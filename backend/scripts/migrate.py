@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from app.agents.checkpointer import setup_checkpointer_tables  # noqa: E402
 from app.core.config import get_settings  # noqa: E402
 
 SUPABASE_CLI = "supabase@2.121.0"  # pinned, see D-024
@@ -35,7 +36,13 @@ def main() -> int:
     )
     output = (result.stdout + result.stderr).replace(db_url, "***")
     print(output.strip())
-    return result.returncode
+    if result.returncode != 0 or "--dry-run" in sys.argv:
+        return result.returncode
+
+    # LangGraph manages its own tables; create/upgrade them in the `langgraph` schema (D-012).
+    setup_checkpointer_tables()
+    print("LangGraph checkpointer tables ready (schema: langgraph).")
+    return 0
 
 
 if __name__ == "__main__":

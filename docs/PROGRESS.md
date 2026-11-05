@@ -4,12 +4,11 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 2 — Database and auth (steps 2.1–2.8 done)
-**Decisions logged:** D-003 to D-029 (monorepo, uv, streaming Option A, background jobs, "other" sex, +10% surplus cap, cost view, profile-change proposals, migrations via Supabase CLI, queries under RLS, DB test location, etc.). Brief updated to match.
-**Last completed:** 2.6: migration 6 (`conversations` with crisis pause, `messages`, `conversation_summaries`, backend-only `agent_runs` that survives account deletion without the user link, `usage_counters`, `daily_llm_cost` view with `security_invoker`) + `scripts/daily_cost.py` (D-013). 1001 fast tests + 131 DB tests passing; 0 rows left behind.
-**Also done:** 2.7: `app/db/` (lazy `psycopg-pool` pool, max 5; `user_transaction` under RLS; `admin_transaction` with logged reason), `/ready` (503 if DB down; `/health` stays DB-free). 1007 fast tests + 137 DB tests passing; 0 rows left behind.
-**Also done:** 2.8: `app/core/auth.py` (ES256 JWT verification via Supabase JWKS, D-029), `get_current_user` dependency, `GET /me`. 1024 fast tests (17 new, forged tokens of every kind rejected) + 140 DB tests (a real Supabase login through `/me`) passing; 0 rows left behind.
-**Waiting on:** Venkat's "go" for Step 2.9 (RLS tests with two real users through the API).
+**Phase:** 2 — Database and auth COMPLETE. Next: Phase 3 (onboarding + first deployment).
+**Decisions logged:** D-003 to D-034. Brief updated to match.
+**Last completed:** 2.10: LangGraph checkpointer works through the Session pooler (D-012), tables in a private `langgraph` schema, set up by `migrate.py`. Dependency-age policy (D-030): `exclude-newer` in `pyproject.toml`, LangGraph pinned. 1024 fast tests + 146 DB tests passing; 0 rows and 0 test checkpoints left behind.
+**Last commit:** `d5b487e` (steps 2.1–2.8). Step 2.10 and the D-030 downgrades are not committed yet.
+**Waiting on:** Venkat's answers to the Phase 2 check questions, then "go" for Phase 3 planning.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
 ## Phase 0 — Setup
@@ -48,10 +47,27 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 - [x] 2.6 Chat and costs: `conversations`, `messages`, `conversation_summaries`, `agent_runs`, `usage_counters` + daily-cost view
 - [x] 2.7 Backend DB layer (`app/db/`, queries under RLS per D-025) + `/ready` DB check
 - [x] 2.8 Auth: verify Supabase JWT in FastAPI + `/me`
-- [ ] 2.9 RLS tests with two test users
-- [ ] 2.10 LangGraph checkpointer connection test (D-012)
+- [→] 2.9 RLS tests with two users **through the API**: moved to Phase 3 (only `/me` exists so far). Table-level cross-user RLS is already tested for every table group.
+- [x] 2.10 LangGraph checkpointer connection test (D-012) + dependency-age policy (D-030)
 
-## Phases 3-11
+**Phase 2 complete (2026-11-05).** 7 migrations: 27 tables + 1 view, RLS everywhere, user-written vs server-written split (D-027), Data API off (D-028). Backend: `app/db/` (pool, `user_transaction`, `admin_transaction`), `app/core/auth.py` (ES256 JWT), `GET /me`, `/ready`, `app/agents/checkpointer.py`. Scripts: `migrate.py`, `daily_cost.py`. 1024 fast + 146 DB tests.
+
+## Phase 3 — Onboarding + first deployment
+
+Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth only), D-033 (local Docker build), D-034 (only Venkat uses the deployed app).
+
+- [ ] 3.1 Onboarding request models (Pydantic): 18+, ranges, allowed values
+- [ ] 3.2 Endpoints: save profile, screening, goal, first weigh-in (under RLS)
+- [ ] 3.3 `POST /onboarding/complete` (consent check → `calculate_targets()` → save targets) + API-level cross-user tests (moved from 2.9)
+- [ ] 3.4 CORS, consistent error responses, structured logging
+- [ ] 3.5 Frontend: sign up / sign in (Supabase Auth), protected pages
+- [ ] 3.6 Frontend API helper (attaches token) + onboarding step 1: consent + basics
+- [ ] 3.7 Onboarding steps 2–4: goal & activity, diet & preferences, equipment & schedule, screening
+- [ ] 3.8 Results screen: targets, reasons, doctor note, habits view
+- [ ] 3.9 Backend Dockerfile (built locally) + deploy to Render
+- [ ] 3.10 Frontend deploy to Vercel + end-to-end check in production
+
+## Phases 4-11
 
 Not started. See `docs/PROJECT_BRIEF.md` section 14.
 

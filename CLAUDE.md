@@ -76,12 +76,13 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Run the dev server: `uv run uvicorn app.main:app --reload` → http://127.0.0.1:8000/health and http://127.0.0.1:8000/docs
 - Run the tests: `uv run pytest -v` (fast, offline; database tests are left out)
 - Run the database tests against Supabase: `uv run pytest -m db -v`
-- Add a package: `uv add <package>` (dev-only: `uv add --dev <package>`)
+- Add a package: `uv add <package>` (dev-only: `uv add --dev <package>`). Versions newer than `exclude-newer` in `pyproject.toml` are ignored on purpose (D-030).
+- Check the database is reachable: http://127.0.0.1:8000/ready
 
 **Database migrations (`backend/`)**
 - New migration: add `supabase/migrations/<YYYYMMDDHHMMSS>_<name>.sql` (every `create table` needs `enable row level security`)
 - Preview: `uv run python scripts/migrate.py --dry-run`
-- Apply: `uv run python scripts/migrate.py` (Supabase CLI pinned to 2.121.0, D-024; reads `DATABASE_URL` from `.env`)
+- Apply: `uv run python scripts/migrate.py` (Supabase CLI pinned to 2.121.0, D-024; reads `DATABASE_URL` from `.env`; then sets up LangGraph's checkpointer tables in the `langgraph` schema, D-012)
 - LLM cost per day: `uv run python scripts/daily_cost.py` (last 14 days; pass a number for more)
 
 **Frontend (`frontend/`)**

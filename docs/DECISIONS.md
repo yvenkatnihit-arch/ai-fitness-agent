@@ -71,6 +71,12 @@ Before importing IFCT 2017, INDB or USDA data, I check each license and format a
 ## D-012 — LangGraph checkpointer connection confirmed in Phase 2
 **Status:** Accepted
 The Postgres checkpointer may not work over Supabase's pooled connection. In Phase 2 we test which connection string works (direct vs pooler) and record the result here.
+**Result (Step 2.10, 2026-11-05): the Session pooler (port 5432) works.** `tests/db/test_checkpointer.py` shows state surviving a brand-new connection, 12 runs on one connection (psycopg's prepared statements are fine in session mode), and thread deletion.
+- Connection settings: `autocommit=True`, dict rows, `search_path = langgraph`.
+- Tables live in a private `langgraph` schema (migration 7) with no access for `anon`/`authenticated`, not in `public` next to our RLS tables.
+- `scripts/migrate.py` runs `PostgresSaver.setup()` after our migrations, so it is idempotent and schema changes stay in one command.
+- Don't use the Transaction pooler (port 6543) for the checkpointer. The direct connection is IPv6-only on the free plan.
+- Phase 7 swaps the single connection in `app/agents/checkpointer.py` for an async pool with the same settings.
 
 ## D-013 — Cost reporting: SQL view + script
 **Status:** Accepted
@@ -218,6 +224,8 @@ Choice: **(1)**. The frontend only needs Supabase **Auth** (`/auth/v1`), which i
 - What "off" looks like: Supabase points PostgREST at a placeholder schema `pg_pgrst_no_exposed_schemas` that doesn't exist (PostgREST logs: error `3F000`), so every `/rest/v1` request gets `503 PGRST002`. That's the expected disabled state, not a fault in our schema.
 - `tests/db/test_data_api_closed.py` signs in a real throwaway user and checks that a direct `/rest/v1/profiles` request is refused with one of the "closed on purpose" answers (503 PGRST002, 406 PGRST106, or 404). Login (`/auth/v1`) is checked to still work.
 - **If the Data API is ever needed again** (for example Supabase Realtime), revisit this decision first.
+- Log tables are user-written under RLS; the backend acts as the user (D-025) and computes nutrition before inserting.
+- RLS stays on everything as a second line of defence. D-027 server-written tables stay as they are.
 
 ## D-029 — How the backend verifies login tokens
 **Status:** Accepted (Step 2.8, 2026-11-05)
@@ -227,5 +235,28 @@ The project signs tokens with **ES256** (asymmetric). Checked on 2026-11-05: JWK
 - Required claims: `exp`, `iat`, `sub`, `aud`, `iss`. Checks: `aud = "authenticated"`, `iss = <SUPABASE_URL>/auth/v1`, `role = "authenticated"`, not `is_anonymous`, and `sub` is a UUID. Clock tolerance is 30 s.
 - `get_current_user` is a FastAPI dependency returning `CurrentUser(id, email)`. It returns 401 with a generic message; the detailed reason is logged only.
 - The verified `id` goes straight into `user_transaction` (D-025). User ids are never taken from request data.
-- Log tables are user-written under RLS; the backend acts as the user (D-025) and computes nutrition before inserting.
-- RLS stays on everything as a second line of defence. D-027 server-written tables stay as they are.
+
+## D-030 — Python packages must be at least ~2 weeks old
+**Status:** Accepted (Step 2.10, 2026-11-05)
+Why: brand-new releases are where most supply-chain attacks and bad releases show up, and they get pulled or fixed within days. The same rule was already applied to the Supabase CLI (D-024).
+- `backend/pyproject.toml` → `[tool.uv] exclude-newer = "2026-10-22T00:00:00Z"`: uv ignores any version uploaded after that date, for **every** package, including transitive ones.
+- Applying it moved 20 packages back (e.g. fastapi 0.162.0 → 0.159.1, langchain-core 1.7.6 → 1.6.13, starlette 1.10.0 → 1.9.0). All 1024 fast + 146 DB tests pass on the older set. Side effect: starlette 1.9 no longer prints the `httpx2` deprecation warning from Step 0.2.
+- LangGraph is pinned exactly: `langgraph==1.2.16`, `langgraph-checkpoint==4.3.0`, `langgraph-checkpoint-postgres==3.2.0`.
+- `httpx2` (needed by `langsmith`) was checked: it's published by Tom Christie (author of httpx) from `github.com/pydantic/httpx2`.
+- **To upgrade:** move the date forward on purpose (never to today), run `uv lock`, check what changed, run all tests.
+
+## D-031 — Email confirmation at sign-up
+**Status:** Accepted (Venkat, 2026-11-05)
+Off while developing: Supabase's built-in email sender only allows a few emails per hour on the free plan. **Before friends join:** turn confirmation on and connect a proper email provider (custom SMTP).
+
+## D-032 — Frontend login uses supabase-js for Auth only
+**Status:** Accepted (Venkat, 2026-11-05)
+The browser uses Supabase's JS client only for sign-up, sign-in and token refresh, then sends the access token to our FastAPI backend (D-029). With the Data API off (D-028), the client can't reach any table directly.
+
+## D-033 — Build the Docker image locally before deploying
+**Status:** Accepted (Venkat, 2026-11-05)
+Venkat already has Docker Desktop, so the backend image is built and run locally first (fast feedback), then deployed to Render from the same `Dockerfile`.
+
+## D-034 — Who uses the deployed app in Phase 3
+**Status:** Accepted (Venkat, 2026-11-05)
+Only Venkat, with test data. Before friends: privacy note and consent copy reviewed, data export and account deletion (Phase 10), Gemini billing on, email confirmation on (D-031), DB tests moved off the real project (D-026).
