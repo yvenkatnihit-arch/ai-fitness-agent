@@ -4,11 +4,10 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 0 — Setup (steps 0.1–0.4 done)
-**Last completed:** 0.4: frontend (Vite 8, React 19, TypeScript, Tailwind 4, Vitest). 1 frontend test + 5 backend tests passing; build and lint clean.
+**Phase:** 0 — Setup COMPLETE. Next: Phase 1 (calculation engine).
 **Decisions logged:** D-003 to D-014 (monorepo, uv, streaming Option A, background jobs, "other" sex, +10% surplus cap, cost view, profile-change proposals, etc.). Brief updated to match.
-**In progress:** 0.5: Kruthi is creating accounts and filling in `backend/.env`. Model: `gemini-2.5-flash` for both tiers (D-015). Gemini key verified on 2026-11-03 (HTTP 200, model served `gemini-2.5-flash`). Supabase and GitHub still to do.
-**Waiting on:** Kruthi to report "done" for 0.5, then I'll verify that `.env` loads (without printing secrets).
+**Last completed:** 0.6: Commands section of CLAUDE.md filled in. Earlier, 0.5: Gemini key verified (`gemini-2.5-flash`, D-015). GitHub repo created (private, github.com/yvenkatnihit-arch/ai-fitness-agent) and first commit pushed. Supabase project created (Mumbai, Postgres 17); `.env` complete; DB connection via Session pooler, publishable key, and secret key all verified 2026-11-05. Added `psycopg[binary]`.
+**Waiting on:** Venkat's answers to the Phase 0 check questions, then "go" for Step 1.1 (`safety_config.py`).
 
 ## Phase 0 — Setup
 
@@ -19,8 +18,10 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
   - `.env` lives in `backend/` (the frontend will get its own in 0.4). Gemini model IDs are blank until 0.5.
 - [x] 0.4 Frontend skeleton: Vite + React + TS + Tailwind showing a page
   - Tests: Vitest + Testing Library (`npm test`). `frontend/.env.example` holds public `VITE_*` values only.
-- [~] 0.5 Accounts checklist (Kruthi): Google AI Studio, Supabase, GitHub now; LangSmith (Phase 7), Vercel and Render (Phase 3) later
-- [ ] 0.6 Fill in the `Commands` section of CLAUDE.md
+- [x] 0.5 Accounts: Google AI Studio, GitHub, Supabase done. LangSmith (Phase 7), Vercel and Render (Phase 3) later.
+- [x] 0.6 Fill in the `Commands` section of CLAUDE.md
+
+**Phase 0 complete (2026-11-05).** Backend: 5 tests. Frontend: 1 test. Gemini, Supabase, and GitHub all verified.
 
 ## Phase 1 — Calculation engine
 

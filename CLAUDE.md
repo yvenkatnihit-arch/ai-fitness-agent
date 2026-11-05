@@ -66,4 +66,28 @@ Key documents (keep them up to date):
 
 ## Commands
 
-(Fill this in as the project is set up: how to run the frontend, backend, tests, migrations, and evals.)
+Run each block from the folder named in its heading. Requires `uv` (Python 3.14) and Node 24 + npm.
+
+**First-time setup**
+- Backend: `cd backend`, then `uv sync`, then `Copy-Item .env.example .env` and fill in the values
+- Frontend: `cd frontend`, then `npm install`, then `Copy-Item .env.example .env`
+
+**Backend (`backend/`)**
+- Run the dev server: `uv run uvicorn app.main:app --reload` → http://127.0.0.1:8000/health and http://127.0.0.1:8000/docs
+- Run the tests: `uv run pytest -v`
+- Add a package: `uv add <package>` (dev-only: `uv add --dev <package>`)
+
+**Frontend (`frontend/`)**
+- Run the dev server: `npm run dev` → http://localhost:5173
+- Run the tests: `npm test`
+- Lint: `npm run lint`
+- Production build: `npm run build` (output goes to `dist/`)
+
+**Git (project root)**
+- The remote is HTTPS: https://github.com/yvenkatnihit-arch/ai-fitness-agent (private). Branch: `main`.
+
+**Not set up yet:** migrations (Phase 2), evals (Phase 7), deployment (Phase 3).
+
+**Windows notes**
+- If `npm` fails with "running scripts is disabled": `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
+- If Python crashes printing emoji (`UnicodeEncodeError`): set `$env:PYTHONIOENCODING = 'utf-8'`
