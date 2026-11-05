@@ -4,8 +4,10 @@ version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.162.0",
+    "psycopg-pool>=3.3.3",
     "psycopg[binary]>=3.3.8",
     "pydantic-settings>=2.16.2",
+    "pyjwt[crypto]>=2.15.1",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -19,3 +21,6 @@ dev = [
 # Lets tests do `from app.main import app` when run from backend/.
 pythonpath = ["."]
 testpaths = ["tests"]
+# Database tests talk to Supabase, so they're opt-in: `uv run pytest -m db` (D-026).
+addopts = "-m 'not db'"
+markers = ["db: needs the Supabase database from backend/.env"]

@@ -174,3 +174,58 @@ These are the *ideal* targets. The safety clamps (Step 1.5: calorie floor, scree
 - Carbs fill the remaining calories. With protein ≤ 35% and fat = 25%, carbs are always ≥ 40%, never negative.
 - Energy per gram: protein 4, carbs 4, fat 9. Macros always add up exactly to the safe calorie target.
 - Values are kept unrounded; rounding happens only for display.
+
+## D-024 — Migrations with the Supabase CLI
+**Status:** Accepted (Venkat, 2026-11-05)
+Options: (a) Supabase CLI; (b) our own Python migration script.
+Choice: **(a)**. It's run with `npx supabase@2.121.0`, pinned. 3.0.0 came out on 2026-11-04 and is too new to trust yet; revisit later.
+- Migrations are SQL files in `supabase/migrations/`, named `<timestamp>_<name>.sql`, applied in order with `db push --db-url`. That means no `supabase login` or `link` and no Docker.
+- `backend/scripts/migrate.py` reads `DATABASE_URL` from `.env` and runs the push, so the URL never has to be typed or shown.
+- The CLI records applied migrations in `supabase_migrations.schema_migrations`, so each file runs exactly once.
+
+## D-025 — Backend queries run under RLS
+**Status:** Accepted (Venkat, 2026-11-05)
+Options: (a) per-request transaction as Supabase's `authenticated` role with the user's JWT claims; (b) Supabase REST client with the user's token; (c) admin connection plus manual `where user_id = ...`.
+Choice: **(a)**. For each user request: `begin; set local role authenticated; select set_config('request.jwt.claims', <claims>, true); ...queries...; commit;`. RLS then applies to every query exactly as if the user had made it.
+- The admin (`postgres`) connection is only for migrations and system jobs (e.g. `agent_runs`, background workers), in clearly named functions.
+- Implemented in Step 2.7: `app/db/transactions.py` provides `user_transaction(user_id: UUID)` and `admin_transaction(reason)`. The reason is required and logged. A DB test proves pooled connections never carry a user's role or claims into the next use.
+- Server-side checks stay as well (CLAUDE.md: RLS **and** server-side).
+Why not (c): one forgotten filter would leak another user's health data, with no second line of defence.
+
+## D-026 — Where database tests run
+**Status:** Accepted (Venkat, 2026-11-05)
+Options: (a) the current Supabase project with throwaway test users; (b) a second Supabase project; (c) local Supabase in Docker.
+Choice: **(a)** for now. The project holds only test data until friends join.
+- DB tests are marked `@pytest.mark.db` and are **opt-in**: plain `uv run pytest` leaves them out (fast, offline), and `uv run pytest -m db` runs them against Supabase.
+- Tests create their own users and rows inside a transaction that is always rolled back, so nothing is left behind (checked after each step).
+- **Revisit before real users join:** move tests to (b) so they never touch real data.
+
+## D-027 — User-written vs server-written tables
+**Status:** Accepted (Claude's default in Step 2.4; Venkat can revert)
+Two kinds of user-owned tables:
+- **User-written** (`profiles`, `health_screening`, `goals`; later the log tables): the user's own answers and records. RLS lets users read and write their own rows.
+- **Server-written** (`calculated_targets`, `meal_plans` + items, `workout_plans` + days + exercises, `plan_proposals`): produced by code that applies the safety limits. Users can only **read** their own rows. No write policies and no write privileges, so not even the public Supabase API with the user's own token can change them. The backend writes them with the admin connection, in clearly named functions, after verifying the user from their JWT.
+Why: targets and plans must always pass through the calc engine and safety validation. If users could insert rows directly, that would be a way around both. Approving a proposal goes through a backend endpoint that re-validates it before applying.
+Changed in migration 4: `calculated_targets` lost its user insert policy from migration 2.
+Child tables also carry `user_id` with a composite foreign key `(parent_id, user_id)`, so RLS stays a simple `user_id = auth.uid()` check and a child row can never belong to a different user than its parent.
+
+## D-028 — Supabase Data API turned off for our tables
+**Status:** Accepted (Venkat, 2026-11-05)
+Problem found in Step 2.5: Supabase exposes every `public` table through its Data API (`/rest/v1`). A signed-in user could call it directly with their own token. RLS would hold, but our backend checks would be skipped entirely: the 18+ rule, nutrition computed by code, input validation.
+Options: (1) remove `public` from the Data API's exposed schemas, so only our FastAPI backend can reach the tables; (2) keep it and make every write server-only via the admin connection.
+Choice: **(1)**. The frontend only needs Supabase **Auth** (`/auth/v1`), which is a separate service and keeps working.
+- Done 2026-11-05: Venkat turned off **"Enable Data API"** (Project Settings → Data API) and saved.
+- What "off" looks like: Supabase points PostgREST at a placeholder schema `pg_pgrst_no_exposed_schemas` that doesn't exist (PostgREST logs: error `3F000`), so every `/rest/v1` request gets `503 PGRST002`. That's the expected disabled state, not a fault in our schema.
+- `tests/db/test_data_api_closed.py` signs in a real throwaway user and checks that a direct `/rest/v1/profiles` request is refused with one of the "closed on purpose" answers (503 PGRST002, 406 PGRST106, or 404). Login (`/auth/v1`) is checked to still work.
+- **If the Data API is ever needed again** (for example Supabase Realtime), revisit this decision first.
+
+## D-029 — How the backend verifies login tokens
+**Status:** Accepted (Step 2.8, 2026-11-05)
+The project signs tokens with **ES256** (asymmetric). Checked on 2026-11-05: JWKS has one EC P-256 key, and the token header names it.
+- `app/core/auth.py` verifies each token against the public keys at `/auth/v1/.well-known/jwks.json`, cached for 1 hour with PyJWT's `PyJWKClient`. No JWT secret needed.
+- Only `ES256`/`RS256` are accepted, which rules out `alg: none` and HS256 key-confusion attacks.
+- Required claims: `exp`, `iat`, `sub`, `aud`, `iss`. Checks: `aud = "authenticated"`, `iss = <SUPABASE_URL>/auth/v1`, `role = "authenticated"`, not `is_anonymous`, and `sub` is a UUID. Clock tolerance is 30 s.
+- `get_current_user` is a FastAPI dependency returning `CurrentUser(id, email)`. It returns 401 with a generic message; the detailed reason is logged only.
+- The verified `id` goes straight into `user_transaction` (D-025). User ids are never taken from request data.
+- Log tables are user-written under RLS; the backend acts as the user (D-025) and computes nutrition before inserting.
+- RLS stays on everything as a second line of defence. D-027 server-written tables stay as they are.

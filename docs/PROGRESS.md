@@ -4,10 +4,13 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 1 — Calculation engine COMPLETE. Next: Phase 2 (database and auth).
-**Decisions logged:** D-003 to D-023 (monorepo, uv, streaming Option A, background jobs, "other" sex, +10% surplus cap, cost view, profile-change proposals, etc.). Brief updated to match.
-**Last completed:** 1.7: `app/calc/engine.py` (`calculate_targets()` = BMR → TDEE → goal → clamps → macros), 5 hand-worked example people + a "calc/ imports no DB/web/LLM code" test. 997 backend tests passing.
-**Waiting on:** Venkat's answers to the Phase 1 check questions, then "go" for Phase 2 planning.
+**Phase:** 2 — Database and auth (steps 2.1–2.8 done)
+**Decisions logged:** D-003 to D-029 (monorepo, uv, streaming Option A, background jobs, "other" sex, +10% surplus cap, cost view, profile-change proposals, migrations via Supabase CLI, queries under RLS, DB test location, etc.). Brief updated to match.
+**Last completed:** 2.6: migration 6 (`conversations` with crisis pause, `messages`, `conversation_summaries`, backend-only `agent_runs` that survives account deletion without the user link, `usage_counters`, `daily_llm_cost` view with `security_invoker`) + `scripts/daily_cost.py` (D-013). 1001 fast tests + 131 DB tests passing; 0 rows left behind.
+**Also done:** 2.7: `app/db/` (lazy `psycopg-pool` pool, max 5; `user_transaction` under RLS; `admin_transaction` with logged reason), `/ready` (503 if DB down; `/health` stays DB-free). 1007 fast tests + 137 DB tests passing; 0 rows left behind.
+**Also done:** 2.8: `app/core/auth.py` (ES256 JWT verification via Supabase JWKS, D-029), `get_current_user` dependency, `GET /me`. 1024 fast tests (17 new, forged tokens of every kind rejected) + 140 DB tests (a real Supabase login through `/me`) passing; 0 rows left behind.
+**Waiting on:** Venkat's "go" for Step 2.9 (RLS tests with two real users through the API).
+**Phase 1 check questions:** skipped for now; can revisit anytime.
 
 ## Phase 0 — Setup
 
@@ -35,7 +38,20 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 **Phase 1 complete (2026-11-05).** `backend/app/calc/`: `bmr.py`, `tdee.py`, `targets.py`, `clamps.py`, `macros.py`, `engine.py`, `validation.py`. All limits in `safety/safety_config.py`. 997 backend tests (most are property tests over input grids).
 
-## Phases 2-11
+## Phase 2 — Database and auth
+
+- [x] 2.1 Migration tooling + `profiles` (RLS, `updated_at` trigger)
+- [x] 2.2 `health_screening`, `goals`, `calculated_targets`
+- [x] 2.3 Reference tables: `foods`, `food_synonyms`, `food_units`, `exercises` (read-only)
+- [x] 2.4 Plans: meal/workout plan tables + `plan_proposals`
+- [x] 2.5 Logs: meal logs, workout logs, `body_weight_entries`, `weekly_checkins` + Data API turned off (D-028)
+- [x] 2.6 Chat and costs: `conversations`, `messages`, `conversation_summaries`, `agent_runs`, `usage_counters` + daily-cost view
+- [x] 2.7 Backend DB layer (`app/db/`, queries under RLS per D-025) + `/ready` DB check
+- [x] 2.8 Auth: verify Supabase JWT in FastAPI + `/me`
+- [ ] 2.9 RLS tests with two test users
+- [ ] 2.10 LangGraph checkpointer connection test (D-012)
+
+## Phases 3-11
 
 Not started. See `docs/PROJECT_BRIEF.md` section 14.
 

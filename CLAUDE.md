@@ -74,8 +74,15 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 
 **Backend (`backend/`)**
 - Run the dev server: `uv run uvicorn app.main:app --reload` → http://127.0.0.1:8000/health and http://127.0.0.1:8000/docs
-- Run the tests: `uv run pytest -v`
+- Run the tests: `uv run pytest -v` (fast, offline; database tests are left out)
+- Run the database tests against Supabase: `uv run pytest -m db -v`
 - Add a package: `uv add <package>` (dev-only: `uv add --dev <package>`)
+
+**Database migrations (`backend/`)**
+- New migration: add `supabase/migrations/<YYYYMMDDHHMMSS>_<name>.sql` (every `create table` needs `enable row level security`)
+- Preview: `uv run python scripts/migrate.py --dry-run`
+- Apply: `uv run python scripts/migrate.py` (Supabase CLI pinned to 2.121.0, D-024; reads `DATABASE_URL` from `.env`)
+- LLM cost per day: `uv run python scripts/daily_cost.py` (last 14 days; pass a number for more)
 
 **Frontend (`frontend/`)**
 - Run the dev server: `npm run dev` → http://localhost:5173
@@ -86,7 +93,7 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 **Git (project root)**
 - The remote is HTTPS: https://github.com/yvenkatnihit-arch/ai-fitness-agent (private). Branch: `main`.
 
-**Not set up yet:** migrations (Phase 2), evals (Phase 7), deployment (Phase 3).
+**Not set up yet:** evals (Phase 7), deployment (Phase 3).
 
 **Windows notes**
 - If `npm` fails with "running scripts is disabled": `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
