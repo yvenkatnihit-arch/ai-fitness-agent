@@ -85,6 +85,11 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Apply: `uv run python scripts/migrate.py` (Supabase CLI pinned to 2.121.0, D-024; reads `DATABASE_URL` from `.env`; then sets up LangGraph's checkpointer tables in the `langgraph` schema, D-012)
 - LLM cost per day: `uv run python scripts/daily_cost.py` (last 14 days; pass a number for more)
 
+**Docker (`backend/`)**
+- Build the image: `docker build -t ai-fitness-backend .`
+- Run it locally (secrets from `.env` at run time, never in the image): `docker run --rm --name ai-fitness-backend-local --env-file .env -p 8000:8000 ai-fitness-backend` → http://127.0.0.1:8000/health
+- Logs: `docker logs ai-fitness-backend-local` (JSON lines). Stop: `Ctrl+C` or `docker rm -f ai-fitness-backend-local`
+
 **Frontend (`frontend/`)**
 - Run the dev server: `npm run dev` → http://localhost:5173
 - Run the tests: `npm test`

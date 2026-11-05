@@ -257,6 +257,7 @@ The browser uses Supabase's JS client only for sign-up, sign-in and token refres
 ## D-033 — Build the Docker image locally before deploying
 **Status:** Accepted (Venkat, 2026-11-05)
 Venkat already has Docker Desktop, so the backend image is built and run locally first (fast feedback), then deployed to Render from the same `Dockerfile`.
+Implemented (Step 3.9): `backend/Dockerfile` has two stages: `uv sync --frozen --no-dev` in a builder, then a slim runtime with only `.venv` + `app/`. Base `python:3.14.7-slim`, `uv` 0.13.4 (D-030). Runs as non-root `appuser`, listens on `$PORT` (Render) or 8000, `--proxy-headers`, Docker `HEALTHCHECK` on `/health`. `.dockerignore` keeps `.env`, tests, scripts and caches out. Image is 366 MB. Checked locally: health, ready (Supabase reachable), CORS, a real Supabase token on `/me`, onboarding status, a 422 with field list, JSON logs, `healthy` status.
 
 ## D-034 — Who uses the deployed app in Phase 3
 **Status:** Accepted (Venkat, 2026-11-05)
