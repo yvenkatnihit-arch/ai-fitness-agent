@@ -274,3 +274,14 @@ Only Venkat, with test data. Before friends: privacy note and consent copy revie
 - **Logs:** JSON lines on stdout. One `request` line per request (method, path, status, duration_ms, request_id). Never request bodies, query strings, or Authorization headers.
 - The request-context middleware is pure ASGI (works with streaming, Phase 7) and sits *inside* CORS, so 500s still carry CORS headers.
 - Settings split: `AppSettings` (non-secret, defaults, safe at import) and `Settings` (adds secrets). `app.main` imports without a `.env`.
+
+## D-036 — Frontend on Vercel
+**Status:** Accepted (Step 3.10, 2026-11-05)
+- Vercel project `ai-fitness-agent`, Root Directory `frontend`, Vite preset, production domain **https://ai-fitness-agent-one.vercel.app** (branch `main`, auto-deploys on push).
+- Env vars: exactly three, all public by design, saved as **Config** (not Secret): `VITE_API_URL=https://ai-fitness-agent-5dq9.onrender.com`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`. **Vite bakes `VITE_*` into the JS at build time**, so changing one needs a redeploy. Never give a real secret a `VITE_` name.
+- Backend variables were imported into Vercel by mistake and then removed. A scan of the public JS found no secrets (no `sb_secret_`, `AIza`, Postgres URL, pooler host, `lsv2_`, or JWT).
+- Vercel's "Supabase integration" was **not** added: it would inject server keys into the frontend project.
+- `frontend/vercel.json`: rewrite every path to `/index.html` (SPA reloads work) + headers `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`.
+- Render `CORS_ORIGINS=http://localhost:5173,https://ai-fitness-agent-one.vercel.app`. Vercel's other preview domains are intentionally not allowed.
+- Supabase Auth Site URL = the Vercel domain, and redirect URLs for it and localhost (needed once email confirmation is on).
+- Checked 2026-11-05: full onboarding through production with the Vercel origin (CORS ok on every response), targets match a hand calculation, about 0.5–0.65 s per request (Singapore ↔ Mumbai).

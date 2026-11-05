@@ -5,8 +5,9 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 ## Current status
 
 **Phase:** 3 — Onboarding + first deployment (steps 3.1–3.8 done: sign-up → onboarding → targets works locally)
-**Decisions logged:** D-003 to D-035. Brief updated to match.
-**Last completed:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
+**Decisions logged:** D-003 to D-036. Brief updated to match.
+**In progress:** 3.10: frontend live at https://ai-fitness-agent-one.vercel.app (D-036). Checked: no secrets in public JS, backend URL baked in, SPA reloads, security headers, CORS from the Vercel origin, and a full onboarding through production (targets match a hand calculation). Waiting on Venkat's own browser/phone test.
+**Earlier:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
 **Earlier:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
 **Earlier:** 3.7: onboarding screens for goal, food preferences (disliked-food chips), training (equipment, days) and health check (explicit Yes/No for all 6, injury areas), plus a Finish screen that calls `POST /onboarding/complete`. Shared `useSaveStep` hook and `Choice` component; `onboarding/options.ts` with a test that reads the backend's Python files and checks every option list matches. 43 frontend tests, build, lint passing. Venkat confirmed sign-up → consent → basics works in the browser.
 **Earlier:** 3.6: `lib/api.ts` (token on every call, our error format → `ApiError` with field errors + request ID, "can't reach the server" message), `/onboarding` page driven by `GET /onboarding/status`, consent step (draft privacy notice `2026-11-draft`) and basics step, home redirects unfinished users to onboarding. 28 frontend tests, build, lint passing.
@@ -16,7 +17,7 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 **Earlier:** 3.2: onboarding endpoints (`app/api/onboarding.py` → `app/db/onboarding.py`, all under RLS): `GET /onboarding/status`, `PUT /onboarding/{consent,basics,goal,preferences,training,screening}`. Consent first (409), goal needs basics (409), target-weight direction check (`app/calc/goals.py`, 422), locked after onboarding (409). Migration 8: `profiles.consent_version`. 1096 fast + 153 DB tests passing; 0 rows left behind.
 **Earlier:** 3.1: onboarding request models (`app/schemas/onboarding.py`), `app/calc/age.py`, `app/core/vocabulary.py`, `app/core/time.py`.
 **Last commit:** `9de2d29` (Dockerfile). Docs updates since then not committed yet.
-**Waiting on:** Venkat's Vercel account, then Step 3.10 (frontend on Vercel + production end-to-end check).
+**Waiting on:** Venkat to try sign-up → onboarding → targets on the live site (laptop and phone), then the Phase 3 wrap-up.
 **Phase 2 check questions:** skipped for now; can revisit anytime.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
@@ -74,7 +75,7 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 - [x] 3.7 Onboarding steps 2–4: goal & activity, diet & preferences, equipment & schedule, screening
 - [x] 3.8 Results screen: targets, reasons, doctor note, habits view
 - [x] 3.9 Backend Dockerfile (built locally) + deploy to Render: https://ai-fitness-agent-5dq9.onrender.com
-- [ ] 3.10 Frontend deploy to Vercel + end-to-end check in production
+- [~] 3.10 Frontend deploy to Vercel + end-to-end check in production: live and checked by script; Venkat's browser test pending
 
 ## Phases 4-11
 
