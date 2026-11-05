@@ -258,6 +258,10 @@ The browser uses Supabase's JS client only for sign-up, sign-in and token refres
 **Status:** Accepted (Venkat, 2026-11-05)
 Venkat already has Docker Desktop, so the backend image is built and run locally first (fast feedback), then deployed to Render from the same `Dockerfile`.
 Implemented (Step 3.9): `backend/Dockerfile` has two stages: `uv sync --frozen --no-dev` in a builder, then a slim runtime with only `.venv` + `app/`. Base `python:3.14.7-slim`, `uv` 0.13.4 (D-030). Runs as non-root `appuser`, listens on `$PORT` (Render) or 8000, `--proxy-headers`, Docker `HEALTHCHECK` on `/health`. `.dockerignore` keeps `.env`, tests, scripts and caches out. Image is 366 MB. Checked locally: health, ready (Supabase reachable), CORS, a real Supabase token on `/me`, onboarding status, a 422 with field list, JSON logs, `healthy` status.
+**Render (2026-11-05):** web service `ai-fitness-agent`, https://ai-fitness-agent-5dq9.onrender.com. Docker runtime, branch `main`, region Singapore (nearest to Supabase Mumbai), Free plan, health check `/health`, auto-deploy on commit.
+- The build context must be `backend/`. With Root Directory = `backend`, use Dockerfile Path `./Dockerfile` and Build Context `.`. The first deploy failed with `COPY app ./app: "/app" not found` because the context was the repo root.
+- Env vars are set in the Render dashboard (never in the image): APP_ENV=production, LOG_LEVEL, CORS_ORIGINS, Gemini x3, Supabase x4, LANGSMITH_TRACING. Render sets PORT.
+- The same checks pass there as locally (health, ready, CORS, real token on `/me`, onboarding status, 422).
 
 ## D-034 — Who uses the deployed app in Phase 3
 **Status:** Accepted (Venkat, 2026-11-05)
