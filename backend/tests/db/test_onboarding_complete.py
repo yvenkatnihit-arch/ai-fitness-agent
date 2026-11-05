@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from app.calc.age import age_on
 from app.calc.engine import BodyProfile, calculate_targets
+from app.calc.macros import calorie_shares
 from app.core.auth import CurrentUser, get_current_user
 from app.core.time import india_today
 from app.db import admin_transaction, close_pool
@@ -88,11 +89,14 @@ def test_complete_returns_the_engines_numbers_and_saves_them(client, users):
     response = onboard(client)
     assert response.status_code == 200
     t = expected()
+    protein_pct, carbs_pct, fat_pct = calorie_shares(t.protein_g, t.carbs_g, t.fat_g)
     assert response.json() == {
         "calorie_target_kcal": round(t.calorie_target_kcal), "protein_g": round(t.protein_g),
         "fat_g": round(t.fat_g), "carbs_g": round(t.carbs_g),
+        "protein_pct": protein_pct, "carbs_pct": carbs_pct, "fat_pct": fat_pct,
         "reasons": [REASON_MESSAGES[c] for c in t.reasons], "doctor_note": None, "focus_on_habits": False,
     }
+    assert protein_pct + carbs_pct + fat_pct == 100
     assert client.get("/onboarding/status").json()["next_step"] == "done"
     assert client.get("/targets/current").json() == response.json()  # same numbers after a reload
 

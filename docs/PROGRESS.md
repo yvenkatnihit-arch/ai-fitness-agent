@@ -17,7 +17,7 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 **Earlier:** 3.2: onboarding endpoints (`app/api/onboarding.py` → `app/db/onboarding.py`, all under RLS): `GET /onboarding/status`, `PUT /onboarding/{consent,basics,goal,preferences,training,screening}`. Consent first (409), goal needs basics (409), target-weight direction check (`app/calc/goals.py`, 422), locked after onboarding (409). Migration 8: `profiles.consent_version`. 1096 fast + 153 DB tests passing; 0 rows left behind.
 **Earlier:** 3.1: onboarding request models (`app/schemas/onboarding.py`), `app/calc/age.py`, `app/core/vocabulary.py`, `app/core/time.py`.
 **Last commit:** `9de2d29` (Dockerfile). Docs updates since then not committed yet.
-**Waiting on:** Venkat to choose: macro chart now (Step 3.11) or with the Phase 9 dashboard; then Phase 4 planning.
+**Waiting on:** Venkat to look at the donut locally, then "commit" to deploy it (one push updates Render + Vercel); then Phase 4 planning.
 **Phase 2 check questions:** skipped for now; can revisit anytime.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
@@ -76,7 +76,7 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 - [x] 3.8 Results screen: targets, reasons, doctor note, habits view
 - [x] 3.9 Backend Dockerfile (built locally) + deploy to Render: https://ai-fitness-agent-5dq9.onrender.com
 - [x] 3.10 Frontend deploy to Vercel + end-to-end check in production: live, checked by script, and tested by Venkat (2026-11-05)
-- [ ] 3.11 (requested by Venkat) Macro donut chart on the results screen: backend computes each macro's share of calories (tested Python), frontend draws an SVG donut with the calorie total in the centre; no chart in the habits view
+- [x] 3.11 (requested by Venkat) Macro donut chart on the results screen: `calorie_shares()` in `app/calc/macros.py` (largest-remainder rounding, always sums to 100, tested) → `protein_pct/carbs_pct/fat_pct` in the targets API (hidden in the habits view); `targets/MacroDonut.tsx` draws an SVG donut (calorie total in the centre, 2.5 px gaps, segment tooltips, screen-reader summary) + a legend with grams and %. Colours from the data-viz palette, validated (CVD-safe; aqua <3:1 on white, so values are always shown as text). 1271 backend fast + 7 DB onboarding-complete + 50 frontend tests passing. Not deployed yet.
 
 **Phase 3 complete (2026-11-05)** apart from the optional 3.11. Live: https://ai-fitness-agent-one.vercel.app (Vercel) → https://ai-fitness-agent-5dq9.onrender.com (Render) → Supabase.
 
@@ -102,5 +102,6 @@ None yet (evals start in Phase 7).
 - **Before 2026-12-01:** `gemini-2.5-flash` gets routed to `gemini-3.5-flash-lite`. Decide whether to switch `.env` to the stable models (D-015).
 - Verify the Tele-MANAS helpline number (14416) before shipping the crisis message.
 - Check each nutrition dataset's license before importing (Phase 4).
+- Frontend JS bundle is ~501 kB (145 kB gzipped), just over Vite's 500 kB advice; mostly supabase-js. Add route-level code splitting (`React.lazy`) in Phase 9/10.
 - **Later (Venkat, 2026-11-05):** add a `docker-compose.yml` that starts backend + frontend with one command (`docker compose up`), plus a "how to run locally" section for other developers (their own Supabase project, `.env` files, `scripts/migrate.py`). Fits with the README in Phase 11.
 - **Before friends join (D-034):** review the draft privacy notice (`frontend/src/onboarding/privacyNotice.ts`) and bump its version; turn email confirmation on with a real email provider (D-031); build data export and account deletion, which the notice promises (Phase 10); move DB tests off the real project (D-026).

@@ -1,7 +1,8 @@
+import { MacroDonut } from './MacroDonut'
+import { MACRO_COLORS, type MacroSlice } from './macroColors'
 import type { Targets } from './types'
 
 // Shows numbers exactly as the backend calculated them (no maths here, CLAUDE.md).
-const format = (n: number) => n.toLocaleString('en-IN')
 
 // Shown instead of numbers for users with eating-disorder history (brief section 7).
 const HABITS = [
@@ -44,26 +45,17 @@ export function TargetsView({ targets }: { targets: Targets }) {
 }
 
 function Numbers({ targets }: { targets: Targets }) {
-  const macros = [
-    ['Protein', targets.protein_g],
-    ['Carbs', targets.carbs_g],
-    ['Fat', targets.fat_g],
-  ] as const
+  const slices: MacroSlice[] = [
+    { name: 'Protein', grams: targets.protein_g ?? 0, percent: targets.protein_pct ?? 0, color: MACRO_COLORS.protein },
+    { name: 'Carbs', grams: targets.carbs_g ?? 0, percent: targets.carbs_pct ?? 0, color: MACRO_COLORS.carbs },
+    { name: 'Fat', grams: targets.fat_g ?? 0, percent: targets.fat_pct ?? 0, color: MACRO_COLORS.fat },
+  ]
 
   return (
-    <section className="rounded-xl bg-white p-5 text-center shadow-sm">
-      <p className="text-sm text-slate-500">Your daily target</p>
-      <p className="mt-1 text-4xl font-bold text-slate-900">
-        {format(targets.calorie_target_kcal ?? 0)} <span className="text-base font-medium text-slate-500">kcal</span>
-      </p>
-      <dl className="mt-5 grid grid-cols-3 gap-2">
-        {macros.map(([label, grams]) => (
-          <div key={label} className="rounded-lg bg-slate-50 px-2 py-3">
-            <dt className="text-xs text-slate-500">{label}</dt>
-            <dd className="text-lg font-semibold text-slate-900">{format(grams ?? 0)} g</dd>
-          </div>
-        ))}
-      </dl>
+    <section className="rounded-xl bg-white p-5 shadow-sm">
+      <h2 className="mb-4 text-center text-sm font-medium text-slate-500">Your daily target</h2>
+      <MacroDonut kcal={targets.calorie_target_kcal ?? 0} slices={slices} />
+      <p className="mt-4 text-center text-xs text-slate-500">Percentages are each macro's share of your daily calories.</p>
     </section>
   )
 }

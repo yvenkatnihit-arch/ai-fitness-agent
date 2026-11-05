@@ -14,6 +14,7 @@ test('signed-out visitors are sent to the sign-in page', () => {
 
 const TARGETS = {
   calorie_target_kcal: 1640, protein_g: 116, fat_g: 46, carbs_g: 189,
+  protein_pct: 28, carbs_pct: 46, fat_pct: 26,
   reasons: [], doctor_note: null, focus_on_habits: false,
 }
 

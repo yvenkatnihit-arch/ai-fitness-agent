@@ -14,12 +14,14 @@ def test_every_reason_code_has_a_message():
 def test_numbers_are_rounded_for_display():
     out = to_targets_out(2207.2, 160.0, 61.31, 253.85, [], False, False)
     assert (out.calorie_target_kcal, out.protein_g, out.fat_g, out.carbs_g) == (2207, 160, 61, 254)
+    assert (out.protein_pct, out.carbs_pct, out.fat_pct) == (29, 46, 25)  # adds up to 100
     assert out.reasons == [] and out.doctor_note is None
 
 
 def test_habits_focus_hides_every_number():
     out = to_targets_out(1781.4, 112, 49.5, 222.0, [clamps.EATING_DISORDER_NO_DEFICIT], True, True)
     assert (out.calorie_target_kcal, out.protein_g, out.fat_g, out.carbs_g) == (None, None, None, None)
+    assert (out.protein_pct, out.carbs_pct, out.fat_pct) == (None, None, None)  # no chart either
     assert out.focus_on_habits is True
     assert out.doctor_note == DOCTOR_NOTE
     assert out.reasons == [REASON_MESSAGES[clamps.EATING_DISORDER_NO_DEFICIT]]

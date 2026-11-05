@@ -3,6 +3,7 @@
 from pydantic import BaseModel
 
 from app.calc import clamps, macros
+from app.calc.macros import calorie_shares
 
 # One plain-English line per reason code (from app/calc/clamps.py and app/calc/macros.py).
 REASON_MESSAGES: dict[str, str] = {
@@ -27,6 +28,10 @@ class TargetsOut(BaseModel):
     protein_g: int | None
     fat_g: int | None
     carbs_g: int | None
+    # Share of daily calories from each macro, whole percentages adding up to 100 (for the chart).
+    protein_pct: int | None
+    carbs_pct: int | None
+    fat_pct: int | None
     reasons: list[str]          # plain-English lines, safe to show
     doctor_note: str | None
     focus_on_habits: bool
@@ -36,11 +41,15 @@ def to_targets_out(calorie_kcal: float, protein_g: float, fat_g: float, carbs_g:
                    reason_codes: list[str], doctor_note: bool, focus_on_habits: bool) -> TargetsOut:
     """Round for display (whole kcal and grams) and hide numbers when focusing on habits."""
     show = not focus_on_habits
+    shares = calorie_shares(protein_g, carbs_g, fat_g) if show else (None, None, None)
     return TargetsOut(
         calorie_target_kcal=round(calorie_kcal) if show else None,
         protein_g=round(protein_g) if show else None,
         fat_g=round(fat_g) if show else None,
         carbs_g=round(carbs_g) if show else None,
+        protein_pct=shares[0],
+        carbs_pct=shares[1],
+        fat_pct=shares[2],
         reasons=[REASON_MESSAGES[code] for code in reason_codes],
         doctor_note=DOCTOR_NOTE if doctor_note else None,
         focus_on_habits=focus_on_habits,

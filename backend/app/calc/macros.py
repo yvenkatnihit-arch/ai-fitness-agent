@@ -69,3 +69,26 @@ def macros(target_kcal: float, weight_kg: float, goal: Goal, screening_flags: se
     carbs_g = carbs_kcal / KCAL_PER_G_CARBS
 
     return Macros(protein_g=protein_g, fat_g=fat_g, carbs_g=carbs_g, reasons=tuple(reasons))
+
+
+def calorie_shares(protein_g: float, carbs_g: float, fat_g: float) -> tuple[int, int, int]:
+    """Each macro's share of calories as whole percentages that always add up to exactly 100.
+
+    Plain rounding can give 99 or 101 (e.g. 32.6 + 42.6 + 24.8 -> 33 + 43 + 25 = 101), so we use
+    the largest-remainder method: round everything down, then give the leftover points to the
+    shares with the biggest fractional parts.
+    """
+    for name, value in (("protein_g", protein_g), ("carbs_g", carbs_g), ("fat_g", fat_g)):
+        require_range(name, value, 0, 10_000)
+    kcal = (protein_g * KCAL_PER_G_PROTEIN, carbs_g * KCAL_PER_G_CARBS, fat_g * KCAL_PER_G_FAT)
+    total = sum(kcal)
+    if total <= 0:
+        raise ValueError("macros add up to zero calories")
+
+    exact = [100 * part / total for part in kcal]
+    shares = [int(value) for value in exact]  # round down
+    leftover = 100 - sum(shares)
+    by_remainder = sorted(range(3), key=lambda i: exact[i] - shares[i], reverse=True)
+    for i in by_remainder[:leftover]:
+        shares[i] += 1
+    return shares[0], shares[1], shares[2]
