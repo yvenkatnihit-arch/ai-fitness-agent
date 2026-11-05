@@ -79,7 +79,13 @@ Composer (small model): ONLY runs when 2+ agents ran or intent is general.
 Output guard (code checks; an extra LLM check runs only when risk_flag is true)
    ↓
 Stream the approved response to the user (the guard runs on the full text first; see D-007)
+   ↓
+≥10 new messages since the last summary? (code)
+   ├─ no → END
+   └─ yes → Summarize (small model, after streaming) → save to conversation_summaries → END   (D-018)
 ```
+
+Routing is a single router decision plus parallel specialists via Send, not a supervisor loop (D-017).
 
 Rules for the agents:
 - Each specialist has only its own tools (listed below), plus shared read-only tools.
@@ -88,13 +94,13 @@ Rules for the agents:
 - When the router sets `needs_profile_update`, a `profile_change` proposal is created and the user approves it in the UI (D-014).
 - Each specialist has a maximum number of tool-call iterations (for example, 4) to prevent loops.
 
-**Shared read-only tools:** `get_profile`, `get_targets`, `get_current_plans`, `get_today_summary`
+**Shared read-only tools:** `get_profile`, `get_targets`, `get_current_plans`, `get_today_summary`, `get_weight_trend` (D-017)
 
 **Nutrition agent tools:** `search_food`, `parse_and_log_meal`, `get_nutrition_totals`, `suggest_substitutes`, `propose_meal_plan_change`
 
 **Workout agent tools:** `get_todays_workout`, `log_workout`, `get_exercise_alternatives`, `adjust_for_soreness`, `propose_workout_change`
 
-**Progress agent tools:** `log_weight`, `get_weight_trend`, `get_adherence`, `explain_plateau`
+**Progress agent tools:** `log_weight`, `get_adherence`, `explain_plateau` (plus the shared `get_weight_trend`)
 
 ### 4.3 Plan generation flow (weekly, and on onboarding)
 
@@ -124,7 +130,7 @@ Portions are shown in grams and household measures (katori, roti count, cups, ta
 ### 4.5 Memory
 
 - Profile, targets, plans, and logs live in Supabase and are fetched fresh by tools. They are never kept only in chat history.
-- Conversation history: the last 6 messages plus a rolling summary, which the small model updates every 10 messages.
+- Conversation history: the last 6 messages plus a rolling summary, which the small model updates every 10 messages in a `summarize` node at the end of the chat graph, after the reply has streamed (D-018).
 - Use the LangGraph Postgres checkpointer (on Supabase) for graph state. Confirm in Phase 2 which connection string (direct or pooled) works (D-012).
 
 ## 5. Nutrition data
@@ -155,6 +161,7 @@ All limits live in `backend/app/safety/safety_config.py`.
 - Minimum daily calorie target (configurable; default 1200 kcal for women and 1500 kcal for men and for "other / prefer not to say"; D-009)
 - Sex is asked only because the BMR formula needs it. `other` uses the average of the male and female Mifflin-St Jeor constants (-78).
 - Maximum surplus of 10% of TDEE for weight gain and muscle gain (D-010)
+- Kidney flag → protein capped at 0.8 g/kg. Protein never above 35% of calories; fat never below 25% (D-023)
 - Maximum deficit of 25% of TDEE
 - Maximum planned weight-loss rate of about 1% of body weight per week
 - No supplement or drug dosing advice, no medical diagnosis

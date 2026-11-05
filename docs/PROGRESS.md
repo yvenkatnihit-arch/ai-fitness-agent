@@ -4,10 +4,10 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 0 — Setup COMPLETE. Next: Phase 1 (calculation engine).
-**Decisions logged:** D-003 to D-014 (monorepo, uv, streaming Option A, background jobs, "other" sex, +10% surplus cap, cost view, profile-change proposals, etc.). Brief updated to match.
-**Last completed:** 0.6: Commands section of CLAUDE.md filled in. Earlier, 0.5: Gemini key verified (`gemini-2.5-flash`, D-015). GitHub repo created (private, github.com/yvenkatnihit-arch/ai-fitness-agent) and first commit pushed. Supabase project created (Mumbai, Postgres 17); `.env` complete; DB connection via Session pooler, publishable key, and secret key all verified 2026-11-05. Added `psycopg[binary]`.
-**Waiting on:** Venkat's answers to the Phase 0 check questions, then "go" for Step 1.1 (`safety_config.py`).
+**Phase:** 1 — Calculation engine COMPLETE. Next: Phase 2 (database and auth).
+**Decisions logged:** D-003 to D-023 (monorepo, uv, streaming Option A, background jobs, "other" sex, +10% surplus cap, cost view, profile-change proposals, etc.). Brief updated to match.
+**Last completed:** 1.7: `app/calc/engine.py` (`calculate_targets()` = BMR → TDEE → goal → clamps → macros), 5 hand-worked example people + a "calc/ imports no DB/web/LLM code" test. 997 backend tests passing.
+**Waiting on:** Venkat's answers to the Phase 1 check questions, then "go" for Phase 2 planning.
 
 ## Phase 0 — Setup
 
@@ -25,13 +25,15 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Phase 1 — Calculation engine
 
-- [ ] 1.1 `safety_config.py` (all limits in one place)
-- [ ] 1.2 BMR (Mifflin-St Jeor) + tests
-- [ ] 1.3 TDEE (activity multipliers) + tests
-- [ ] 1.4 Calorie target by goal, with deficit/surplus caps + tests
-- [ ] 1.5 Safety clamps (calorie floor, 25% deficit cap, 1%/week rate cap, screening flags) + tests
-- [ ] 1.6 Macros (protein per kg, fat floor, carbs remainder) + tests
-- [ ] 1.7 `calculate_targets()` that ties 1.2-1.6 together + a tiny debug endpoint (optional) + tests
+- [x] 1.1 `safety_config.py` (all limits in one place)
+- [x] 1.2 BMR (Mifflin-St Jeor) + tests
+- [x] 1.3 TDEE (activity multipliers) + tests
+- [x] 1.4 Calorie target by goal + tests (caps are applied in 1.5)
+- [x] 1.5 Safety clamps (calorie floor, 25% deficit cap, 1%/week rate cap, screening flags) + tests
+- [x] 1.6 Macros (protein per kg, fat floor, carbs remainder) + tests
+- [x] 1.7 `calculate_targets()` that ties 1.2-1.6 together + tests (debug endpoint skipped; Phase 3 builds the real one)
+
+**Phase 1 complete (2026-11-05).** `backend/app/calc/`: `bmr.py`, `tdee.py`, `targets.py`, `clamps.py`, `macros.py`, `engine.py`, `validation.py`. All limits in `safety/safety_config.py`. 997 backend tests (most are property tests over input grids).
 
 ## Phases 2-11
 

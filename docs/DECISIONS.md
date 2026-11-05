@@ -96,3 +96,81 @@ Known trade-offs, accepted:
 - **Revisit before 2026-12-01** (tracked in PROGRESS.md reminders). Switching to (a) is two lines in `.env`.
 Not chosen at all: `gemini-3.8-flash` (labeled "New", not Stable) and any `-preview` model.
 The IDs live only in `.env` (`GEMINI_SMALL_MODEL`, `GEMINI_MID_MODEL`), so switching models is a config change, not a code change.
+
+## D-016 — "Mild" deficit for users with screening flags
+**Status:** Accepted (Venkat chose the recommended 10%, 2026-11-05)
+The brief says flagged users get "no calorie deficit beyond a mild level" but doesn't give a number.
+Options: 5%, **10%**, or 15% of TDEE.
+Choice: 10% (`FLAGGED_MAX_DEFICIT_FRACTION = 0.10` in `safety_config.py`). That's less than half the normal 25% cap, and roughly 200–250 kcal/day for most adults: a slow, gentle deficit.
+Eating disorder history stays at 0% (no deficit), as the brief says. With several flags, the strictest rule wins.
+
+## D-017 — Router + Send, not a supervisor loop
+**Status:** Accepted (Venkat, 2026-11-05)
+Options:
+1. Router + Send (one routing decision, specialists in parallel). Add a bounded "needs another agent?" round later, only if evals show it's needed.
+2. Full supervisor loop: an LLM picks the next agent after each one finishes.
+3. Hybrid from the start.
+Choice: **1**.
+Why: 3–4 LLM calls per multi-intent message instead of 5+. Agents run in parallel, which fits the 2–3 s first-token target and puts less pressure on Gemini rate limits. Routes are predictable, so evals stay simple. Cross-domain needs are covered by shared read-only tools.
+Follow-ups:
+- `get_weight_trend` becomes a shared read-only tool, so the workout and nutrition agents can see weight trends without a supervisor.
+- In Phase 7, keep the graph easy to extend with one optional extra routing round after the merge. Revisit if Phase 7 evals show that cross-agent follow-ups fail often.
+
+## D-018 — Summarize node at the end of the chat graph
+**Status:** Accepted (Venkat, 2026-11-05)
+Options: (a) summarize every 10 new messages; (b) summarize when recent history passes a token threshold.
+Choice: **(a)**.
+Design:
+- An explicit `summarize` node is the last node of the chat graph. It runs **after** the reply has streamed, so the user never waits for it.
+- A plain-code conditional edge runs it only when there are ≥10 new messages since the last summary. Otherwise the graph goes straight to END.
+- The summary rolls forward: its input is the previous summary plus the new messages, never the full history, so its cost stays flat.
+- Small model, `max_tokens` capped (~300). It keeps goals, preferences, injuries and recent decisions, and leaves out numbers, because tools always fetch targets fresh.
+- It writes only to `conversation_summaries`. If it fails, chat still works and it retries at the next trigger.
+Why: it saves LLM tokens (each call sends the last 6 messages + summary), not database space. Full messages stay in `messages` for chat history and data export.
+Revisit (b) if long messages turn out to be common.
+
+## D-019 — Plausible input ranges for body measurements
+**Status:** Accepted (Venkat said "go" without changes, 2026-11-05)
+The brief asks for check constraints on valid ranges but gives none. Proposal, in `safety_config.py`:
+- Age 18–100 years (18 is the brief's minimum).
+- Weight 30–300 kg.
+- Height 120–230 cm.
+Why: values outside these ranges are almost always typos (height entered in metres, weight in pounds) and would give nonsense or unsafe targets. Calculations raise a clear error; onboarding will show a friendly message instead. Phase 2 database check constraints will use the same ranges.
+
+## D-020 — Activity levels and TDEE multipliers
+**Status:** Accepted (standard values; change if you prefer)
+Five levels, with the widely used multipliers on Mifflin-St Jeor BMR:
+- `sedentary` 1.2: desk job, little or no exercise
+- `light` 1.375: exercise 1–3 days a week
+- `moderate` 1.55: exercise 3–5 days a week
+- `active` 1.725: exercise 6–7 days a week
+- `very_active` 1.9: hard daily training or a physical job
+They live in `app/calc/tdee.py`. They're calculation constants, not safety limits. Onboarding shows the descriptions so users pick honestly. People tend to overestimate their activity, so the weekly check-in (Phase 8) corrects for that using real weight trends.
+
+## D-021 — Default calorie adjustment per goal
+**Status:** Accepted (Venkat, 2026-11-05)
+Fraction of TDEE, in `app/calc/targets.py`:
+- `fat_loss` −20%: sustainable, roughly 0.5 kg/week for most people
+- `muscle_gain` +8%: lean bulk
+- `weight_gain` +10%: at the surplus cap (D-010)
+- `recomp` −10%: small deficit plus high protein
+- `general_fitness` 0%: maintenance
+These are the *ideal* targets. The safety clamps (Step 1.5: calorie floor, screening flags, 1%/week loss rate) run afterwards and can only make a target more conservative. A test checks that every default stays within the `safety_config.py` caps.
+
+## D-022 — Safety clamp order and the kcal-per-kg figure
+**Status:** Accepted (Venkat said "go", 2026-11-05)
+- `KCAL_PER_KG_FAT = 7700` (the standard approximation) turns "≤1% of body weight per week" into a daily cap: `weight × 0.01 × 7700 / 7`. For 80 kg, that's 880 kcal/day.
+- Clamp order in `app/calc/clamps.py`: surplus cap → deficit cap (25% / 10% flagged / 0% eating disorder history) → loss-rate cap → calorie floor. **The floor goes last, so it always wins.** Each clamp can only make the target more conservative.
+- The result carries `reasons` (codes such as `screening_deficit_cap`) so the UI can explain any change, plus `doctor_note` (any flag) and `focus_on_habits` (eating disorder history: show balanced meals, not numbers).
+- Edge case: if TDEE is below the floor (for example a very small, sedentary person), the floor still applies and the target ends up slightly above TDEE. That's the safer outcome.
+
+## D-023 — Macro rules
+**Status:** Accepted (Venkat, 2026-11-05)
+- Protein g per kg body weight, by goal (`app/calc/macros.py`): fat loss 2.0, recomp 2.0, muscle gain 1.8, weight gain 1.6, general fitness 1.6.
+- Safety limits (`safety_config.py`):
+  - **Kidney flag → protein ≤ 0.8 g/kg.** High protein can strain damaged kidneys. This wasn't in the brief; Claude flagged it.
+  - Protein ≤ 35% of calories, so very heavy users don't get huge protein targets. A height-based reference weight was considered and rejected as more complex.
+  - Fat = 25% of calories (the minimum, for hormones and absorbing vitamins A, D, E and K).
+- Carbs fill the remaining calories. With protein ≤ 35% and fat = 25%, carbs are always ≥ 40%, never negative.
+- Energy per gram: protein 4, carbs 4, fat 9. Macros always add up exactly to the safe calorie target.
+- Values are kept unrounded; rounding happens only for display.
