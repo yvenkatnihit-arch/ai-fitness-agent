@@ -113,11 +113,11 @@ def test_me_without_a_token_is_401():
     response = client.get("/me")
     assert response.status_code == 401
     assert response.headers["www-authenticate"] == "Bearer"
-    assert response.json() == {"detail": "Please sign in."}
+    assert response.json()["detail"] == "Please sign in."
 
 
 def test_me_with_a_bad_token_is_401_with_a_generic_message():
     response = client.get("/me", headers={"Authorization": f"Bearer {make_token(key=OTHER_KEY)}"})
     assert response.status_code == 401
     # The user never learns *why* (signature? expiry?). Details only go to our logs.
-    assert response.json() == {"detail": "Your session has expired or is invalid. Please sign in again."}
+    assert response.json()["detail"] == "Your session has expired or is invalid. Please sign in again."

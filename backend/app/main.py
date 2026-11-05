@@ -3,20 +3,42 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import db
-from app.api import me
+from app.api import me, onboarding, targets
+from app.core.config import get_app_settings
+from app.core.errors import register_error_handlers
+from app.core.logging import setup_logging
+from app.core.middleware import RequestContextMiddleware
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    setup_logging(get_app_settings().log_level)
     yield
     db.close_pool()  # the pool opens lazily on first use; close it cleanly on shutdown
 
 
 app = FastAPI(title="AI Fitness Agent API", version="0.1.0", lifespan=lifespan)
+register_error_handlers(app)
+
+# Middleware added LAST runs FIRST. So CORS wraps everything, including our safe-500 handler.
+app.add_middleware(RequestContextMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_app_settings().cors_origins,  # exact frontend URLs only, from .env
+    allow_credentials=False,                     # we use Bearer tokens, not cookies
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    expose_headers=["X-Request-ID"],             # so the frontend can show it in error messages
+    max_age=600,                                 # browsers may cache the preflight answer for 10 min
+)
+
 app.include_router(me.router)
+app.include_router(onboarding.router)
+app.include_router(targets.router)
 
 
 @app.get("/health")

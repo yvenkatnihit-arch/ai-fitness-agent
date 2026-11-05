@@ -1,11 +1,22 @@
+import type { ReactNode } from 'react'
+import { Navigate, Route, Routes } from 'react-router'
+
+import { RequireAuth } from './auth/RequireAuth'
+import { OnboardingPage } from './onboarding/OnboardingPage'
+import { HomePage } from './pages/HomePage'
+import { SignInPage } from './pages/SignInPage'
+
+const signedIn = (page: ReactNode) => <RequireAuth>{page}</RequireAuth>
+
+// Pages. Everything except /sign-in needs a signed-in user.
 function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">AI Fitness Coach</h1>
-        <p className="mt-2 text-sm text-slate-500">Frontend is running. Sign-in comes in Phase 3.</p>
-      </div>
-    </main>
+    <Routes>
+      <Route path="/sign-in" element={<SignInPage />} />
+      <Route path="/onboarding" element={signedIn(<OnboardingPage />)} />
+      <Route path="/" element={signedIn(<HomePage />)} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 

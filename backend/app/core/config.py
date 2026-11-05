@@ -11,13 +11,26 @@ from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
-class Settings(BaseSettings):
+class AppSettings(BaseSettings):
+    """Non-secret settings with safe defaults. Safe to load at import time (no .env needed)."""
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    # App
     app_env: Literal["development", "test", "production"] = "development"
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     # NoDecode: read the raw "a,b" string so the validator below can split it.
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def split_comma_list(cls, value: object) -> object:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
+
+
+class Settings(AppSettings):
+    """Everything, including secrets. Required values fail fast when this is first loaded."""
 
     # Gemini
     gemini_api_key: SecretStr
@@ -35,12 +48,10 @@ class Settings(BaseSettings):
     langsmith_api_key: SecretStr | None = None
     langsmith_project: str = "ai-fitness-agent"
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def split_comma_list(cls, value: object) -> object:
-        if isinstance(value, str):
-            return [item.strip() for item in value.split(",") if item.strip()]
-        return value
+
+@lru_cache
+def get_app_settings() -> AppSettings:
+    return AppSettings()
 
 
 @lru_cache

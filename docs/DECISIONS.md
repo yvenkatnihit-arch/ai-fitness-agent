@@ -244,6 +244,7 @@ Why: brand-new releases are where most supply-chain attacks and bad releases sho
 - LangGraph is pinned exactly: `langgraph==1.2.16`, `langgraph-checkpoint==4.3.0`, `langgraph-checkpoint-postgres==3.2.0`.
 - `httpx2` (needed by `langsmith`) was checked: it's published by Tom Christie (author of httpx) from `github.com/pydantic/httpx2`.
 - **To upgrade:** move the date forward on purpose (never to today), run `uv lock`, check what changed, run all tests.
+- **Frontend too (Step 3.5):** `frontend/.npmrc` has `before=2026-10-22T00:00:00Z` and `save-exact=true`. Five Phase 0 packages were newer than that (tailwindcss and @tailwindcss/vite 4.3.4, @vitejs/plugin-react 6.2.1, oxlint 1.90.0, vitest 5.1.0). They were pinned to the newest older version in the same major, then `node_modules` and `package-lock.json` were rebuilt from scratch so transitive packages follow the rule too. 0 vulnerabilities; tests, build and lint pass. Added: `@supabase/supabase-js` 2.118.0, `react-router` 8.5.0.
 
 ## D-031 — Email confirmation at sign-up
 **Status:** Accepted (Venkat, 2026-11-05)
@@ -260,3 +261,11 @@ Venkat already has Docker Desktop, so the backend image is built and run locally
 ## D-034 — Who uses the deployed app in Phase 3
 **Status:** Accepted (Venkat, 2026-11-05)
 Only Venkat, with test data. Before friends: privacy note and consent copy reviewed, data export and account deletion (Phase 10), Gemini billing on, email confirmation on (D-031), DB tests moved off the real project (D-026).
+
+## D-035 — CORS, error format, logs
+**Status:** Accepted (Step 3.4, 2026-11-05)
+- **CORS:** only the exact origins in `CORS_ORIGINS`. No cookies (`allow_credentials=False`, Bearer tokens only). Methods GET/POST/PUT/DELETE. Headers Authorization, Content-Type and X-Request-ID; X-Request-ID is exposed to the frontend.
+- **Errors:** every error is `{"detail": <safe message>, "request_id": ...}`. 422 adds `errors: [{field, message}]` and never echoes submitted values (could be health data). Unexpected exceptions → 500 with a generic message; `PoolTimeout` → 503. The traceback goes to logs only.
+- **Logs:** JSON lines on stdout. One `request` line per request (method, path, status, duration_ms, request_id). Never request bodies, query strings, or Authorization headers.
+- The request-context middleware is pure ASGI (works with streaming, Phase 7) and sits *inside* CORS, so 500s still carry CORS headers.
+- Settings split: `AppSettings` (non-secret, defaults, safe at import) and `Settings` (adds secrets). `app.main` imports without a `.env`.

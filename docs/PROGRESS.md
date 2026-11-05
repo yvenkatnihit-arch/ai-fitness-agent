@@ -4,11 +4,19 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 2 — Database and auth COMPLETE. Next: Phase 3 (onboarding + first deployment).
-**Decisions logged:** D-003 to D-034. Brief updated to match.
-**Last completed:** 2.10: LangGraph checkpointer works through the Session pooler (D-012), tables in a private `langgraph` schema, set up by `migrate.py`. Dependency-age policy (D-030): `exclude-newer` in `pyproject.toml`, LangGraph pinned. 1024 fast tests + 146 DB tests passing; 0 rows and 0 test checkpoints left behind.
-**Last commit:** `d5b487e` (steps 2.1–2.8). Step 2.10 and the D-030 downgrades are not committed yet.
-**Waiting on:** Venkat's answers to the Phase 2 check questions, then "go" for Phase 3 planning.
+**Phase:** 3 — Onboarding + first deployment (steps 3.1–3.8 done: sign-up → onboarding → targets works locally)
+**Decisions logged:** D-003 to D-035. Brief updated to match.
+**Last completed:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
+**Earlier:** 3.7: onboarding screens for goal, food preferences (disliked-food chips), training (equipment, days) and health check (explicit Yes/No for all 6, injury areas), plus a Finish screen that calls `POST /onboarding/complete`. Shared `useSaveStep` hook and `Choice` component; `onboarding/options.ts` with a test that reads the backend's Python files and checks every option list matches. 43 frontend tests, build, lint passing. Venkat confirmed sign-up → consent → basics works in the browser.
+**Earlier:** 3.6: `lib/api.ts` (token on every call, our error format → `ApiError` with field errors + request ID, "can't reach the server" message), `/onboarding` page driven by `GET /onboarding/status`, consent step (draft privacy notice `2026-11-draft`) and basics step, home redirects unfinished users to onboarding. 28 frontend tests, build, lint passing.
+**Earlier:** 3.5: frontend sign up / sign in with supabase-js (Auth only), `AuthProvider` + `RequireAuth` + `/sign-in` page with friendly errors, react-router; `frontend/.npmrc` dependency-age rule (D-030), 5 frontend packages pinned older and tree rebuilt; `frontend/.env` created from public values; "Confirm email" already off (D-031 needs no dashboard change). 17 frontend tests, build, lint passing.
+**Earlier:** 3.4: CORS (exact origins, no cookies), one error format with request_id (422 lists fields without echoing values; 500 generic; PoolTimeout → 503), JSON request logs with X-Request-ID (`app/core/{middleware,errors,logging}.py`), `LOG_LEVEL` setting, settings split so the app imports without `.env` (D-035). 1114 fast + 160 DB tests passing.
+**Earlier:** 3.3: `POST /onboarding/complete` (`app/workflows/complete_onboarding.py`: read as user → `calculate_targets()` → one admin transaction marks onboarded + inserts targets; double-submit safe) and `GET /targets/current`. Display rounding + plain-English reasons + doctor note (`app/schemas/targets.py`); eating-disorder history → no numbers returned. Cross-user API tests (moved from 2.9). 1099 fast + 160 DB tests passing; 0 rows left behind.
+**Earlier:** 3.2: onboarding endpoints (`app/api/onboarding.py` → `app/db/onboarding.py`, all under RLS): `GET /onboarding/status`, `PUT /onboarding/{consent,basics,goal,preferences,training,screening}`. Consent first (409), goal needs basics (409), target-weight direction check (`app/calc/goals.py`, 422), locked after onboarding (409). Migration 8: `profiles.consent_version`. 1096 fast + 153 DB tests passing; 0 rows left behind.
+**Earlier:** 3.1: onboarding request models (`app/schemas/onboarding.py`), `app/calc/age.py`, `app/core/vocabulary.py`, `app/core/time.py`.
+**Last commit:** `2bb70bd` (Phase 2 complete). Steps 3.1–3.8 not committed yet.
+**Waiting on:** Venkat to check the results screen in the browser, then "go" for Step 3.9 (Dockerfile + Render deploy; Render account needed).
+**Phase 2 check questions:** skipped for now; can revisit anytime.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
 ## Phase 0 — Setup
@@ -56,14 +64,14 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth only), D-033 (local Docker build), D-034 (only Venkat uses the deployed app).
 
-- [ ] 3.1 Onboarding request models (Pydantic): 18+, ranges, allowed values
-- [ ] 3.2 Endpoints: save profile, screening, goal, first weigh-in (under RLS)
-- [ ] 3.3 `POST /onboarding/complete` (consent check → `calculate_targets()` → save targets) + API-level cross-user tests (moved from 2.9)
-- [ ] 3.4 CORS, consistent error responses, structured logging
-- [ ] 3.5 Frontend: sign up / sign in (Supabase Auth), protected pages
-- [ ] 3.6 Frontend API helper (attaches token) + onboarding step 1: consent + basics
-- [ ] 3.7 Onboarding steps 2–4: goal & activity, diet & preferences, equipment & schedule, screening
-- [ ] 3.8 Results screen: targets, reasons, doctor note, habits view
+- [x] 3.1 Onboarding request models (Pydantic): 18+, ranges, allowed values
+- [x] 3.2 Endpoints: save profile, screening, goal, first weigh-in (under RLS)
+- [x] 3.3 `POST /onboarding/complete` (consent check → `calculate_targets()` → save targets) + API-level cross-user tests (moved from 2.9)
+- [x] 3.4 CORS, consistent error responses, structured logging
+- [x] 3.5 Frontend: sign up / sign in (Supabase Auth), protected pages
+- [x] 3.6 Frontend API helper (attaches token) + onboarding step 1: consent + basics
+- [x] 3.7 Onboarding steps 2–4: goal & activity, diet & preferences, equipment & schedule, screening
+- [x] 3.8 Results screen: targets, reasons, doctor note, habits view
 - [ ] 3.9 Backend Dockerfile (built locally) + deploy to Render
 - [ ] 3.10 Frontend deploy to Vercel + end-to-end check in production
 
@@ -73,7 +81,7 @@ Not started. See `docs/PROJECT_BRIEF.md` section 14.
 
 ## Mock data / placeholders (`# MOCK:`)
 
-None yet.
+- `frontend/src/onboarding/privacyNotice.ts`: **DRAFT** privacy notice (`2026-11-draft`). Not a mock, but must be reviewed (and the version bumped) before any friend signs up (D-034).
 
 ## Eval results
 
@@ -85,3 +93,4 @@ None yet (evals start in Phase 7).
 - **Before 2026-12-01:** `gemini-2.5-flash` gets routed to `gemini-3.5-flash-lite`. Decide whether to switch `.env` to the stable models (D-015).
 - Verify the Tele-MANAS helpline number (14416) before shipping the crisis message.
 - Check each nutrition dataset's license before importing (Phase 4).
+- **Before friends join (D-034):** review the draft privacy notice (`frontend/src/onboarding/privacyNotice.ts`) and bump its version; turn email confirmation on with a real email provider (D-031); build data export and account deletion, which the notice promises (Phase 10); move DB tests off the real project (D-026).
