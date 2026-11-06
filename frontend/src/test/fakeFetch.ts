@@ -6,19 +6,20 @@ type Reply = { status?: number; body: unknown }
 type Handler = Reply | ((body: unknown) => Reply)
 
 export function fakeFetch(handlers: Record<string, Handler>) {
-  const calls: { method: string; path: string; body: unknown; headers: Record<string, string> }[] = []
+  const calls: { method: string; path: string; query: string; body: unknown; headers: Record<string, string> }[] = []
 
   const fetchMock = vi.fn(async (url: string, init: RequestInit = {}) => {
     const method = init.method ?? 'GET'
-    const path = new URL(url).pathname
+    const { pathname: path, search: query } = new URL(url)
     const body = init.body ? JSON.parse(String(init.body)) : undefined
-    calls.push({ method, path, body, headers: (init.headers ?? {}) as Record<string, string> })
+    calls.push({ method, path, query, body, headers: (init.headers ?? {}) as Record<string, string> })
 
     const handler = handlers[`${method} ${path}`]
     if (!handler) throw new Error(`fakeFetch: no handler for ${method} ${path}`)
     const reply = typeof handler === 'function' ? handler(body) : handler
-    return new Response(JSON.stringify(reply.body), {
-      status: reply.status ?? 200,
+    const status = reply.status ?? 200
+    return new Response(status === 204 ? null : JSON.stringify(reply.body), {
+      status,
       headers: { 'Content-Type': 'application/json', 'X-Request-ID': 'req-test-1234' },
     })
   })

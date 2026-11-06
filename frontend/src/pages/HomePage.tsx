@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router'
+import { Link, Navigate } from 'react-router'
 
 import { useAuth } from '../auth/context'
 import { FormError } from '../components/ui'
@@ -60,6 +60,11 @@ export function HomePage() {
 
         {error && <FormError message={error.message} requestId={error.requestId} />}
         {!error && !targets && <p className="text-center text-sm text-slate-500">Loading…</p>}
+        {targets && (
+          <Link to="/log" className="rounded-lg bg-emerald-600 px-4 py-2.5 text-center font-semibold text-white">
+            Log a meal
+          </Link>
+        )}
         {targets && <TargetsView targets={targets} />}
       </div>
     </main>

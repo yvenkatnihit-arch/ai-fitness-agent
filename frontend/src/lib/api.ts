@@ -25,6 +25,7 @@ export type Api = {
   get: <T>(path: string) => Promise<T>
   put: <T>(path: string, body: unknown) => Promise<T>
   post: <T>(path: string, body?: unknown) => Promise<T>
+  delete: (path: string) => Promise<void>
 }
 
 export function createApi(accessToken: string | null): Api {
@@ -44,6 +45,7 @@ export function createApi(accessToken: string | null): Api {
       throw new ApiError(0, UNREACHABLE)
     }
 
+    if (response.status === 204) return undefined as T // "No Content": e.g. a successful delete
     if (response.ok) return (await response.json()) as T
 
     let data: ErrorBody = {}
@@ -61,5 +63,6 @@ export function createApi(accessToken: string | null): Api {
     get: (path) => request('GET', path),
     put: (path, body) => request('PUT', path, body),
     post: (path, body) => request('POST', path, body),
+    delete: (path) => request<void>('DELETE', path),
   }
 }

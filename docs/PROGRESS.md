@@ -17,7 +17,7 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 **Earlier:** 3.2: onboarding endpoints (`app/api/onboarding.py` → `app/db/onboarding.py`, all under RLS): `GET /onboarding/status`, `PUT /onboarding/{consent,basics,goal,preferences,training,screening}`. Consent first (409), goal needs basics (409), target-weight direction check (`app/calc/goals.py`, 422), locked after onboarding (409). Migration 8: `profiles.consent_version`. 1096 fast + 153 DB tests passing; 0 rows left behind.
 **Earlier:** 3.1: onboarding request models (`app/schemas/onboarding.py`), `app/calc/age.py`, `app/core/vocabulary.py`, `app/core/time.py`.
 **Last commit:** `9de2d29` (Dockerfile). Docs updates since then not committed yet.
-**Phase 4:** 4.0 licence review (D-037), 4.2 downloads, 4.3a readers + checks, 4.3b carb basis (D-038) + review report, 4.3c 121 ingredients, 4.3d 72 cooked dishes, 4.4a recipe calculator + 4.4b 11 recipes (total 95 ready, 84 review, 14 gaps), 4.5a 179 foods + 280 synonyms loaded into Supabase (D-039), 4.5b 96 household units (D-040), 4.6 food search endpoint, 4.7a meal logging endpoints done. 4.1: Venkat sends the two permission emails. Waiting on "go" for 4.7b (meal logging form in the app).
+**Phase 4:** 4.0 licence review (D-037), 4.2 downloads, 4.3a readers + checks, 4.3b carb basis (D-038) + review report, 4.3c 121 ingredients, 4.3d 72 cooked dishes, 4.4a recipe calculator + 4.4b 11 recipes (total 95 ready, 84 review, 14 gaps), 4.5a 179 foods + 280 synonyms loaded into Supabase (D-039), 4.5b 96 household units (D-040), 4.6 food search endpoint, 4.7a meal logging endpoints, 4.7b meal logging screen done. 4.1: Venkat sends the two permission emails. Waiting on Venkat trying /log locally, then "go" for 4.8 ("Data sources" credits page, last Phase 4 step).
 **Phase 2 check questions:** skipped for now; can revisit anytime.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
@@ -102,7 +102,7 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 - [ ] 4.5 Load into Supabase (`foods`), synonyms (dahi = curd, chawal = rice…), household units (katori, piece, cup…) with checks
 - [ ] 4.6 Food search endpoint (fuzzy, synonyms, diet filter) + tests
 - [x] 4.7a Meal logging endpoints (no LLM): `POST /meals` (slot, optional date: today to 7 days back, 1–20 items of food_id + quantity + unit; client never sends nutrition), `GET /meals?day=` (meals + day totals), `DELETE /meals/{id}`. Maths in `app/calc/portions.py` (grams = quantity × unit grams; nutrition = grams × per-100 g / 100; unit must be `g` or one the food has). Stored values are a snapshot. RLS: other users can't see or delete (tested). End-to-end check: 2 roti + 1 katori dal = 301.7 kcal (matches hand calculation). 1445 offline + 179 DB tests pass.
-- [ ] 4.7b Meal logging form (frontend): search box → pick food → amount + unit → add to meal → save; today's meals and totals
+- [x] 4.7b Meal logging screen `/log` (linked from Home): meal slot (default from India time of day), debounced food search (300 ms, ≥ 2 letters, "values being checked" for unverified foods), amount + unit (the food's units + grams), draft list, save, today's meals with per-meal and day totals, delete. No nutrition maths in the browser: it sends foods + amounts and shows the backend's numbers. `api.delete` handles 204. 64 frontend tests pass; lint clean; build OK.
 - [ ] 4.8 "Data sources" credits in the app
 
 ## Phase 7 notes (requested by Venkat, 2026-11-05)
