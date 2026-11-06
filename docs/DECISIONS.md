@@ -299,3 +299,14 @@ Choice: **2 + 1**.
 - Every source is credited in the app ("Data sources").
 - Raw downloads are kept out of git (`data/raw/`, re-downloadable). The download script records URL, date and SHA-256 for provenance.
 - **Validation is code, with tests** (Phase 4 plan): units and ranges, energy consistency (Atwater 4/4/9 vs stated kcal), macros ≤ 100 g per 100 g, diet-class rules, duplicates, cross-source agreement where both sources have the item, plausibility bands for cooked dishes, and a review report of flagged rows for a human to check.
+
+## D-038 — "Carbs" means available carbohydrate, as weighed; fibre is separate
+**Status:** Accepted (Venkat, 2026-11-06)
+Problem (found by the Step 4.3a audit): USDA gives **total carbohydrate by difference** (includes fibre); CoFID gives **available carbohydrate in monosaccharide equivalents** (excludes fibre, and is slightly heavier on paper: starch × 1.10, disaccharides × 1.05). Storing both unchanged would mix two definitions in one day's total.
+Options: (A) total carbs; (B) available carbs, fibre separate; (C) keep each source's definition.
+Choice: **(B)**. `foods.carbs_g_per_100g` = available (digestible) carbohydrate **as weighed**; `fiber_g_per_100g` stored separately.
+Why: it matches how our carb **target** is set (remaining calories ÷ 4 = digestible carbohydrate), so logged foods and targets count the same thing.
+Conversion (`fooddata/carbs.py`, tested):
+- USDA: available = by-difference − total dietary fibre. If fibre is unknown, we can't convert → flagged, not guessed.
+- CoFID: as weighed = starch/1.10 + oligosaccharides/1.10 + (glucose + fructose + galactose) + (sucrose + maltose + lactose)/1.05 when the breakdown is known. If only starch and total sugars are known: starch/1.10 + sugars/1.05, marked approximate (a warning in the review report). Otherwise flagged.
+Trade-off: differs slightly from the "Total carbohydrate" printed on Indian packaged-food labels (FSSAI); the app labels the figure "carbs (excl. fibre)".

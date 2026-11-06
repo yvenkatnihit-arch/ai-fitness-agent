@@ -1,0 +1,62 @@
+key,name,local_names,category,diet_class,source,source_id,source_name,kcal,protein_g,carbs_g,fat_g,fiber_g,carbs_quality,match
+toor_dal,Toor dal (split pigeon peas),arhar dal;tuvar dal;togari bele,pulse,vegan,uk_cofid,13-104,"Beans, pigeon peas, dahl, dried, raw",324.0,21.8,51.45,1.9,,exact,exact
+moong_whole,Moong (whole green gram),sabut moong;green gram;pesarlu,pulse,vegan,usda_sr_legacy,174256,"Mung beans, mature seeds, raw",347.0,23.86,46.32,1.15,16.3,exact,exact
+moong_dal,Moong dal (split green gram),mung dal;pesara pappu;hesaru bele,pulse,vegan,usda_sr_legacy,174256,"Mung beans, mature seeds, raw",347.0,23.86,46.32,1.15,16.3,exact,close
+chana_whole,Kala chana (whole chickpeas),chole;kabuli chana;bengal gram,pulse,vegan,usda_sr_legacy,173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",378.0,20.47,50.75,6.04,12.2,exact,exact
+chana_dal,Chana dal (split chickpeas),bengal gram dal;kadale bele,pulse,vegan,usda_sr_legacy,173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",378.0,20.47,50.75,6.04,12.2,exact,close
+masoor_dal,Masoor dal (split red lentils),red lentils;masur dal,pulse,vegan,uk_cofid,13-657,"Lentils, red, split, dried, raw",311.0,25.6,46.6,1.8,17.4,exact,exact
+masoor_whole,Masoor (whole lentils),sabut masoor;brown lentils,pulse,vegan,usda_sr_legacy,172420,"Lentils, raw",352.0,24.63,52.65,1.06,10.7,exact,exact
+urad_dal,Urad dal (split black gram),dhuli urad;minapa pappu;uddina bele,pulse,vegan,uk_cofid,13-060,"Black gram, duhli urad dahl, split, dried, raw",298.0,27.2,38.34,1.4,,exact,exact
+rajma,Rajma (red kidney beans),kidney beans,pulse,vegan,usda_sr_legacy,173744,"Beans, kidney, red, mature seeds, raw",337.0,22.53,46.09,1.06,15.2,exact,exact
+lobia,Lobia (black-eyed peas),chawli;alasande;cowpeas,pulse,vegan,usda_sr_legacy,173758,"Cowpeas, common (blackeyes, crowder, southern), mature seeds, raw",336.0,23.52,49.43,1.26,10.6,exact,exact
+besan,Besan (gram flour),chickpea flour;kadale hittu,pulse,vegan,usda_sr_legacy,174288,Chickpea flour (besan),387.0,22.39,47.02,6.69,10.8,exact,exact
+soybean,Soybeans (dried),soya beans,pulse,vegan,usda_sr_legacy,174270,"Soybeans, mature seeds, raw",446.0,36.49,20.86,19.94,9.3,exact,exact
+tofu,Tofu (firm),soya paneer,pulse,vegan,usda_sr_legacy,172475,"Tofu, raw, firm, prepared with calcium sulfate",144.0,17.27,0.48,8.72,2.3,exact,exact
+atta,Atta (whole wheat flour),gehun ka atta;chapati flour,cereal,vegan,usda_sr_legacy,168893,"Wheat flour, whole-grain (Includes foods for USDA's Food Distribution Program)",340.0,13.21,61.27,2.5,10.7,exact,close
+rice_white,Rice (white raw),chawal;arisi;akki,cereal,vegan,usda_sr_legacy,169756,"Rice, white, long-grain, regular, raw, unenriched",365.0,7.13,78.65,0.66,1.3,exact,close
+rice_brown,Brown rice (raw),,cereal,vegan,usda_sr_legacy,169703,"Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)",367.0,7.54,72.65,3.2,3.6,exact,exact
+rice_parboiled,Parboiled rice (raw),ukda chawal;boiled rice;puzhungal arisi,cereal,vegan,usda_sr_legacy,169758,"Rice, white, long-grain, parboiled, unenriched, dry",374.0,7.51,79.09,1.03,1.8,exact,exact
+sooji,Sooji (semolina),rava;suji,cereal,vegan,usda_sr_legacy,168933,"Semolina, unenriched",360.0,12.68,68.93,1.05,3.9,exact,exact
+oats,Oats (rolled),porridge oats,cereal,vegan,uk_cofid,11-788,"Porridge oats, unfortified",381.0,10.9,64.29,8.1,7.8,approximate,exact
+jowar,Jowar (sorghum grain),jonna;jola,cereal,vegan,usda_sr_legacy,169716,Sorghum grain,329.0,10.62,65.39,3.46,6.7,exact,exact
+jowar_flour,Jowar flour,jowar atta,cereal,vegan,usda_sr_legacy,168943,"Sorghum flour, whole-grain",359.0,8.43,70.04,3.34,6.6,exact,exact
+paneer,Paneer,cottage cheese (Indian),dairy,vegetarian,uk_cofid,12-495,"Cheese, Paneer",328.0,26.0,0.86,24.5,0.0,exact,exact
+curd,Curd (plain whole milk),dahi;mosaru;thayir,dairy,vegetarian,usda_sr_legacy,171284,"Yogurt, plain, whole milk",61.0,3.47,4.66,3.25,0.0,exact,exact
+milk_whole,Milk (whole),doodh;full cream milk,dairy,vegetarian,usda_sr_legacy,172217,"Milk, whole, 3.25% milkfat, without added vitamin A and vitamin D",61.0,3.15,4.78,3.27,0.0,exact,close
+milk_toned_low,Milk (double toned / 1 %),double toned milk,dairy,vegetarian,usda_sr_legacy,173441,"Milk, fluid, 1% fat, without added vitamin A and vitamin D",42.0,3.37,4.99,0.97,0.0,exact,close
+ghee,Ghee,clarified butter;neyyi;tuppa,fat_oil,vegetarian,usda_sr_legacy,171314,"Butter, Clarified butter (ghee)",900.0,0.0,0.0,100.0,0.0,exact,exact
+oil_mustard,Mustard oil,sarson ka tel,fat_oil,vegan,usda_sr_legacy,172337,"Oil, mustard",884.0,0.0,0.0,100.0,0.0,exact,exact
+oil_soybean,Soybean oil,refined oil,fat_oil,vegan,usda_sr_legacy,171411,"Oil, soybean, salad or cooking",884.0,0.0,0.0,100.0,0.0,exact,exact
+oil_sunflower,Sunflower oil,,fat_oil,vegan,uk_cofid,17-045,"Oil, sunflower",899.0,0.0,0.0,99.9,0.0,exact,exact
+oil_groundnut,Groundnut oil,peanut oil;kadalai ennai,fat_oil,vegan,usda_sr_legacy,171410,"Oil, peanut, salad or cooking",884.0,0.0,0.0,100.0,0.0,exact,exact
+oil_coconut,Coconut oil,nariyal tel;thengai ennai,fat_oil,vegan,usda_sr_legacy,171412,"Oil, coconut",892.0,0.0,0.0,99.06,0.0,exact,exact
+egg,Egg (whole),anda;mutta;motte,egg,eggetarian,usda_sr_legacy,171287,"Egg, whole, raw, fresh",143.0,12.56,0.72,9.51,0.0,exact,exact
+chicken_breast,Chicken breast (skinless),murgh,meat,non_vegetarian,usda_sr_legacy,171509,"Chicken, broilers or fryers, breast, skinless, boneless, meat only, with added solution, raw",108.0,20.32,0.0,3.0,0.0,exact,exact
+chicken_thigh,Chicken thigh (skinless),,meat,non_vegetarian,usda_sr_legacy,173627,"Chicken, broilers or fryers, dark meat, thigh, meat only, raw",121.0,19.66,0.0,4.12,0.0,exact,exact
+mutton,Mutton (goat meat),gosht;goat,meat,non_vegetarian,usda_sr_legacy,175303,"Game meat, goat, raw",109.0,20.6,0.0,2.31,0.0,exact,exact
+mackerel,Mackerel,bangda;ayala;bangude,fish,non_vegetarian,usda_sr_legacy,173672,"Fish, mackerel, Pacific and jack, mixed species, raw",158.0,20.07,0.0,7.89,0.0,exact,close
+prawns,Prawns (raw),jhinga;chemmeen,fish,non_vegetarian,uk_cofid,16-387,"Prawns, king, raw",77.0,17.6,0.0,0.7,0.0,exact,exact
+peanuts,Peanuts (raw),moongphali;groundnut;kadalai,nut_seed,vegan,usda_sr_legacy,172430,"Peanuts, all types, raw",567.0,25.8,7.63,49.24,8.5,exact,exact
+almonds,Almonds,badam,nut_seed,vegan,usda_sr_legacy,170567,"Nuts, almonds",579.0,21.15,9.05,49.93,12.5,exact,exact
+cashews,Cashews (raw),kaju,nut_seed,vegan,usda_sr_legacy,170162,"Nuts, cashew nuts, raw",553.0,18.22,26.89,43.85,3.3,exact,exact
+coconut_fresh,Coconut (fresh),nariyal;thengai,nut_seed,vegan,usda_sr_legacy,170169,"Nuts, coconut meat, raw",354.0,3.33,6.23,33.49,9.0,exact,exact
+potato,Potato,aloo;batata,vegetable,vegan,usda_sr_legacy,170026,"Potatoes, flesh and skin, raw",77.0,2.05,15.39,0.09,2.1,exact,exact
+onion,Onion,pyaz;kanda;vengayam,vegetable,vegan,usda_sr_legacy,170000,"Onions, raw",40.0,1.1,7.64,0.1,1.7,exact,exact
+tomato,Tomato,tamatar,vegetable,vegan,usda_sr_legacy,170457,"Tomatoes, red, ripe, raw, year round average",18.0,0.88,2.69,0.2,1.2,exact,exact
+spinach,Spinach,palak;keerai,vegetable,vegan,usda_sr_legacy,168462,"Spinach, raw",23.0,2.86,1.43,0.39,2.2,exact,exact
+cauliflower,Cauliflower,gobi;phool gobi,vegetable,vegan,usda_sr_legacy,169986,"Cauliflower, raw",25.0,1.92,2.97,0.28,2.0,exact,exact
+cabbage,Cabbage,patta gobi;muttaikose,vegetable,vegan,usda_sr_legacy,169975,"Cabbage, raw",25.0,1.28,3.3,0.1,2.5,exact,exact
+okra,Okra,bhindi;vendakkai,vegetable,vegan,usda_sr_legacy,169260,"Okra, raw",33.0,1.93,4.25,0.19,3.2,exact,exact
+brinjal,Brinjal (eggplant),baingan;vankaya;kathirikai,vegetable,vegan,usda_sr_legacy,169228,"Eggplant, raw",25.0,0.98,2.88,0.18,3.0,exact,exact
+carrot,Carrot,gajar,vegetable,vegan,usda_sr_legacy,170393,"Carrots, raw",41.0,0.93,6.78,0.24,2.8,exact,exact
+green_peas,Green peas,matar;pattani,vegetable,vegan,usda_sr_legacy,170419,"Peas, green, raw",81.0,5.42,8.75,0.4,5.7,exact,exact
+karela,Bitter gourd,karela;pavakkai;hagalakai,vegetable,vegan,uk_cofid,13-252,"Gourd, karela, raw",11.0,1.6,0.73,0.2,2.6,exact,exact
+lauki,Bottle gourd,lauki;dudhi;sorakaya,vegetable,vegan,usda_sr_legacy,169232,"Gourd, white-flowered (calabash), raw",14.0,0.62,2.89,0.02,0.5,exact,exact
+cucumber,Cucumber,kheera;khira,vegetable,vegan,usda_sr_legacy,168409,"Cucumber, with peel, raw",15.0,0.65,3.13,0.11,0.5,exact,exact
+banana,Banana,kela;vazhaipazham,fruit,vegan,usda_sr_legacy,173944,"Bananas, raw",89.0,1.09,20.24,0.33,2.6,exact,exact
+mango,Mango,aam;mamidi,fruit,vegan,usda_sr_legacy,169910,"Mangos, raw",60.0,0.82,13.38,0.38,1.6,exact,exact
+guava,Guava,amrood;peru,fruit,vegan,usda_sr_legacy,173044,"Guavas, common, raw",68.0,2.55,8.92,0.95,5.4,exact,close
+papaya,Papaya,papita,fruit,vegan,usda_sr_legacy,169926,"Papayas, raw",43.0,0.47,9.12,0.26,1.7,exact,exact
+orange,Orange,santra;narangi,fruit,vegan,usda_sr_legacy,169097,"Oranges, raw, all commercial varieties",47.0,0.94,9.35,0.12,2.4,exact,exact
+sugar,Sugar,cheeni;shakkar,sweetener,vegan,usda_sr_legacy,169655,"Sugars, granulated",387.0,0.0,99.98,0.0,0.0,exact,exact
+honey,Honey,shahad;madhu,sweetener,vegetarian,usda_sr_legacy,169640,Honey,304.0,0.3,82.2,0.0,0.2,exact,exact

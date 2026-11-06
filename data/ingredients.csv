@@ -1,0 +1,67 @@
+key,name,local_names,category,diet_class,source,source_id,check_source,check_id,match,note
+toor_dal,Toor dal (split pigeon peas),arhar dal;tuvar dal;togari bele,pulse,vegan,uk_cofid,13-104,usda_sr_legacy,172436,exact,CoFID has the split dahl form Indians cook; USDA (cross-check) is whole pigeon peas
+moong_whole,Moong (whole green gram),sabut moong;green gram;pesarlu,pulse,vegan,usda_sr_legacy,174256,,,exact,
+moong_dal,Moong dal (split green gram),mung dal;pesara pappu;hesaru bele,pulse,vegan,usda_sr_legacy,174256,,,close,USDA has whole mung only; split dehusked dal has slightly less fibre
+chana_whole,Kala chana (whole chickpeas),chole;kabuli chana;bengal gram,pulse,vegan,usda_sr_legacy,173756,,,exact,USDA lists chickpeas = bengal gram
+chana_dal,Chana dal (split chickpeas),bengal gram dal;kadale bele,pulse,vegan,usda_sr_legacy,173756,,,close,USDA has whole chickpeas only
+masoor_dal,Masoor dal (split red lentils),red lentils;masur dal,pulse,vegan,uk_cofid,13-657,usda_sr_legacy,174284,exact,
+masoor_whole,Masoor (whole lentils),sabut masoor;brown lentils,pulse,vegan,usda_sr_legacy,172420,uk_cofid,13-089,exact,
+urad_dal,Urad dal (split black gram),dhuli urad;minapa pappu;uddina bele,pulse,vegan,uk_cofid,13-060,usda_sr_legacy,174259,exact,CoFID split dehusked urad; USDA calls black gram mungo beans
+rajma,Rajma (red kidney beans),kidney beans,pulse,vegan,usda_sr_legacy,173744,,,exact,
+lobia,Lobia (black-eyed peas),chawli;alasande;cowpeas,pulse,vegan,usda_sr_legacy,173758,,,exact,
+besan,Besan (gram flour),chickpea flour;kadale hittu,pulse,vegan,usda_sr_legacy,174288,,,exact,
+soybean,Soybeans (dried),soya beans,pulse,vegan,usda_sr_legacy,174270,,,exact,
+tofu,Tofu (firm),soya paneer,pulse,vegan,usda_sr_legacy,172475,,,exact,
+atta,Atta (whole wheat flour),gehun ka atta;chapati flour,cereal,vegan,usda_sr_legacy,168893,,,close,US whole-grain wheat flour; Indian atta is similar but slightly lower in protein
+rice_white,Rice (white raw),chawal;arisi;akki,cereal,vegan,usda_sr_legacy,169756,,,close,US long-grain unenriched; Indian varieties (sona masoori basmati) are similar per 100 g
+rice_brown,Brown rice (raw),,cereal,vegan,usda_sr_legacy,169703,,,exact,
+rice_parboiled,Parboiled rice (raw),ukda chawal;boiled rice;puzhungal arisi,cereal,vegan,usda_sr_legacy,169758,,,exact,
+sooji,Sooji (semolina),rava;suji,cereal,vegan,usda_sr_legacy,168933,uk_cofid,11-903,exact,
+oats,Oats (rolled),porridge oats,cereal,vegan,uk_cofid,11-788,,,exact,
+jowar,Jowar (sorghum grain),jonna;jola,cereal,vegan,usda_sr_legacy,169716,,,exact,
+jowar_flour,Jowar flour,jowar atta,cereal,vegan,usda_sr_legacy,168943,,,exact,
+ragi,Ragi (finger millet),nachni;mandua;ragulu,cereal,vegan,,,,,none,GAP: not in USDA or CoFID; USDA "millet" is a different grain. Needs IFCT (permission requested)
+bajra,Bajra (pearl millet),sajje;kambu,cereal,vegan,,,,,none,GAP: USDA "Millet raw" is not specified as pearl millet; not used to avoid a wrong match. Needs IFCT
+poha,Poha (flattened rice),aval;avalakki;chivda,cereal,vegan,,,,,none,GAP: the only "poha" match is a fruit (cape gooseberry). Needs IFCT or a verified source
+paneer,Paneer,cottage cheese (Indian),dairy,vegetarian,uk_cofid,12-495,,,exact,
+curd,Curd (plain whole milk),dahi;mosaru;thayir,dairy,vegetarian,usda_sr_legacy,171284,uk_cofid,12-184,exact,
+milk_whole,Milk (whole),doodh;full cream milk,dairy,vegetarian,usda_sr_legacy,172217,,,close,3.25 % fat cow milk; Indian full-cream (6 %) and buffalo milk are richer
+milk_toned_low,Milk (double toned / 1 %),double toned milk,dairy,vegetarian,usda_sr_legacy,173441,,,close,1 % fat; Indian double-toned is about 1.5 %
+ghee,Ghee,clarified butter;neyyi;tuppa,fat_oil,vegetarian,usda_sr_legacy,171314,uk_cofid,17-640,exact,
+oil_mustard,Mustard oil,sarson ka tel,fat_oil,vegan,usda_sr_legacy,172337,,,exact,
+oil_soybean,Soybean oil,refined oil,fat_oil,vegan,usda_sr_legacy,171411,,,exact,
+oil_sunflower,Sunflower oil,,fat_oil,vegan,uk_cofid,17-045,,,exact,
+oil_groundnut,Groundnut oil,peanut oil;kadalai ennai,fat_oil,vegan,usda_sr_legacy,171410,uk_cofid,17-040,exact,
+oil_coconut,Coconut oil,nariyal tel;thengai ennai,fat_oil,vegan,usda_sr_legacy,171412,uk_cofid,17-031,exact,
+egg,Egg (whole),anda;mutta;motte,egg,eggetarian,usda_sr_legacy,171287,,,exact,
+chicken_breast,Chicken breast (skinless),murgh,meat,non_vegetarian,usda_sr_legacy,171509,,,exact,
+chicken_thigh,Chicken thigh (skinless),,meat,non_vegetarian,usda_sr_legacy,173627,,,exact,
+mutton,Mutton (goat meat),gosht;goat,meat,non_vegetarian,usda_sr_legacy,175303,,,exact,In India "mutton" usually means goat
+mackerel,Mackerel,bangda;ayala;bangude,fish,non_vegetarian,usda_sr_legacy,173672,,,close,Pacific/jack mackerel; Indian mackerel is a different species with similar values
+prawns,Prawns (raw),jhinga;chemmeen,fish,non_vegetarian,uk_cofid,16-387,,,exact,
+rohu,Rohu fish,,fish,non_vegetarian,,,,,none,GAP: not in USDA or CoFID. Needs IFCT
+peanuts,Peanuts (raw),moongphali;groundnut;kadalai,nut_seed,vegan,usda_sr_legacy,172430,,,exact,
+almonds,Almonds,badam,nut_seed,vegan,usda_sr_legacy,170567,uk_cofid,14-896,exact,
+cashews,Cashews (raw),kaju,nut_seed,vegan,usda_sr_legacy,170162,,,exact,
+coconut_fresh,Coconut (fresh),nariyal;thengai,nut_seed,vegan,usda_sr_legacy,170169,,,exact,
+potato,Potato,aloo;batata,vegetable,vegan,usda_sr_legacy,170026,,,exact,
+onion,Onion,pyaz;kanda;vengayam,vegetable,vegan,usda_sr_legacy,170000,uk_cofid,13-499,exact,
+tomato,Tomato,tamatar,vegetable,vegan,usda_sr_legacy,170457,,,exact,
+spinach,Spinach,palak;keerai,vegetable,vegan,usda_sr_legacy,168462,,,exact,
+cauliflower,Cauliflower,gobi;phool gobi,vegetable,vegan,usda_sr_legacy,169986,uk_cofid,13-512,exact,
+cabbage,Cabbage,patta gobi;muttaikose,vegetable,vegan,usda_sr_legacy,169975,,,exact,
+okra,Okra,bhindi;vendakkai,vegetable,vegan,usda_sr_legacy,169260,uk_cofid,13-300,exact,
+brinjal,Brinjal (eggplant),baingan;vankaya;kathirikai,vegetable,vegan,usda_sr_legacy,169228,,,exact,
+carrot,Carrot,gajar,vegetable,vegan,usda_sr_legacy,170393,,,exact,
+green_peas,Green peas,matar;pattani,vegetable,vegan,usda_sr_legacy,170419,,,exact,
+karela,Bitter gourd,karela;pavakkai;hagalakai,vegetable,vegan,uk_cofid,13-252,,,exact,
+lauki,Bottle gourd,lauki;dudhi;sorakaya,vegetable,vegan,usda_sr_legacy,169232,uk_cofid,13-249,exact,USDA "white-flowered gourd (calabash)" is bottle gourd; CoFID lacks the carb breakdown so it is the cross-check only
+cucumber,Cucumber,kheera;khira,vegetable,vegan,usda_sr_legacy,168409,,,exact,
+banana,Banana,kela;vazhaipazham,fruit,vegan,usda_sr_legacy,173944,,,exact,
+mango,Mango,aam;mamidi,fruit,vegan,usda_sr_legacy,169910,,,exact,
+guava,Guava,amrood;peru,fruit,vegan,usda_sr_legacy,173044,uk_cofid,14-118,close,USDA common guava; CoFID cross-check differs (different variety)
+papaya,Papaya,papita,fruit,vegan,usda_sr_legacy,169926,uk_cofid,14-390,exact,
+orange,Orange,santra;narangi,fruit,vegan,usda_sr_legacy,169097,,,exact,
+sugar,Sugar,cheeni;shakkar,sweetener,vegan,usda_sr_legacy,169655,,,exact,
+jaggery,Jaggery,gur;bellam;vellam,sweetener,vegan,,,,,none,GAP: not in USDA or CoFID. Needs IFCT
+honey,Honey,shahad;madhu,sweetener,vegetarian,usda_sr_legacy,169640,uk_cofid,17-050,exact,Marked vegetarian (not vegan): many vegans avoid honey
