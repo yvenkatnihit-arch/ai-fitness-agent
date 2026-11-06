@@ -65,6 +65,11 @@ export function HomePage() {
             Log a meal
           </Link>
         )}
+        {targets && (
+          <Link to="/exercises" className="rounded-lg border border-emerald-600 px-4 py-2.5 text-center font-semibold text-emerald-700">
+            Exercise library
+          </Link>
+        )}
         {targets && <TargetsView targets={targets} />}
         <Link to="/sources" className="text-center text-xs text-slate-500 underline">Data sources</Link>
       </div>

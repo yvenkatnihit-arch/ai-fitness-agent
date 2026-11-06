@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 
 import { RequireAuth } from './auth/RequireAuth'
+import { ExercisesPage } from './exercises/ExercisesPage'
 import { MealLogPage } from './meals/MealLogPage'
 import { OnboardingPage } from './onboarding/OnboardingPage'
 import { HomePage } from './pages/HomePage'
@@ -18,6 +19,7 @@ function App() {
       <Route path="/sources" element={<SourcesPage />} />
       <Route path="/onboarding" element={signedIn(<OnboardingPage />)} />
       <Route path="/log" element={signedIn(<MealLogPage />)} />
+      <Route path="/exercises" element={signedIn(<ExercisesPage />)} />
       <Route path="/" element={signedIn(<HomePage />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
