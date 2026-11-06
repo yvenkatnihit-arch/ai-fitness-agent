@@ -10,8 +10,9 @@ from dataclasses import dataclass, field
 from app.calc.bmr import bmr
 from app.calc.clamps import apply_safety_clamps
 from app.calc.macros import macros
-from app.calc.targets import Goal, calorie_target
+from app.calc.targets import PACE_LIMITED_BY_SCREENING, Goal, calorie_target, effective_pace
 from app.calc.tdee import ActivityLevel, tdee
+from app.core.vocabulary import Pace
 from app.safety.safety_config import Sex
 
 
@@ -24,6 +25,7 @@ class BodyProfile:
     activity_level: ActivityLevel
     goal: Goal
     screening_flags: frozenset[str] = field(default_factory=frozenset)
+    pace: Pace = "normal"
 
 
 @dataclass(frozen=True)
@@ -46,9 +48,11 @@ def calculate_targets(profile: BodyProfile) -> Targets:
 
     bmr_kcal = bmr(profile.weight_kg, profile.height_cm, profile.age_years, profile.sex)
     tdee_kcal = tdee(bmr_kcal, profile.activity_level)
-    goal_kcal = calorie_target(tdee_kcal, profile.goal)
+    pace, held_back = effective_pace(profile.pace, profile.goal, flags)
+    goal_kcal = calorie_target(tdee_kcal, profile.goal, pace)
     safe = apply_safety_clamps(goal_kcal, tdee_kcal, profile.weight_kg, profile.sex, flags)
     split = macros(safe.kcal, profile.weight_kg, profile.goal, flags)
+    pace_reasons = (PACE_LIMITED_BY_SCREENING,) if held_back else ()
 
     return Targets(
         bmr_kcal=bmr_kcal,
@@ -58,7 +62,7 @@ def calculate_targets(profile: BodyProfile) -> Targets:
         protein_g=split.protein_g,
         fat_g=split.fat_g,
         carbs_g=split.carbs_g,
-        reasons=safe.reasons + split.reasons,
+        reasons=pace_reasons + safe.reasons + split.reasons,
         doctor_note=safe.doctor_note,
         focus_on_habits=safe.focus_on_habits,
     )

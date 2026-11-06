@@ -20,6 +20,7 @@ class SavedInputs:
     date_of_birth: date
     sex: str
     activity_level: str
+    pace: str
     flags: frozenset[str]
 
 
@@ -30,16 +31,16 @@ def read_inputs(conn: Connection) -> SavedInputs | None:
         f"""select g.id, g.goal_type,
                    (select w.weight_kg from public.body_weight_entries w
                      where w.user_id = p.id order by w.measured_on desc limit 1),
-                   p.height_cm, p.date_of_birth, p.sex, p.activity_level, {flag_columns}
+                   p.height_cm, p.date_of_birth, p.sex, p.activity_level, g.pace, {flag_columns}
             from public.profiles p
             join public.goals g on g.user_id = p.id and g.active
             join public.health_screening s on s.user_id = p.id
             where p.id = auth.uid()"""
     ).fetchone()
-    if row is None or None in row[:7]:
+    if row is None or None in row[:8]:
         return None
-    flags = frozenset(name for name, value in zip(SCREENING_FLAGS, row[7:]) if value)
-    return SavedInputs(row[0], row[1], float(row[2]), float(row[3]), row[4], row[5], row[6], flags)
+    flags = frozenset(name for name, value in zip(SCREENING_FLAGS, row[8:]) if value)
+    return SavedInputs(row[0], row[1], float(row[2]), float(row[3]), row[4], row[5], row[6], row[7], flags)
 
 
 def mark_onboarded(admin_conn: Connection, user_id: UUID) -> bool:

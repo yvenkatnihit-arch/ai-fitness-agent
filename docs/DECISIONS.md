@@ -379,3 +379,50 @@ Options for the look: fresh & energetic (green brand + orange accent), dark & bo
 - **Fonts:** Bricolage Grotesque (headings) and Source Sans 3 (text), loaded from Google Fonts with `display=swap` and system-font fallbacks. Trade-off: the browser asks Google's servers for the font, which shares the visitor's IP with Google. If that matters later (privacy notice, paying users), self-host them with `@fontsource` packages (needs the D-030 age check).
 - **Shared pieces** (`components/ui.tsx`): `PageShell` (page background, one column, title row, optional Back/action) and `ButtonLink`; used by Home, Meal log and Exercise library. Remaining screens (sign-in, onboarding, sources) already use the tokens through the colour swap and move to `PageShell` as they are touched.
 - **Not themed yet:** the macro donut uses fixed colours chosen for colour-blind safety (`targets/macroColors.ts`); checked on light backgrounds only, to revisit with the Phase 9 polish.
+
+## D-045 — How pace changes the calorie target
+**Status:** Accepted with defaults (Step 6.1, 2026-11-06); Venkat can tune the table
+Pace is a lookup in plain code (`app/calc/targets.py`), per goal, as a fraction of TDEE. "Normal" is the original D-021 value, so nothing changed for existing users.
+
+| goal | slow | normal | fast |
+|---|---|---|---|
+| fat loss | -10% | -20% | -25% (the deficit cap) |
+| muscle gain | +4% | +8% | +10% (the surplus cap) |
+| weight gain | +5% | +10% | +10% (normal is already at the cap) |
+| recomposition | -5% | -10% | -15% |
+| general fitness | 0 | 0 | 0 (no weight change, so no pace) |
+
+Options considered: (a) scale every goal by one factor per pace; (b) an explicit table. Chose **(b)**: each cell is visible, reviewable and tested, and the caps differ by goal.
+Rules that make it safe:
+- The safety clamps run **after** pace, unchanged: 25% deficit cap, 10% surplus cap, 1% body weight/week, calorie floor, flag caps. A test runs every combination of 5 body types × 4 flag sets × 5 goals × 3 paces and checks no limit is broken.
+- **Anyone with a health flag gets at most "normal"** (diabetes, pregnancy, eating-disorder history...). The user is told: "Because of your health answers, we used a normal pace instead of the fastest one." Eating-disorder history still gets no deficit at all.
+- The pace used is saved in `calculated_targets.inputs`, so each stored number says what it was based on.
+- Pace changes calories only. It does not change protein (which follows body weight) and not yet the workout; training intensity by pace comes with the routine rules.
+
+## D-046 — The help bot can change the user's profile, through a proposal the user approves
+**Status:** Requested by Venkat (2026-11-06); design accepted as the default, field tiers to be confirmed
+Request: the help bot should update or modify the user's profile when the user asks in chat.
+This touches two earlier rules: the help bot reads no health data (D-042), and nothing changes without the user's approval (CLAUDE.md, D-014). Design that keeps both:
+- **The bot never writes.** Its only profile tool is `propose_profile_change(field, new_value)`. It creates a pending `profile_change` proposal (the table already exists) and the chat shows a confirmation card with the old value, the new value, and, when numbers would change, the new calorie target worked out by code. The change happens only when the user taps **Approve**.
+- **One path to change a profile.** Approve calls the same endpoint as the Profile & settings page (`PATCH /profile`, to be built first), so the bot gets the same validation and the same safety rules as the forms: ranges, 18+, vocabulary lists, pace held to "normal" with a health flag, and a fresh `calculated_targets` row whenever a number-affecting field changes. Today profile steps are locked once onboarding is done (409), so this endpoint is a prerequisite.
+- **Fields by tier:**
+  1. *Chat + confirm card:* display name, workout location, equipment, days per week, experience level, diet type, cuisine, disliked foods, pace, activity level.
+  2. *Chat + confirm card showing the new targets:* weight (logged as a weigh-in), target weight, goal, height.
+  3. *Form only:* health screening answers and injury areas. The bot can say "open Health check" and link to it, because a wrong guess here changes safety limits. (A temporary soreness note is handled by the soreness agent, not the profile.)
+  4. *Never in chat:* consent, date of birth, email, account deletion.
+- **Data the bot sees:** only the field being changed and its current value (a `get_profile_field` tool), never the whole profile or screening answers.
+- **Cost:** profile requests are one small-model call to understand the request plus a code-validated proposal; no mid-tier model.
+- **Safety text:** the input guard and NeMo rails still run first, so a message like "set my calories to 800" is refused before any proposal exists (targets are calculated, never typed in).
+Roadmap: `PATCH /profile` and the settings screen come before the bot tool (Phase 9 "Profile and settings" is pulled earlier, right after the plan screens); the `propose_profile_change` tool is built with the chat in Phase 7/8.
+
+## D-047 — Agent build order, and consistency reminders ("nudges") shown by the help bot
+**Status:** Requested by Venkat (2026-11-06); design accepted as the default
+**Order:** (1) router + Nutrition, Workout, Progress specialists + help bot + composer + guards (Phase 7, as planned); (2) the soreness/injury agent and the meal swap agent right after; (3) workout logger and "what can I eat now?" later, if wanted.
+**Reminders.** When a user is slipping away from their goal, the app says something, through the help bot's widget. Split into the part that decides and the part that talks:
+- **Code decides *whether* to nudge** (no LLM): a daily job checks simple rules per user: no meal logged for 2 days; fewer workouts this week than planned by mid-week; no weigh-in for 7+ days; pending plan or check-in proposal waiting; no activity for 5+ days. Each rule has a cooldown, so the same nudge is never repeated within a few days, and at most **one nudge a day**.
+- **Words are templates first.** A nudge is a short, kind, fixed sentence per rule ("You haven't logged a meal since Monday. Want to log today's lunch?") with a one-tap action. An LLM (small model, one short call) is optional later, only to vary the wording; it never decides who gets a nudge or what is true.
+- **Channels:** in-app first (a badge on the widget and a message when it opens). Email, push or WhatsApp are a later step because each needs a provider, cost and separate consent. Nothing is sent outside the app without the user turning it on.
+- **Respect and safety:** consent and an off switch in settings (per type and all); quiet hours; no shaming or guilt wording; users with an eating-disorder history get habit nudges only (no calories, weight or "you're behind" wording); no nudges for 7 days after a user dismisses three in a row.
+- **Running it:** the job needs a scheduler. Render's free web service sleeps, so it can't run its own timer; a scheduled trigger (Supabase `pg_cron`, GitHub Actions or Render cron) calls one protected backend endpoint once a day. Decide which at build time.
+- **Data:** a `nudges` table (user, rule, text, created, seen, dismissed, acted) with RLS; the same table feeds the "pending proposals" badge on the dashboard.
+- **Tests:** each rule is a pure function over dates and logs (unit tested), plus cooldown, daily cap, opt-out, and eating-disorder wording tests.

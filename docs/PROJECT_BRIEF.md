@@ -306,6 +306,6 @@ Added after Phase 4. The roadmap in section 14 stays; these items slot into it a
 | 10 | **Attractive UI**: design tokens, components, mobile-first, motion kept light. | Design foundation before Phase 6 screens; polish in Phase 9 |
 
 ### 16.1 Architecture notes for these items
-- The help bot is a fourth router intent (`app_help`) answered from a maintained guide file (`docs`-style markdown shipped with the backend, split into small sections, retrieved by simple search first; embeddings only if search proves weak). It has no access to health data.
+- The help bot is a fourth router intent (`app_help`) answered from a maintained guide file (`docs`-style markdown shipped with the backend, split into small sections, retrieved by simple search first; embeddings only if search proves weak). It never reads health data for answering how-to questions. It can also *propose* profile changes the user asks for (see D-046): the bot never writes; the user approves a confirmation card, and the change goes through the same validated profile endpoint as the settings page.
 - The coach chat and help bot share the same widget and graph; the router decides which one answers. The widget is mounted once in the app shell so it is on every screen.
 - Splits and goal dates are deterministic modules in `app/calc/` with unit tests, like BMR and TDEE.

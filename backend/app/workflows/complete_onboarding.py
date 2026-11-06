@@ -41,12 +41,13 @@ def complete_onboarding(user_id: UUID) -> Targets:
         activity_level=saved.activity_level,
         goal=saved.goal_type,
         screening_flags=saved.flags,
+        pace=saved.pace,
     )
     targets = calculate_targets(profile)
     inputs = {
         "weight_kg": profile.weight_kg, "height_cm": profile.height_cm, "age_years": profile.age_years,
         "sex": profile.sex, "activity_level": profile.activity_level, "goal": profile.goal,
-        "screening_flags": sorted(profile.screening_flags), "calculated_on": today.isoformat(),
+        "pace": profile.pace, "screening_flags": sorted(profile.screening_flags), "calculated_on": today.isoformat(),
     }
 
     # 3. Save both in ONE admin transaction (calculated_targets is server-written, D-027).

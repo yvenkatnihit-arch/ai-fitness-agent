@@ -1,4 +1,4 @@
-from app.calc import clamps, macros
+from app.calc import clamps, macros, targets
 from app.schemas.targets import DOCTOR_NOTE, REASON_MESSAGES, to_targets_out
 
 
@@ -8,7 +8,7 @@ def reason_codes(module) -> set[str]:
 
 
 def test_every_reason_code_has_a_message():
-    assert reason_codes(clamps) | reason_codes(macros) == set(REASON_MESSAGES)
+    assert reason_codes(clamps) | reason_codes(macros) | reason_codes(targets) == set(REASON_MESSAGES)
 
 
 def test_numbers_are_rounded_for_display():

@@ -61,19 +61,20 @@ def client(users):
     close_pool()
 
 
-def onboard(client, **screening):
+def onboard(client, pace="normal", **screening):
+    forms = {**FORMS, "goal": {**FORMS["goal"], "pace": pace}}
     for step in ("consent", "basics", "goal", "preferences", "training"):
-        assert client.put(f"/onboarding/{step}", json=FORMS[step]).status_code == 200
+        assert client.put(f"/onboarding/{step}", json=forms[step]).status_code == 200
     body = {**FORMS["screening"], **screening}
     assert client.put("/onboarding/screening", json=body).status_code == 200
     return client.post("/onboarding/complete")
 
 
-def expected(flags=frozenset()):
+def expected(flags=frozenset(), pace="normal"):
     """What the Phase 1 engine says for FORMS (age computed for today, like the API does)."""
     return calculate_targets(BodyProfile(
         weight_kg=58.0, height_cm=162.5, age_years=age_on(date(1995, 8, 20), india_today()),
-        sex="female", activity_level="light", goal="fat_loss", screening_flags=frozenset(flags),
+        sex="female", activity_level="light", goal="fat_loss", screening_flags=frozenset(flags), pace=pace,
     ))
 
 
@@ -108,6 +109,32 @@ def test_complete_returns_the_engines_numbers_and_saves_them(client, users):
     assert len(rows) == 1
     assert float(rows[0][0]) == pytest.approx(t.calorie_target_kcal, abs=0.05)  # stored to 1 decimal
     assert rows[0][1] == "fat_loss"
+
+
+def test_the_chosen_pace_changes_the_saved_target_and_is_recorded(client, users):
+    results = {}
+    for pace in ("slow", "normal", "fast"):
+        with admin_transaction("test: reset between paces") as conn:
+            conn.execute("delete from public.calculated_targets where user_id = %s", (users[0],))
+            conn.execute("update public.profiles set onboarded_at = null where id = %s", (users[0],))
+        body = onboard(client, pace=pace).json()
+        assert body["calorie_target_kcal"] == round(expected(pace=pace).calorie_target_kcal), pace
+        results[pace] = body["calorie_target_kcal"]
+    assert results["slow"] > results["normal"] > results["fast"]          # a fat-loss goal eats less the faster it goes
+
+    with admin_transaction("test: check recorded pace") as conn:
+        recorded = conn.execute(
+            "select inputs->>'pace' from public.calculated_targets where user_id = %s", (users[0],)
+        ).fetchone()[0]
+    assert recorded == "fast"                                              # inputs record what the numbers were based on
+
+
+def test_fast_with_a_health_flag_is_held_back_and_the_user_is_told(client):
+    body = onboard(client, pace="fast", diabetes=True).json()
+    assert body["calorie_target_kcal"] == round(expected({"diabetes"}, "fast").calorie_target_kcal)
+    assert body["calorie_target_kcal"] == round(expected({"diabetes"}, "normal").calorie_target_kcal)
+    assert REASON_MESSAGES["pace_limited_by_screening"] in body["reasons"]
+    assert body["doctor_note"] == DOCTOR_NOTE
 
 
 def test_completing_twice_is_refused_and_saves_nothing_extra(client, users):

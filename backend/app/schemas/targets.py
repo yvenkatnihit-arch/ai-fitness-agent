@@ -2,11 +2,12 @@
 
 from pydantic import BaseModel
 
-from app.calc import clamps, macros
+from app.calc import clamps, macros, targets
 from app.calc.macros import calorie_shares
 
-# One plain-English line per reason code (from app/calc/clamps.py and app/calc/macros.py).
+# One plain-English line per reason code (from app/calc/clamps.py, macros.py and targets.py).
 REASON_MESSAGES: dict[str, str] = {
+    targets.PACE_LIMITED_BY_SCREENING: "Because of your health answers, we used a normal pace instead of the fastest one.",
     clamps.SURPLUS_CAP: "We kept your calorie surplus small so the gain is mostly muscle, not fat.",
     clamps.DEFICIT_CAP: "We limited your calorie deficit to a safe, sustainable level.",
     clamps.SCREENING_DEFICIT_CAP: "Because of your health answers, we kept your calorie deficit mild.",

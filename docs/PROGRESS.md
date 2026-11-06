@@ -6,7 +6,7 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 **Phase:** 5 — Exercise library, in progress (Phase 4 food data COMPLETE 2026-11-06).
 **Decisions logged:** D-003 to D-042 (D-042 = added requirements, see below).
-**Phase 5:** 5.1 Free Exercise DB download + reader + find done (D-041). 5.2 (102 exercises + validator + report) and 5.3 (loaded into Supabase) done. Phase 5 COMPLETE: 5.1–5.4 committed (`f33b756`); 5.5 library screen done, not committed. Design foundation D.1 (D-044) and Phase 6 step 6.0 (pace + cuisine in onboarding) done, not committed. Next: 6.1 (pace changes the calorie target, inside the safety limits).
+**Phase 5:** 5.1 Free Exercise DB download + reader + find done (D-041). 5.2 (102 exercises + validator + report) and 5.3 (loaded into Supabase) done. Phase 5 COMPLETE: 5.1–5.4 committed (`f33b756`); 5.5 library screen done, not committed. Design foundation D.1 (D-044) and 6.0 (pace + cuisine in onboarding) committed (`9976e0d`). 6.1 (pace changes the calorie target inside the safety limits, D-045) done, not committed. Next: 6.2 (workout split recommender).
 **Last completed:** 3.10: frontend live at https://ai-fitness-agent-one.vercel.app (D-036). Checked: no secrets in public JS, backend URL baked in, SPA reloads, security headers, CORS from the Vercel origin, and a full onboarding through production (targets match a hand calculation). Venkat tested sign-up → onboarding → targets on the live site: works.
 **Earlier:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
 **Earlier:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
@@ -130,11 +130,15 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 
 Planned, not started. Order: finish Phase 5, then:
 - [x] 6.0 Onboarding additions: pace (slow/normal/fast) saved on the goal, cuisine (Indian only) saved on the profile; migration `20261106160000_pace_and_cuisine.sql` applied (defaults `normal`/`indian`, so existing rows keep their meaning); both validated by the API (unknown values → 422, missing → default) and added to the Goal and Food-preferences screens; frontend/backend option lists checked against each other by `options.test.ts`; gym/home/both + equipment were already asked in the Training step. **Pace is stored only: it changes no numbers yet.** 1521 offline + 188 DB + 78 frontend tests pass.
-- [ ] 6.1 Pace in the calorie target: pace picks a point inside the safety limits (code + tests; eating-disorder history and flagged users ignore "fast")
+- [x] 6.1 Pace in the calorie target (D-045): `GOAL_ADJUSTMENT[goal][pace]` table in `app/calc/targets.py` (fat loss -10/-20/-25%, muscle gain +4/+8/+10%, weight gain +5/+10/+10%, recomp -5/-10/-15%, fitness 0), `effective_pace()` holds "fast" to "normal" for anyone with a health flag and says why, engine + onboarding completion pass the saved pace, pace stored in `inputs`. Clamps unchanged and still run last. Tests: hand-calculated values for 11 goal/pace cases, ordering, a sweep of 300 combinations against every safety limit, and a database run with all three paces. 1542 offline + 190 DB tests pass. Hand-checked by example: 80 kg man, TDEE 2759 → slow 2483, normal 2207, fast 2069 kcal.
 - [ ] 6.x Workout split recommender (PPL, Arnold, upper/lower, full body, bro split ...) + routine by experience level
 - [ ] 6.x Goal-date prediction (pure Python, within safety limits)
 - [ ] 6.x/9.x Edit workout per weekday (API, then screen)
 - [ ] 7.x NeMo Guardrails (D-043): input + output rails layered on top of the code guards; compatibility check first (Python 3.14, D-030, image size, Gemini)
+- [ ] 6.x/9.x Profile & settings: `PATCH /profile` (same validation as onboarding, recalculates targets when numbers change) + settings screen. Prerequisite for the bot editing the profile (D-046)
+- [ ] 7.x Soreness/injury agent, then meal swap agent (right after the planned specialists, D-047); later: workout logger, "what can I eat now?"
+- [ ] 8.x Consistency nudges (D-047): rules in code (missed logs, missed workouts, no weigh-in), one a day, cooldowns, opt-out, in-app via the help bot widget; scheduled daily trigger; `nudges` table
+- [ ] 7.x Help bot `propose_profile_change` tool: proposal + confirmation card, user approves (D-046)
 - [ ] 7.x Floating help bot (app guide, intent `app_help`) in the app shell
 - [ ] 8.x/9.x Statistics for workouts and diet
 - [ ] 9.x UI design foundation + polish (a small design-tokens step before the Phase 6 screens)
