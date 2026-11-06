@@ -65,9 +65,9 @@ def test_exercise_rejects_unknown_contraindication(scratch_user):
     with pytest.raises(psycopg.errors.CheckViolation):
         with conn.transaction():
             conn.execute(
-                """insert into public.exercises (name, muscle_groups, location, difficulty,
+                """insert into public.exercises (key, name, muscle_groups, location, difficulty,
                                                  movement_pattern, form_cues, contraindications)
-                   values ('Test squat', '{quads}', 'both', 'beginner', 'squat', 'Knees over toes.', '{toe}')"""
+                   values ('test_squat', 'Test squat', '{quads}', 'both', 'beginner', 'squat', 'Knees over toes.', '{toe}')"""
             )
 
 

@@ -96,6 +96,8 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 **Exercise data (`backend/`, D-041)**
 - The Free Exercise DB file is downloaded/verified by the same command as the food data: `uv run python -m fooddata.download`
 - Find an exercise's Free Exercise DB id (to cite in `data/exercises.csv`): `uv run python -m exercisedata.find "goblet squat" "pushups"`
+- Validate `data/exercises.csv` (sign off an exercise by filling `reviewed_by`) → `data/exercises_validated.csv` + `data/reports/exercises_review.md`: `uv run python -m exercisedata.build`
+- Load the validated exercises into Supabase (upsert by key, safe to re-run): `uv run python -m exercisedata.load --dry-run`, then `uv run python -m exercisedata.load`
 
 **Docker (`backend/`)**
 - Build the image: `docker build -t ai-fitness-backend .`

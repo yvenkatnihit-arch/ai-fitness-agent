@@ -369,3 +369,4 @@ Trade-offs to settle at build time:
 - **Streaming:** output rails need the full text, which already matches D-007 (guard runs before streaming).
 - **Testing:** each rail gets eval cases in `evals/` (Phase 7), and results are recorded in PROGRESS.md.
 Brief sections 4.2 and 7 are to be updated when this is built.
+- **Filing convention (Step 5.2):** the `movement_pattern` list has no slot for isolation moves, so each is filed under the pattern it most resembles (curls → `pull_horizontal`, lateral raises → `push_vertical`, calf raises → `squat`, clamshell → `mobility`). Pattern rules then demand that pattern's injury tags, which can be slightly over-cautious (calf raise is tagged knee). Over-cautious only hides an exercise; it never shows one to an injured user.

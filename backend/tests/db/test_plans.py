@@ -130,8 +130,9 @@ def test_rep_range_must_be_in_order(scratch_user):
         " values (%s, %s, 1, 'Legs') returning id", (plan_id, uid)
     ).fetchone()[0]
     exercise_id = conn.execute(
-        "insert into public.exercises (name, muscle_groups, location, difficulty, movement_pattern, form_cues)"
-        " values ('Test goblet squat', '{quads,glutes}', 'both', 'beginner', 'squat', 'Chest up.') returning id"
+        "insert into public.exercises (key, name, muscle_groups, location, difficulty, movement_pattern, form_cues)"
+        " values ('test_goblet_squat', 'Test goblet squat', '{quads,glutes}', 'both', 'beginner', 'squat', 'Chest up.')"
+        " returning id"
     ).fetchone()[0]
     insert = ("insert into public.workout_plan_exercises (plan_day_id, user_id, exercise_id, position, sets,"
               " reps_min, reps_max, rest_sec) values (%s, %s, %s, %s, 3, %s, %s, 90)")
