@@ -1,0 +1,37 @@
+{
+  "sources": [
+    {
+      "key": "usda_sr_legacy",
+      "name": "USDA FoodData Central - SR Legacy",
+      "release": "2018-04",
+      "license": "Public domain (CC0 1.0)",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "credit": "U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. fdc.nal.usda.gov",
+      "homepage": "https://fdc.nal.usda.gov/",
+      "foods": 98
+    },
+    {
+      "key": "uk_cofid",
+      "name": "McCance and Widdowson's Composition of Foods Integrated Dataset (CoFID) 2021",
+      "release": "2021-03",
+      "license": "Open Government Licence v3.0 (credit required)",
+      "license_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "credit": "Public Health England (2021). McCance and Widdowson's The Composition of Foods Integrated Dataset 2021. Contains public sector information licensed under the Open Government Licence v3.0.",
+      "homepage": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+      "foods": 70
+    }
+  ],
+  "recipes": [
+    {
+      "key": "computed",
+      "name": "Our own recipes",
+      "description": "Dishes such as idli, dosa, upma and kheer are not in the sources above. We calculate them from a recipe: raw ingredient weights (from the sources above) plus the weight of the cooked dish. The maths is done by tested code, never by AI. A recipe shows \"values being checked\" until a person has reviewed it.",
+      "foods": 11
+    }
+  ],
+  "notes": [
+    "Values are per 100 g. Carbs are digestible carbohydrate; fibre is shown separately.",
+    "Foods marked \"values being checked\" are still being reviewed against a second source.",
+    "Household measures: 1 katori = 150 ml and 1 glass = 250 ml; piece and spoon weights come from USDA's measured portions."
+  ]
+}

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 
 import { useAuth } from '../auth/context'
 import { MIN_PASSWORD_LENGTH } from '../auth/messages'
@@ -111,6 +111,7 @@ export function SignInPage() {
           {isSignIn ? "New here? Create an account" : 'Already have an account? Sign in'}
         </button>
       </div>
+      <Link to="/sources" className="mt-4 text-xs text-slate-500 underline">Data sources</Link>
     </main>
   )
 }

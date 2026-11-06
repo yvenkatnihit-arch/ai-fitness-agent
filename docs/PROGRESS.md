@@ -4,8 +4,8 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 3 — Onboarding + first deployment COMPLETE, including 3.11 (macro donut). Next: Phase 4 (food data).
-**Decisions logged:** D-003 to D-037. Brief updated to match.
+**Phase:** 4 — Food data COMPLETE (2026-11-06). Next: Phase 5 (exercise library + workout plans, per brief section 14).
+**Decisions logged:** D-003 to D-040.
 **Last completed:** 3.10: frontend live at https://ai-fitness-agent-one.vercel.app (D-036). Checked: no secrets in public JS, backend URL baked in, SPA reloads, security headers, CORS from the Vercel origin, and a full onboarding through production (targets match a hand calculation). Venkat tested sign-up → onboarding → targets on the live site: works.
 **Earlier:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
 **Earlier:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
@@ -16,8 +16,8 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 **Earlier:** 3.3: `POST /onboarding/complete` (`app/workflows/complete_onboarding.py`: read as user → `calculate_targets()` → one admin transaction marks onboarded + inserts targets; double-submit safe) and `GET /targets/current`. Display rounding + plain-English reasons + doctor note (`app/schemas/targets.py`); eating-disorder history → no numbers returned. Cross-user API tests (moved from 2.9). 1099 fast + 160 DB tests passing; 0 rows left behind.
 **Earlier:** 3.2: onboarding endpoints (`app/api/onboarding.py` → `app/db/onboarding.py`, all under RLS): `GET /onboarding/status`, `PUT /onboarding/{consent,basics,goal,preferences,training,screening}`. Consent first (409), goal needs basics (409), target-weight direction check (`app/calc/goals.py`, 422), locked after onboarding (409). Migration 8: `profiles.consent_version`. 1096 fast + 153 DB tests passing; 0 rows left behind.
 **Earlier:** 3.1: onboarding request models (`app/schemas/onboarding.py`), `app/calc/age.py`, `app/core/vocabulary.py`, `app/core/time.py`.
-**Last commit:** `9de2d29` (Dockerfile). Docs updates since then not committed yet.
-**Phase 4:** 4.0 licence review (D-037), 4.2 downloads, 4.3a readers + checks, 4.3b carb basis (D-038) + review report, 4.3c 121 ingredients, 4.3d 72 cooked dishes, 4.4a recipe calculator + 4.4b 11 recipes (total 95 ready, 84 review, 14 gaps), 4.5a 179 foods + 280 synonyms loaded into Supabase (D-039), 4.5b 96 household units (D-040), 4.6 food search endpoint, 4.7a meal logging endpoints, 4.7b meal logging screen done. 4.1: Venkat sends the two permission emails. Waiting on Venkat trying /log locally, then "go" for 4.8 ("Data sources" credits page, last Phase 4 step).
+**Phase 4:** 4.0 licence review (D-037), 4.2 downloads, 4.3a readers + checks, 4.3b carb basis (D-038) + review report, 4.3c 121 ingredients, 4.3d 72 cooked dishes, 4.4a recipe calculator + 4.4b 11 recipes (total 95 ready, 84 review, 14 gaps), 4.5a 179 foods + 280 synonyms loaded into Supabase (D-039), 4.5b 96 household units (D-040), 4.6 food search endpoint, 4.7a meal logging endpoints, 4.7b meal logging screen (Venkat tested it), 4.8 data sources page done. 4.1: Venkat sends the two permission emails.
+**Last commit:** `126a608` (4.7b). Step 4.8 not committed yet.
 **Phase 2 check questions:** skipped for now; can revisit anytime.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
@@ -103,13 +103,15 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 - [ ] 4.6 Food search endpoint (fuzzy, synonyms, diet filter) + tests
 - [x] 4.7a Meal logging endpoints (no LLM): `POST /meals` (slot, optional date: today to 7 days back, 1–20 items of food_id + quantity + unit; client never sends nutrition), `GET /meals?day=` (meals + day totals), `DELETE /meals/{id}`. Maths in `app/calc/portions.py` (grams = quantity × unit grams; nutrition = grams × per-100 g / 100; unit must be `g` or one the food has). Stored values are a snapshot. RLS: other users can't see or delete (tested). End-to-end check: 2 roti + 1 katori dal = 301.7 kcal (matches hand calculation). 1445 offline + 179 DB tests pass.
 - [x] 4.7b Meal logging screen `/log` (linked from Home): meal slot (default from India time of day), debounced food search (300 ms, ≥ 2 letters, "values being checked" for unverified foods), amount + unit (the food's units + grams), draft list, save, today's meals with per-meal and day totals, delete. No nutrition maths in the browser: it sends foods + amounts and shows the backend's numbers. `api.delete` handles 204. 64 frontend tests pass; lint clean; build OK.
-- [ ] 4.8 "Data sources" credits in the app
+- [x] 4.8 Public `/sources` page (linked from sign-in and Home): each source's credit, release, licence link (OGL v3.0 for CoFID, CC0 for USDA), food count, plus how our recipes are computed. Content generated by `fooddata.build` from `data/sources.json` (+ homepage, license_url) into `frontend/src/sources/credits.json`; a backend test fails if the committed file is out of date, and a build error if a food comes from an uncredited source. 1449 backend + 67 frontend tests pass.
+
+**Phase 4 complete (2026-11-06).** 179 foods in Supabase (98 USDA, 70 CoFID, 11 computed recipes; 95 verified, 84 in review), 280 local names, 96 household units, 14 recorded gaps. Every value passed tested checks (energy, macros, ranges, diet class, cross-source, dish bands). Search with misspellings and Indian names; meal logging via form with nutrition computed in code; credits page. Open items for Venkat: permission emails (IFCT, INDB), katori/glass sizes (D-040), recipe sign-off.
 
 ## Phase 7 notes (requested by Venkat, 2026-11-05)
 
 - The coach chat must let users discuss diet, exercises, and more, grounded in *their* profile, targets, and plans (not generic answers). Depends on Phases 4–6 (food DB, exercise library, plans).
 
-## Phases 4-11
+## Phases 5-11
 
 Not started. See `docs/PROJECT_BRIEF.md` section 14.
 

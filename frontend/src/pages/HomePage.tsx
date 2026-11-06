@@ -66,6 +66,7 @@ export function HomePage() {
           </Link>
         )}
         {targets && <TargetsView targets={targets} />}
+        <Link to="/sources" className="text-center text-xs text-slate-500 underline">Data sources</Link>
       </div>
     </main>
   )

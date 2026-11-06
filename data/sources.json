@@ -8,6 +8,8 @@
       "file": "usda_sr_legacy_2018-04.zip",
       "release": "2018-04",
       "license": "Public domain (CC0 1.0)",
+      "homepage": "https://fdc.nal.usda.gov/",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
       "credit": "U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. fdc.nal.usda.gov",
       "expect_members": [
         "food.csv",
@@ -26,6 +28,8 @@
       "file": "uk_cofid_2021.xlsx",
       "release": "2021-03",
       "license": "Open Government Licence v3.0 (credit required)",
+      "homepage": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+      "license_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
       "credit": "Public Health England (2021). McCance and Widdowson's The Composition of Foods Integrated Dataset 2021. Contains public sector information licensed under the Open Government Licence v3.0.",
       "expect_members": [
         "xl/workbook.xml"

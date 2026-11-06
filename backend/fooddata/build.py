@@ -17,6 +17,7 @@ import csv
 from pathlib import Path
 
 from fooddata.carbs import available_carbs
+from fooddata.credits import write_credits
 from fooddata.checks import Issue, check_diet_class, check_dish_plausibility, check_food, compare_sources
 from fooddata.download import DATA_DIR
 from fooddata.find import load_all
@@ -185,6 +186,7 @@ def main() -> None:
     units, errors = build_units(food_sources, usda_portions(), recipe_keys(), read_unit_rows())
     write_units(units)
     write_units_report(units, errors)
+    write_credits(VALIDATED)  # the app's "Data sources" page (Step 4.8)
     print(f"units    {len(units)} ok, {len(errors)} blocked")
     for error in errors:
         print(f"  BLOCKED unit {error}")
