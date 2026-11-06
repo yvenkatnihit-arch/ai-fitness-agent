@@ -101,7 +101,8 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 - [ ] 4.4 target was ~100–150 dishes: now 83 (72 from CoFID + 11 recipes). More recipes (regional dishes, e.g. pongal, poha once poha has data, pesarattu, avial, thepla) can be added any time by editing the two recipe CSVs
 - [ ] 4.5 Load into Supabase (`foods`), synonyms (dahi = curd, chawal = rice…), household units (katori, piece, cup…) with checks
 - [ ] 4.6 Food search endpoint (fuzzy, synonyms, diet filter) + tests
-- [ ] 4.7 Meal logging via a form (backend computes the nutrition snapshot) + UI
+- [x] 4.7a Meal logging endpoints (no LLM): `POST /meals` (slot, optional date: today to 7 days back, 1–20 items of food_id + quantity + unit; client never sends nutrition), `GET /meals?day=` (meals + day totals), `DELETE /meals/{id}`. Maths in `app/calc/portions.py` (grams = quantity × unit grams; nutrition = grams × per-100 g / 100; unit must be `g` or one the food has). Stored values are a snapshot. RLS: other users can't see or delete (tested). End-to-end check: 2 roti + 1 katori dal = 301.7 kcal (matches hand calculation). 1445 offline + 179 DB tests pass.
+- [ ] 4.7b Meal logging form (frontend): search box → pick food → amount + unit → add to meal → save; today's meals and totals
 - [ ] 4.8 "Data sources" credits in the app
 
 ## Phase 7 notes (requested by Venkat, 2026-11-05)
