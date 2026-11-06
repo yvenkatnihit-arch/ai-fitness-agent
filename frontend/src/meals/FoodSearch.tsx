@@ -46,7 +46,7 @@ export function FoodSearch({ onPick }: { onPick: (food: FoodHit) => void }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+      <label className="flex flex-col gap-1 text-sm font-medium text-ink-soft">
         Search food
         <input
           type="search"
@@ -57,12 +57,12 @@ export function FoodSearch({ onPick }: { onPick: (food: FoodHit) => void }) {
           autoComplete="off"
         />
       </label>
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       {active && !searching && !error && shown.length === 0 && (
-        <p className="text-sm text-slate-500">No foods found. Try another name.</p>
+        <p className="text-sm text-muted">No foods found. Try another name.</p>
       )}
       {shown.length > 0 && (
-        <ul aria-label="Search results" className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+        <ul aria-label="Search results" className="divide-y divide-line rounded-lg border border-line">
           {shown.map((food) => (
             <li key={food.id}>
               <button
@@ -72,13 +72,13 @@ export function FoodSearch({ onPick }: { onPick: (food: FoodHit) => void }) {
                   setQuery('')
                   setResults([])
                 }}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left hover:bg-slate-50"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left hover:bg-bg"
               >
                 <span>
-                  <span className="block text-sm font-medium text-slate-800">{food.name}</span>
-                  {!food.verified && <span className="block text-xs text-amber-700">values being checked</span>}
+                  <span className="block text-sm font-medium text-ink">{food.name}</span>
+                  {!food.verified && <span className="block text-xs text-warn">values being checked</span>}
                 </span>
-                <span className="shrink-0 text-xs text-slate-500">{Math.round(food.kcal_per_100g)} kcal / 100 g</span>
+                <span className="shrink-0 text-xs text-muted">{Math.round(food.kcal_per_100g)} kcal / 100 g</span>
               </button>
             </li>
           ))}

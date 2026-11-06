@@ -370,3 +370,12 @@ Trade-offs to settle at build time:
 - **Testing:** each rail gets eval cases in `evals/` (Phase 7), and results are recorded in PROGRESS.md.
 Brief sections 4.2 and 7 are to be updated when this is built.
 - **Filing convention (Step 5.2):** the `movement_pattern` list has no slot for isolation moves, so each is filed under the pattern it most resembles (curls → `pull_horizontal`, lateral raises → `push_vertical`, calf raises → `squat`, clamshell → `mobility`). Pattern rules then demand that pattern's injury tags, which can be slightly over-cautious (calf raise is tagged knee). Over-cautious only hides an exercise; it never shows one to an injured user.
+
+## D-044 — Design foundation: tokens, light + dark, shared page frame
+**Status:** Accepted (Venkat, 2026-11-06: "Fresh & energetic", light and dark mode)
+Options for the look: fresh & energetic (green brand + orange accent), dark & bold, calm & clean. Chosen: **fresh & energetic**, plus **dark mode that follows the phone's setting**.
+- **Tokens** (`frontend/src/index.css`): every colour is a named CSS variable (`--brand`, `--ink`, `--surface`...), swapped for dark under `prefers-color-scheme`, and exposed to Tailwind (`bg-surface`, `text-ink`, `border-line`, `bg-brand`, `text-on-brand`...). Screens never use raw palette colours any more, so changing the brand is a one-file edit.
+- **Checked by a test** (`src/theme.test.ts`): dark defines exactly the light tokens, and 16 text/background pairs meet WCAG AA (4.5:1) in both themes.
+- **Fonts:** Bricolage Grotesque (headings) and Source Sans 3 (text), loaded from Google Fonts with `display=swap` and system-font fallbacks. Trade-off: the browser asks Google's servers for the font, which shares the visitor's IP with Google. If that matters later (privacy notice, paying users), self-host them with `@fontsource` packages (needs the D-030 age check).
+- **Shared pieces** (`components/ui.tsx`): `PageShell` (page background, one column, title row, optional Back/action) and `ButtonLink`; used by Home, Meal log and Exercise library. Remaining screens (sign-in, onboarding, sources) already use the tokens through the colour swap and move to `PageShell` as they are touched.
+- **Not themed yet:** the macro donut uses fixed colours chosen for colour-blind safety (`targets/macroColors.ts`); checked on light backgrounds only, to revisit with the Phase 9 polish.

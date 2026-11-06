@@ -6,42 +6,42 @@ import credits from './credits.json'
 // The content is generated from data/sources.json by `uv run python -m fooddata.build`; don't edit credits.json by hand.
 export function SourcesPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-8">
+    <main className="flex min-h-screen flex-col items-center bg-bg px-4 py-8">
       <div className="flex w-full max-w-md flex-col gap-4">
         <header className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-900">Data sources</h1>
-          <Link to="/" className="text-sm font-medium text-emerald-700">Back</Link>
+          <h1 className="text-xl font-bold text-ink">Data sources</h1>
+          <Link to="/" className="text-sm font-medium text-brand-strong">Back</Link>
         </header>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-muted">
           Our food nutrition values come from these public datasets. We thank the people who build and share them.
         </p>
 
         {credits.sources.map((s) => (
-          <article key={s.key} className="rounded-xl bg-white p-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-slate-900">
+          <article key={s.key} className="rounded-xl bg-surface p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-ink">
               <a href={s.homepage} target="_blank" rel="noreferrer" className="underline decoration-slate-300">{s.name}</a>
             </h2>
-            <p className="mt-1 text-xs text-slate-500">Release {s.release} · {s.foods} of our foods</p>
-            <p className="mt-2 text-sm text-slate-700">{s.credit}</p>
-            <p className="mt-2 text-xs text-slate-600">
+            <p className="mt-1 text-xs text-muted">Release {s.release} · {s.foods} of our foods</p>
+            <p className="mt-2 text-sm text-ink-soft">{s.credit}</p>
+            <p className="mt-2 text-xs text-muted">
               Licence:{' '}
-              <a href={s.license_url} target="_blank" rel="noreferrer" className="text-emerald-700 underline">{s.license}</a>
+              <a href={s.license_url} target="_blank" rel="noreferrer" className="text-brand-strong underline">{s.license}</a>
             </p>
           </article>
         ))}
 
         {credits.recipes.map((r) => (
-          <article key={r.key} className="rounded-xl bg-white p-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-slate-900">{r.name}</h2>
-            <p className="mt-1 text-xs text-slate-500">{r.foods} of our foods</p>
-            <p className="mt-2 text-sm text-slate-700">{r.description}</p>
+          <article key={r.key} className="rounded-xl bg-surface p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-ink">{r.name}</h2>
+            <p className="mt-1 text-xs text-muted">{r.foods} of our foods</p>
+            <p className="mt-2 text-sm text-ink-soft">{r.description}</p>
           </article>
         ))}
 
-        <ul className="flex list-disc flex-col gap-1 pl-5 text-xs text-slate-600">
+        <ul className="flex list-disc flex-col gap-1 pl-5 text-xs text-muted">
           {credits.notes.map((note) => <li key={note}>{note}</li>)}
         </ul>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           This app gives general guidance, not medical advice. Values are averages; real foods vary.
         </p>
       </div>

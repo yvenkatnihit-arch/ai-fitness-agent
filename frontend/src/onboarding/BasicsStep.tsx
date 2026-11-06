@@ -30,7 +30,7 @@ export function BasicsStep({ onSaved }: StepProps) {
     })
   }
 
-  const labelClass = 'flex flex-col gap-1 text-sm font-medium text-slate-700'
+  const labelClass = 'flex flex-col gap-1 text-sm font-medium text-ink-soft'
 
   return (
     <Card title="About you" subtitle="We use this to calculate your daily targets.">
@@ -50,12 +50,12 @@ export function BasicsStep({ onSaved }: StepProps) {
         </label>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium text-slate-700">Sex (used only for the calorie formula)</legend>
+          <legend className="text-sm font-medium text-ink-soft">Sex (used only for the calorie formula)</legend>
           <div className="flex flex-wrap gap-2">
             {SEXES.map(([value, label]) => (
-              <label key={value} className="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm">
+              <label key={value} className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm">
                 <input type="radio" name="sex" value={value} checked={form.sex === value}
-                       onChange={() => set('sex')(value)} className="accent-emerald-600" />
+                       onChange={() => set('sex')(value)} className="accent-brand" />
                 {label}
               </label>
             ))}
@@ -79,14 +79,14 @@ export function BasicsStep({ onSaved }: StepProps) {
         </div>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium text-slate-700">How active are you?</legend>
+          <legend className="text-sm font-medium text-ink-soft">How active are you?</legend>
           {ACTIVITY_LEVELS.map(([value, label, hint]) => (
-            <label key={value} className="flex items-start gap-3 rounded-lg border border-slate-300 px-3 py-2">
+            <label key={value} className="flex items-start gap-3 rounded-lg border border-line px-3 py-2">
               <input type="radio" name="activity_level" value={value} checked={form.activity_level === value}
-                     onChange={() => set('activity_level')(value)} className="mt-1 accent-emerald-600" />
+                     onChange={() => set('activity_level')(value)} className="mt-1 accent-brand" />
               <span className="text-sm">
-                <span className="font-medium text-slate-800">{label}</span>
-                <span className="block text-xs text-slate-500">{hint}</span>
+                <span className="font-medium text-ink">{label}</span>
+                <span className="block text-xs text-muted">{hint}</span>
               </span>
             </label>
           ))}

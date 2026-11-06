@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 
-import { FormError } from '../components/ui'
+import { FormError, PageShell } from '../components/ui'
 import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { ExerciseCard } from './ExerciseCard'
@@ -39,20 +39,15 @@ export function ExercisesPage() {
   )
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-8">
-      <div className="flex w-full max-w-md flex-col gap-4">
-        <header className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-900">Exercise library</h1>
-          <Link to="/" className="text-sm font-medium text-emerald-700">Back</Link>
-        </header>
+    <PageShell title="Exercise library" back>
 
         {error && (
           <>
             <FormError message={error.message} requestId={error.requestId} />
-            {error.status === 409 && <Link to="/onboarding" className="text-sm font-medium text-emerald-700">Go to onboarding</Link>}
+            {error.status === 409 && <Link to="/onboarding" className="text-sm font-medium text-brand-strong">Go to onboarding</Link>}
           </>
         )}
-        {!error && !list && <p className="text-center text-sm text-slate-500">Loading…</p>}
+        {!error && !list && <p className="text-center text-sm text-muted">Loading…</p>}
 
         {list && (
           <>
@@ -64,7 +59,7 @@ export function ExercisesPage() {
                   aria-pressed={list.setting === place}
                   onClick={() => { setWanted(place); setMuscle('all') }}
                   className={`rounded-lg border px-3 py-2 text-sm font-semibold capitalize ${
-                    list.setting === place ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 bg-white text-slate-700'
+                    list.setting === place ? 'border-brand bg-brand text-on-brand' : 'border-line bg-surface text-ink-soft'
                   }`}
                 >
                   {place}
@@ -72,12 +67,12 @@ export function ExercisesPage() {
               ))}
             </div>
 
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-muted">
               Showing {list.shown} of {list.total_in_library} exercises for the {list.setting}, {list.level} level.
               {list.injuries.length > 0 && ` Left out because of your ${list.injuries.map(words).join(', ')}.`}
             </p>
             {list.exercises.some((e) => !e.verified) && (
-              <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="rounded-lg bg-warn-soft p-3 text-xs text-warn">
                 The safety tags on these exercises are still being reviewed. If anything hurts, stop. Sharp pain,
                 swelling or numbness means see a doctor or physiotherapist.
               </p>
@@ -88,7 +83,7 @@ export function ExercisesPage() {
               placeholder="Search by name"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+              className="rounded-lg border border-line bg-surface px-3 py-2 text-sm"
             />
             <div role="group" aria-label="Muscle" className="flex flex-wrap gap-2">
               {['all', ...muscles].map((m) => (
@@ -98,7 +93,7 @@ export function ExercisesPage() {
                   aria-pressed={muscle === m}
                   onClick={() => setMuscle(m)}
                   className={`rounded-full border px-3 py-1 text-xs font-medium capitalize ${
-                    muscle === m ? 'border-slate-800 bg-slate-800 text-white' : 'border-slate-300 bg-white text-slate-700'
+                    muscle === m ? 'border-ink bg-ink text-on-brand' : 'border-line bg-surface text-ink-soft'
                   }`}
                 >
                   {words(m)}
@@ -107,7 +102,7 @@ export function ExercisesPage() {
             </div>
 
             {visible.length === 0 ? (
-              <p className="text-center text-sm text-slate-500">No exercises match.</p>
+              <p className="text-center text-sm text-muted">No exercises match.</p>
             ) : (
               <ul aria-label="Exercises" className="flex flex-col gap-3">
                 {visible.map((e) => <ExerciseCard key={e.id} exercise={e} />)}
@@ -115,7 +110,6 @@ export function ExercisesPage() {
             )}
           </>
         )}
-      </div>
-    </main>
+    </PageShell>
   )
 }

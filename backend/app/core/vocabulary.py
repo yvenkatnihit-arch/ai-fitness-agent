@@ -28,6 +28,13 @@ Equipment = Literal[
     "yoga_mat",
 ]
 
+# How fast the user wants to go (D-042). Only picks a point inside the safety limits, never beyond them.
+Pace = Literal["slow", "normal", "fast"]
+# Cuisines with validated food data. A new one is added here only after its foods are loaded.
+Cuisine = Literal["indian"]
+
+PACES = get_args(Pace)
+CUISINES = get_args(Cuisine)
 DIET_TYPES = get_args(DietType)
 EXPERIENCE_LEVELS = get_args(ExperienceLevel)
 WORKOUT_LOCATIONS = get_args(WorkoutLocation)

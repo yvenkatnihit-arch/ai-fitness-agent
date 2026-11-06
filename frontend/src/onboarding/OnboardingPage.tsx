@@ -40,7 +40,7 @@ export function OnboardingPage() {
       </Shell>
     )
   }
-  if (!status) return <Shell><p className="text-sm text-slate-500">Loading…</p></Shell>
+  if (!status) return <Shell><p className="text-sm text-muted">Loading…</p></Shell>
   if (status.next_step === 'done') return <Navigate to="/" replace />
 
   if (status.next_step === 'complete') {
@@ -50,7 +50,7 @@ export function OnboardingPage() {
   const Screen = SCREENS[status.next_step]
   return (
     <Shell>
-      <p className="mb-3 text-xs font-medium uppercase tracking-wide text-slate-500">
+      <p className="mb-3 text-xs font-medium uppercase tracking-wide text-muted">
         Step {STEPS.indexOf(status.next_step) + 1} of {STEPS.length}
       </p>
       <Screen onSaved={setStatus} />
@@ -59,5 +59,5 @@ export function OnboardingPage() {
 }
 
 function Shell({ children }: { children: ReactNode }) {
-  return <main className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-10">{children}</main>
+  return <main className="flex min-h-screen flex-col items-center bg-bg px-4 py-10">{children}</main>
 }

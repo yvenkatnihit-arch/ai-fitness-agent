@@ -15,7 +15,9 @@ from app.calc.age import age_on
 from app.calc.targets import Goal
 from app.calc.tdee import ActivityLevel
 from app.core.time import india_today
-from app.core.vocabulary import EQUIPMENT, DietType, Equipment, ExperienceLevel, InjuryArea, WorkoutLocation
+from app.core.vocabulary import (
+    EQUIPMENT, Cuisine, DietType, Equipment, ExperienceLevel, InjuryArea, Pace, WorkoutLocation,
+)
 from app.safety import safety_config as cfg
 from app.safety.safety_config import Sex
 
@@ -77,12 +79,14 @@ class GoalIn(_Form):
 
     goal_type: Goal
     target_weight_kg: WeightKg | None = None
+    pace: Pace = "normal"  # D-042: slow / normal / fast, always inside the safety limits
 
 
 class PreferencesIn(_Form):
     """Step 3: diet and foods to avoid."""
 
     diet_type: DietType
+    cuisine: Cuisine = "indian"  # D-042: only cuisines with validated food data
     disliked_foods: list[FoodName] = Field(default_factory=list, max_length=30)
 
     @field_validator("disliked_foods")

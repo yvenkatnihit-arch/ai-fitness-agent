@@ -24,6 +24,18 @@ export const GOALS = [
   ['general_fitness', 'Get fitter and stronger', 'Eat to maintain your weight; the training does the work.'],
 ] as const
 
+// Same values as backend/app/core/vocabulary.py (Pace). Pace only picks a point inside the safety limits (D-042).
+export const PACES = [
+  ['slow', 'Slow and steady', 'Gentler changes that are easiest to keep up.'],
+  ['normal', 'Normal', 'A balanced pace. A good choice for most people.'],
+  ['fast', 'Fast and intense', 'The quickest pace that is still safe. It takes more discipline.'],
+] as const
+
+// Only cuisines that have validated food data (backend Cuisine). More are added after their data is loaded.
+export const CUISINES = [
+  ['indian', 'Indian', 'Rotis, dals, sabzis, rice dishes, South Indian breakfasts and more'],
+] as const
+
 export const DIETS = [
   ['vegetarian', 'Vegetarian', 'Includes dairy, no eggs, meat or fish'],
   ['eggetarian', 'Eggetarian', 'Vegetarian plus eggs'],

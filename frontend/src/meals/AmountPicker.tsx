@@ -17,10 +17,10 @@ export function AmountPicker({ food, onAdd, onCancel }: {
   const valid = quantity.trim() !== '' && Number.isFinite(amount) && amount > 0
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
-      <p className="text-sm font-medium text-slate-800">{food.name}</p>
+    <div className="flex flex-col gap-3 rounded-lg border border-brand-soft bg-brand-soft p-3">
+      <p className="text-sm font-medium text-ink">{food.name}</p>
       <div className="flex gap-2">
-        <label className="flex w-24 flex-col gap-1 text-xs font-medium text-slate-700">
+        <label className="flex w-24 flex-col gap-1 text-xs font-medium text-ink-soft">
           Amount
           <input
             type="number"
@@ -32,7 +32,7 @@ export function AmountPicker({ food, onAdd, onCancel }: {
             className={inputClass}
           />
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-slate-700">
+        <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-ink-soft">
           Unit
           <select value={unit} onChange={(e) => setUnit(e.target.value)} className={inputClass}>
             {food.units.map((u) => (
@@ -47,11 +47,11 @@ export function AmountPicker({ food, onAdd, onCancel }: {
           type="button"
           disabled={!valid}
           onClick={() => onAdd({ food, quantity: amount, unit })}
-          className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-on-brand disabled:opacity-50"
         >
           Add to meal
         </button>
-        <button type="button" onClick={onCancel} className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">
+        <button type="button" onClick={onCancel} className="rounded-lg border border-line px-3 py-2 text-sm text-ink-soft">
           Cancel
         </button>
       </div>

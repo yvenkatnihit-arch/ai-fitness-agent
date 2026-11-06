@@ -55,13 +55,13 @@ export function SignInPage() {
   const isSignIn = mode === 'sign-in'
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">{isSignIn ? 'Welcome back' : 'Create your account'}</h1>
-        <p className="mt-1 text-sm text-slate-500">AI Fitness Coach</p>
+    <main className="flex min-h-screen items-center justify-center bg-bg px-4">
+      <div className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-sm">
+        <h1 className="text-2xl font-bold text-ink">{isSignIn ? 'Welcome back' : 'Create your account'}</h1>
+        <p className="mt-1 text-sm text-muted">AI Fitness Coach</p>
 
         <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
-          <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-ink-soft">
             Email
             <input
               type="email"
@@ -69,10 +69,10 @@ export function SignInPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal focus:border-emerald-600 focus:outline-none"
+              className="rounded-lg border border-line px-3 py-2 text-base font-normal focus:border-brand focus:outline-none"
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+          <label className="flex flex-col gap-1 text-sm font-medium text-ink-soft">
             Password
             <input
               type="password"
@@ -80,20 +80,20 @@ export function SignInPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal focus:border-emerald-600 focus:outline-none"
+              className="rounded-lg border border-line px-3 py-2 text-base font-normal focus:border-brand focus:outline-none"
             />
             {!isSignIn && (
-              <span className="text-xs font-normal text-slate-500">At least {MIN_PASSWORD_LENGTH} characters.</span>
+              <span className="text-xs font-normal text-muted">At least {MIN_PASSWORD_LENGTH} characters.</span>
             )}
           </label>
 
           {error && (
-            <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
               {error}
             </p>
           )}
           {notice && (
-            <p role="status" className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+            <p role="status" className="rounded-lg bg-brand-soft px-3 py-2 text-sm text-brand-strong">
               {notice}
             </p>
           )}
@@ -101,17 +101,17 @@ export function SignInPage() {
           <button
             type="submit"
             disabled={busy || !email || !password}
-            className="rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white disabled:opacity-50"
+            className="rounded-lg bg-brand px-4 py-2.5 font-semibold text-on-brand disabled:opacity-50"
           >
             {busy ? 'Please wait…' : isSignIn ? 'Sign in' : 'Create account'}
           </button>
         </form>
 
-        <button type="button" onClick={switchMode} className="mt-4 w-full text-center text-sm text-emerald-700">
+        <button type="button" onClick={switchMode} className="mt-4 w-full text-center text-sm text-brand-strong">
           {isSignIn ? "New here? Create an account" : 'Already have an account? Sign in'}
         </button>
       </div>
-      <Link to="/sources" className="mt-4 text-xs text-slate-500 underline">Data sources</Link>
+      <Link to="/sources" className="mt-4 text-xs text-muted underline">Data sources</Link>
     </main>
   )
 }

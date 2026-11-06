@@ -61,7 +61,7 @@ export function TrainingStep({ onSaved }: StepProps) {
           <div className="flex flex-wrap gap-2">
             {DAYS.map((n) => (
               <button key={n} type="button" aria-pressed={days === n} onClick={() => setDays(n)}
-                      className={`h-10 w-10 rounded-full border text-sm font-medium ${days === n ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 text-slate-700'}`}>
+                      className={`h-10 w-10 rounded-full border text-sm font-medium ${days === n ? 'border-brand bg-brand text-on-brand' : 'border-line text-ink-soft'}`}>
                 {n}
               </button>
             ))}

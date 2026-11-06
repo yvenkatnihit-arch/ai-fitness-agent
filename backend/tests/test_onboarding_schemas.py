@@ -100,7 +100,22 @@ def test_goal():
         GoalIn(goal_type="fat_loss", target_weight_kg=20)
 
 
+def test_pace_defaults_to_normal_and_only_accepts_known_values():
+    assert GoalIn(goal_type="fat_loss").pace == "normal"          # older clients that don't send it
+    assert [GoalIn(goal_type="fat_loss", pace=p).pace for p in ("slow", "normal", "fast")] == ["slow", "normal", "fast"]
+    for bad in ("extreme", "FAST", "", None, 2):
+        with pytest.raises(ValidationError):
+            GoalIn(goal_type="fat_loss", pace=bad)
+
+
 # --- Preferences ---
+
+def test_cuisine_defaults_to_indian_and_refuses_cuisines_we_have_no_data_for():
+    assert PreferencesIn(diet_type="vegan").cuisine == "indian"
+    for bad in ("italian", "Indian", "", None):
+        with pytest.raises(ValidationError):
+            PreferencesIn(diet_type="vegan", cuisine=bad)
+
 
 def test_disliked_foods_are_trimmed_and_deduplicated():
     p = PreferencesIn(diet_type="vegetarian", disliked_foods=["  Brinjal ", "brinjal", "Karela"])

@@ -45,7 +45,7 @@ export function ScreeningStep({ onSaved }: StepProps) {
                       onChange={() => toggle(value)} label={label} />
             ))}
           </div>
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-muted">
             Sharp pain, swelling or numbness? Please see a doctor or physiotherapist before training that area.
           </p>
         </fieldset>

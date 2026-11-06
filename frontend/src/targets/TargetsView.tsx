@@ -17,7 +17,7 @@ export function TargetsView({ targets }: { targets: Targets }) {
   return (
     <div className="flex flex-col gap-4">
       {targets.doctor_note && (
-        <p role="note" className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p role="note" className="rounded-xl border border-warn bg-warn-soft px-4 py-3 text-sm text-warn">
           {targets.doctor_note}
         </p>
       )}
@@ -25,11 +25,11 @@ export function TargetsView({ targets }: { targets: Targets }) {
       {targets.focus_on_habits ? <Habits /> : <Numbers targets={targets} />}
 
       {targets.reasons.length > 0 && (
-        <section className="rounded-xl bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-semibold text-slate-800">
+        <section className="rounded-xl bg-surface p-4 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink">
             {targets.focus_on_habits ? 'About your plan' : 'Why these numbers'}
           </h2>
-          <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-slate-600">
+          <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-muted">
             {targets.reasons.map((reason) => (
               <li key={reason}>{reason}</li>
             ))}
@@ -37,7 +37,7 @@ export function TargetsView({ targets }: { targets: Targets }) {
         </section>
       )}
 
-      <p className="text-center text-xs text-slate-500">
+      <p className="text-center text-xs text-muted">
         Your weekly meal and workout plans are coming in a later update.
       </p>
     </div>
@@ -52,27 +52,27 @@ function Numbers({ targets }: { targets: Targets }) {
   ]
 
   return (
-    <section className="rounded-xl bg-white p-5 shadow-sm">
-      <h2 className="mb-4 text-center text-sm font-medium text-slate-500">Your daily target</h2>
+    <section className="rounded-xl bg-surface p-5 shadow-sm">
+      <h2 className="mb-4 text-center text-sm font-medium text-muted">Your daily target</h2>
       <MacroDonut kcal={targets.calorie_target_kcal ?? 0} slices={slices} />
-      <p className="mt-4 text-center text-xs text-slate-500">Percentages are each macro's share of your daily calories.</p>
+      <p className="mt-4 text-center text-xs text-muted">Percentages are each macro's share of your daily calories.</p>
     </section>
   )
 }
 
 function Habits() {
   return (
-    <section className="rounded-xl bg-white p-5 shadow-sm">
-      <h2 className="text-base font-semibold text-slate-900">Your focus: balanced, regular meals</h2>
-      <p className="mt-1 text-sm text-slate-500">
+    <section className="rounded-xl bg-surface p-5 shadow-sm">
+      <h2 className="text-base font-semibold text-ink">Your focus: balanced, regular meals</h2>
+      <p className="mt-1 text-sm text-muted">
         Instead of counting numbers, your plan is built around steady, nourishing habits.
       </p>
-      <ul className="mt-3 flex list-disc flex-col gap-2 pl-5 text-sm text-slate-700">
+      <ul className="mt-3 flex list-disc flex-col gap-2 pl-5 text-sm text-ink-soft">
         {HABITS.map((habit) => (
           <li key={habit}>{habit}</li>
         ))}
       </ul>
-      <p className="mt-3 text-sm text-slate-600">
+      <p className="mt-3 text-sm text-muted">
         If food or eating feels hard right now, talking to a doctor or counsellor can really help.
       </p>
     </section>

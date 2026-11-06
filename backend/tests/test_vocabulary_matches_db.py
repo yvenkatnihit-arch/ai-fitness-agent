@@ -40,6 +40,8 @@ def sql_array(column: str) -> set[str]:
         ("diet_type", v.DIET_TYPES),
         ("experience_level", v.EXPERIENCE_LEVELS),
         ("workout_location", v.WORKOUT_LOCATIONS),
+        ("pace", v.PACES),
+        ("cuisine", v.CUISINES),
     ],
 )
 def test_check_lists_match(column, python_values):

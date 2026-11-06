@@ -1,11 +1,45 @@
 // Small shared pieces so every form looks and behaves the same.
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { Link } from 'react-router'
+
+// The frame every signed-in screen shares: page background, one centred column, a title row.
+// `back` adds a "Back" link to Home; `action` is anything else for the right of the title (e.g. Sign out).
+export function PageShell({
+  title, subtitle, back, action, children,
+}: { title: string; subtitle?: string; back?: boolean; action?: ReactNode; children: ReactNode }) {
+  return (
+    <main className="min-h-screen bg-bg px-4 py-6">
+      <div className="mx-auto flex w-full max-w-md flex-col gap-4">
+        <header className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-ink">{title}</h1>
+            {subtitle && <p className="truncate text-xs text-muted">{subtitle}</p>}
+          </div>
+          {back ? <Link to="/" className="shrink-0 text-sm font-semibold text-brand-strong">Back</Link> : action}
+        </header>
+        {children}
+      </div>
+    </main>
+  )
+}
+
+// A link that looks like a button (primary = filled, secondary = outlined).
+export function ButtonLink({ to, variant = 'primary', children }: { to: string; variant?: 'primary' | 'secondary'; children: ReactNode }) {
+  const style = variant === 'primary'
+    ? 'bg-brand text-on-brand hover:opacity-90'
+    : 'border border-brand text-brand-strong hover:bg-brand-soft'
+  return (
+    <Link to={to} className={`rounded-xl px-4 py-3 text-center font-semibold transition ${style}`}>
+      {children}
+    </Link>
+  )
+}
 
 export function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
   return (
-    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm">
-      <h1 className="text-xl font-bold text-slate-900">{title}</h1>
-      {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+    <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-sm">
+      <h1 className="text-xl font-bold text-ink">{title}</h1>
+      {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       <div className="mt-5">{children}</div>
     </div>
   )
@@ -16,7 +50,7 @@ export function PrimaryButton({ busy, children, ...props }: ButtonHTMLAttributes
     <button
       {...props}
       disabled={busy || props.disabled}
-      className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white disabled:opacity-50"
+      className="w-full rounded-xl bg-brand px-4 py-3 font-semibold text-on-brand transition hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
     >
       {busy ? 'Saving…' : children}
     </button>
@@ -25,15 +59,15 @@ export function PrimaryButton({ busy, children, ...props }: ButtonHTMLAttributes
 
 export function FieldError({ message }: { message?: string }) {
   if (!message) return null
-  return <span className="text-xs font-normal text-red-700">{message}</span>
+  return <span className="text-xs font-normal text-danger">{message}</span>
 }
 
 export function FormError({ message, requestId }: { message: string | null; requestId?: string | null }) {
   if (!message) return null
   return (
-    <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+    <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
       {message}
-      {requestId && <span className="mt-1 block text-xs text-red-500">Reference: {requestId}</span>}
+      {requestId && <span className="mt-1 block text-xs text-danger">Reference: {requestId}</span>}
     </p>
   )
 }
@@ -51,20 +85,20 @@ export function Choice({
 }) {
   return (
     <label
-      className={`flex items-start gap-3 rounded-lg border px-3 py-2 ${checked ? 'border-emerald-600 bg-emerald-50' : 'border-slate-300'}`}
+      className={`flex items-start gap-3 rounded-lg border px-3 py-2 ${checked ? 'border-brand bg-brand-soft' : 'border-line'}`}
     >
-      <input type={type} name={name} checked={checked} onChange={onChange} className="mt-1 accent-emerald-600" />
+      <input type={type} name={name} checked={checked} onChange={onChange} className="mt-1 accent-brand" />
       <span className="text-sm">
-        <span className="font-medium text-slate-800">{label}</span>
-        {hint && <span className="block text-xs text-slate-500">{hint}</span>}
+        <span className="font-medium text-ink">{label}</span>
+        {hint && <span className="block text-xs text-muted">{hint}</span>}
       </span>
     </label>
   )
 }
 
 export function Legend({ children }: { children: ReactNode }) {
-  return <legend className="mb-2 text-sm font-medium text-slate-700">{children}</legend>
+  return <legend className="mb-2 text-sm font-medium text-ink-soft">{children}</legend>
 }
 
 export const inputClass =
-  'rounded-lg border border-slate-300 px-3 py-2 text-base font-normal focus:border-emerald-600 focus:outline-none'
+  'rounded-lg border border-line px-3 py-2 text-base font-normal focus:border-brand focus:outline-none'

@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router'
-
-import { FormError, PrimaryButton, inputClass } from '../components/ui'
+import { FormError, PageShell, PrimaryButton, inputClass } from '../components/ui'
 import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { AmountPicker } from './AmountPicker'
@@ -74,15 +72,10 @@ export function MealLogPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-slate-50 px-4 py-8">
-      <div className="flex w-full max-w-md flex-col gap-4">
-        <header className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-900">Log a meal</h1>
-          <Link to="/" className="text-sm font-medium text-emerald-700">Back</Link>
-        </header>
+    <PageShell title="Log a meal" back>
 
-        <section className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm">
-          <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+        <section className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm">
+          <label className="flex flex-col gap-1 text-sm font-medium text-ink-soft">
             Meal
             <select value={slot} onChange={(e) => setSlot(e.target.value as Slot)} className={inputClass}>
               {SLOTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -105,13 +98,13 @@ export function MealLogPage() {
           {draft.length > 0 && (
             <ul aria-label="This meal" className="flex flex-col gap-1">
               {draft.map((d, index) => (
-                <li key={index} className="flex items-center justify-between gap-2 text-sm text-slate-700">
+                <li key={index} className="flex items-center justify-between gap-2 text-sm text-ink-soft">
                   <span>{d.quantity} {d.unit} {d.food.name}</span>
                   <button
                     type="button"
                     aria-label={`Remove ${d.food.name}`}
                     onClick={() => setDraft((items) => items.filter((_, i) => i !== index))}
-                    className="text-xs text-slate-500"
+                    className="text-xs text-muted"
                   >
                     Remove
                   </button>
@@ -126,8 +119,7 @@ export function MealLogPage() {
           </PrimaryButton>
         </section>
 
-        {day ? <TodayMeals day={day} onDelete={remove} deleting={deleting} /> : <p className="text-center text-sm text-slate-500">Loading…</p>}
-      </div>
-    </main>
+        {day ? <TodayMeals day={day} onDelete={remove} deleting={deleting} /> : <p className="text-center text-sm text-muted">Loading…</p>}
+    </PageShell>
   )
 }

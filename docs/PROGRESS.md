@@ -6,7 +6,7 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 **Phase:** 5 — Exercise library, in progress (Phase 4 food data COMPLETE 2026-11-06).
 **Decisions logged:** D-003 to D-042 (D-042 = added requirements, see below).
-**Phase 5:** 5.1 Free Exercise DB download + reader + find done (D-041). 5.2 (102 exercises + validator + report) and 5.3 (loaded into Supabase) done. Phase 5 COMPLETE: 5.1–5.4 committed (`f33b756`); 5.5 library screen done, not committed. Next: design-foundation step (D-042), then Phase 6.
+**Phase 5:** 5.1 Free Exercise DB download + reader + find done (D-041). 5.2 (102 exercises + validator + report) and 5.3 (loaded into Supabase) done. Phase 5 COMPLETE: 5.1–5.4 committed (`f33b756`); 5.5 library screen done, not committed. Design foundation D.1 (D-044) and Phase 6 step 6.0 (pace + cuisine in onboarding) done, not committed. Next: 6.1 (pace changes the calorie target, inside the safety limits).
 **Last completed:** 3.10: frontend live at https://ai-fitness-agent-one.vercel.app (D-036). Checked: no secrets in public JS, backend URL baked in, SPA reloads, security headers, CORS from the Vercel origin, and a full onboarding through production (targets match a hand calculation). Venkat tested sign-up → onboarding → targets on the live site: works.
 **Earlier:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
 **Earlier:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
@@ -118,6 +118,10 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 
 **Phase 5 complete (2026-11-06).** 102 curated exercises in Supabase (all `review` until Venkat signs off the injury tags), a validator and review report, a keyed idempotent loader, a pure filter by injury/level/place/equipment, `GET /exercises/for-me`, and the library screen. Open for Venkat: read the injury tags in `data/reports/exercises_review.md` and fill `reviewed_by` when happy (no changes requested so far). Next: the design foundation step (D-042), then Phase 6.
 
+## Design foundation (D-042/D-044, after Phase 5)
+
+- [x] D.1 Design tokens (light + dark) in `index.css`, fonts (Bricolage Grotesque + Source Sans 3), every raw palette colour swapped for a token across all screens, `PageShell` and `ButtonLink` shared components (Home, Meal log, Exercise library use them), `theme.test.ts` (token parity + WCAG AA contrast in both themes). 75 frontend tests pass; lint clean; build OK. **Venkat: look at it in the browser, in light and in dark (Windows: Settings → Personalization → Colors).** Not done: donut colours in dark mode; moving sign-in/onboarding to `PageShell`; any illustrations or motion (Phase 9 polish).
+
 ## Phase 7 notes (requested by Venkat, 2026-11-05)
 
 - The coach chat must let users discuss diet, exercises, and more, grounded in *their* profile, targets, and plans (not generic answers). Depends on Phases 4–6 (food DB, exercise library, plans).
@@ -125,7 +129,8 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 ## Added requirements (Venkat, 2026-11-06; D-042, brief section 16)
 
 Planned, not started. Order: finish Phase 5, then:
-- [ ] 6.0 Onboarding additions: pace (fast/normal/slow), cuisine (Indian only for now), gym/home/both question; migration + screens
+- [x] 6.0 Onboarding additions: pace (slow/normal/fast) saved on the goal, cuisine (Indian only) saved on the profile; migration `20261106160000_pace_and_cuisine.sql` applied (defaults `normal`/`indian`, so existing rows keep their meaning); both validated by the API (unknown values → 422, missing → default) and added to the Goal and Food-preferences screens; frontend/backend option lists checked against each other by `options.test.ts`; gym/home/both + equipment were already asked in the Training step. **Pace is stored only: it changes no numbers yet.** 1521 offline + 188 DB + 78 frontend tests pass.
+- [ ] 6.1 Pace in the calorie target: pace picks a point inside the safety limits (code + tests; eating-disorder history and flagged users ignore "fast")
 - [ ] 6.x Workout split recommender (PPL, Arnold, upper/lower, full body, bro split ...) + routine by experience level
 - [ ] 6.x Goal-date prediction (pure Python, within safety limits)
 - [ ] 6.x/9.x Edit workout per weekday (API, then screen)

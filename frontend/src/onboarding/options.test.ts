@@ -26,6 +26,8 @@ test.each([
   ['ACTIVITY_LEVELS', 'app/calc/tdee.py', 'ActivityLevel'],
   ['GOALS', 'app/calc/targets.py', 'Goal'],
   ['DIETS', 'app/core/vocabulary.py', 'DietType'],
+  ['PACES', 'app/core/vocabulary.py', 'Pace'],
+  ['CUISINES', 'app/core/vocabulary.py', 'Cuisine'],
   ['EXPERIENCE', 'app/core/vocabulary.py', 'ExperienceLevel'],
   ['LOCATIONS', 'app/core/vocabulary.py', 'WorkoutLocation'],
   ['EQUIPMENT', 'app/core/vocabulary.py', 'Equipment'],

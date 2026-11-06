@@ -11,18 +11,18 @@ export function ConsentStep({ onSaved }: StepProps) {
 
   return (
     <Card title="Before we start" subtitle="How we look after your health information">
-      <ul className="flex list-disc flex-col gap-2 pl-5 text-sm text-slate-700">
+      <ul className="flex list-disc flex-col gap-2 pl-5 text-sm text-ink-soft">
         {PRIVACY_POINTS.map((point) => (
           <li key={point}>{point}</li>
         ))}
       </ul>
 
-      <label className="mt-5 flex items-start gap-3 text-sm text-slate-800">
+      <label className="mt-5 flex items-start gap-3 text-sm text-ink">
         <input
           type="checkbox"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-0.5 h-5 w-5 accent-emerald-600"
+          className="mt-0.5 h-5 w-5 accent-brand"
         />
         I agree to AI Fitness Coach processing my health and fitness information as described above.
       </label>

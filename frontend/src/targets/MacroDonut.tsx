@@ -50,10 +50,10 @@ export function MacroDonut({ kcal, slices }: { kcal: number; slices: MacroSlice[
             )
           })}
         </g>
-        <text x="50%" y="47%" textAnchor="middle" className="fill-slate-900 text-[26px] font-bold">
+        <text x="50%" y="47%" textAnchor="middle" className="fill-ink text-[26px] font-bold">
           {format(kcal)}
         </text>
-        <text x="50%" y="61%" textAnchor="middle" className="fill-slate-500 text-[11px]">
+        <text x="50%" y="61%" textAnchor="middle" className="fill-muted text-[11px]">
           kcal a day
         </text>
       </svg>
@@ -62,9 +62,9 @@ export function MacroDonut({ kcal, slices }: { kcal: number; slices: MacroSlice[
         {slices.map((slice) => (
           <li key={slice.name} className="flex items-center gap-3">
             <span aria-hidden className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: slice.color }} />
-            <span className="flex-1 text-sm font-medium text-slate-800">{slice.name}</span>
-            <span className="text-sm font-semibold text-slate-900">{format(slice.grams)} g</span>
-            <span className="w-10 text-right text-sm text-slate-500">{slice.percent}%</span>
+            <span className="flex-1 text-sm font-medium text-ink">{slice.name}</span>
+            <span className="text-sm font-semibold text-ink">{format(slice.grams)} g</span>
+            <span className="w-10 text-right text-sm text-muted">{slice.percent}%</span>
           </li>
         ))}
       </ul>

@@ -1,13 +1,14 @@
 import { useState, type FormEvent } from 'react'
 
 import { Card, Choice, FieldError, FormError, Legend, PrimaryButton, inputClass } from '../components/ui'
-import { DIETS, MAX_DISLIKED_FOODS } from './options'
+import { CUISINES, DIETS, MAX_DISLIKED_FOODS } from './options'
 import type { StepProps } from './types'
 import { useSaveStep } from './useSaveStep'
 
 export function PreferencesStep({ onSaved }: StepProps) {
   const { save, busy, error, fieldError } = useSaveStep('/onboarding/preferences', onSaved)
   const [diet, setDiet] = useState('')
+  const [cuisine, setCuisine] = useState('indian')
   const [foods, setFoods] = useState<string[]>([])
   const [draft, setDraft] = useState('')
 
@@ -20,12 +21,22 @@ export function PreferencesStep({ onSaved }: StepProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    save({ diet_type: diet, disliked_foods: foods })
+    save({ diet_type: diet, cuisine, disliked_foods: foods })
   }
 
   return (
     <Card title="Food preferences" subtitle="Your meal plans will only use foods that fit.">
       <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+        <fieldset className="flex flex-col gap-2">
+          <Legend>Which cuisine should your meals come from?</Legend>
+          {CUISINES.map(([value, label, hint]) => (
+            <Choice key={value} type="radio" name="cuisine" checked={cuisine === value}
+                    onChange={() => setCuisine(value)} label={label} hint={hint} />
+          ))}
+          <p className="text-xs text-muted">More cuisines are coming. We add each one only after its food data is checked.</p>
+          <FieldError message={fieldError('cuisine')} />
+        </fieldset>
+
         <fieldset className="flex flex-col gap-2">
           <Legend>How do you eat?</Legend>
           {DIETS.map(([value, label, hint]) => (
@@ -36,7 +47,7 @@ export function PreferencesStep({ onSaved }: StepProps) {
         </fieldset>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor="disliked-food" className="text-sm font-medium text-slate-700">
+          <label htmlFor="disliked-food" className="text-sm font-medium text-ink-soft">
             Foods you don't like (optional)
           </label>
           <div className="flex gap-2">
@@ -55,16 +66,16 @@ export function PreferencesStep({ onSaved }: StepProps) {
               }}
             />
             <button type="button" onClick={addFood} disabled={!draft.trim() || foods.length >= MAX_DISLIKED_FOODS}
-                    className="rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 disabled:opacity-50">
+                    className="rounded-lg border border-line px-3 text-sm font-medium text-ink-soft disabled:opacity-50">
               Add
             </button>
           </div>
           {foods.length > 0 && (
             <ul className="flex flex-wrap gap-2" aria-label="Foods you don't like">
               {foods.map((food) => (
-                <li key={food} className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                <li key={food} className="flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1 text-sm text-ink-soft">
                   {food}
-                  <button type="button" aria-label={`Remove ${food}`} className="text-slate-500"
+                  <button type="button" aria-label={`Remove ${food}`} className="text-muted"
                           onClick={() => setFoods(foods.filter((f) => f !== food))}>
                     ×
                   </button>

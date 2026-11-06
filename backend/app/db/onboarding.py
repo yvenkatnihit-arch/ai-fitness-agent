@@ -109,17 +109,17 @@ def latest_weight_kg(conn: Connection) -> float | None:
 def save_goal(conn: Connection, goal: GoalIn, start_weight_kg: float, today: date) -> None:
     """Keep exactly one active goal: update it if it exists, otherwise create it."""
     _require_open(conn)
-    params = (goal.goal_type, goal.target_weight_kg, start_weight_kg, today)
+    params = (goal.goal_type, goal.target_weight_kg, start_weight_kg, today, goal.pace)
     updated = conn.execute(
         """update public.goals
-           set goal_type = %s, target_weight_kg = %s, start_weight_kg = %s, started_on = %s
+           set goal_type = %s, target_weight_kg = %s, start_weight_kg = %s, started_on = %s, pace = %s
            where user_id = auth.uid() and active""",
         params,
     ).rowcount
     if updated == 0:
         conn.execute(
-            """insert into public.goals (user_id, goal_type, target_weight_kg, start_weight_kg, started_on)
-               values (auth.uid(), %s, %s, %s, %s)""",
+            """insert into public.goals (user_id, goal_type, target_weight_kg, start_weight_kg, started_on, pace)
+               values (auth.uid(), %s, %s, %s, %s, %s)""",
             params,
         )
 
@@ -127,8 +127,8 @@ def save_goal(conn: Connection, goal: GoalIn, start_weight_kg: float, today: dat
 def save_preferences(conn: Connection, prefs: PreferencesIn) -> None:
     _require_open(conn)
     conn.execute(
-        "update public.profiles set diet_type = %s, disliked_foods = %s where id = auth.uid()",
-        (prefs.diet_type, prefs.disliked_foods),
+        "update public.profiles set diet_type = %s, cuisine = %s, disliked_foods = %s where id = auth.uid()",
+        (prefs.diet_type, prefs.cuisine, prefs.disliked_foods),
     )
 
 

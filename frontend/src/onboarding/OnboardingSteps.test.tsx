@@ -28,7 +28,23 @@ test('goal: sends the chosen goal and target weight', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
   expect(await screen.findByRole('heading', { name: 'Food preferences' })).toBeInTheDocument()
-  expect(sent(calls, '/onboarding/goal')).toEqual({ goal_type: 'fat_loss', target_weight_kg: 54 })
+  expect(sent(calls, '/onboarding/goal')).toEqual({ goal_type: 'fat_loss', target_weight_kg: 54, pace: 'normal' })
+})
+
+test('goal: the pace the user picks is sent, with a reminder that safe limits always apply', async () => {
+  const calls = fakeFetch({
+    'GET /onboarding/status': { body: status('goal', ['consent', 'basics']) },
+    'PUT /onboarding/goal': { body: status('preferences', ['consent', 'basics', 'goal']) },
+  })
+  render()
+  fireEvent.click(await loseFat())
+  expect(screen.getByLabelText(/^Normal/)).toBeChecked()                       // the default
+  expect(screen.getByText(/never go past safe limits/)).toBeInTheDocument()
+  fireEvent.click(screen.getByLabelText(/^Fast and intense/))
+  fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+  await screen.findByRole('heading', { name: 'Food preferences' })
+  expect(sent(calls, '/onboarding/goal')).toEqual({ goal_type: 'fat_loss', target_weight_kg: null, pace: 'fast' })
 })
 
 test("goal: shows the backend's target-weight message", async () => {
@@ -65,7 +81,10 @@ test('preferences: diet plus disliked foods (Enter adds, repeats ignored, × rem
   fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
   await screen.findByRole('heading', { name: 'Your training' })
-  expect(sent(calls, '/onboarding/preferences')).toEqual({ diet_type: 'vegetarian', disliked_foods: ['Karela', 'Baingan'] })
+  expect(sent(calls, '/onboarding/preferences')).toEqual({
+    diet_type: 'vegetarian', cuisine: 'indian', disliked_foods: ['Karela', 'Baingan'],
+  })
+  expect(screen.queryByText(/More cuisines are coming/)).not.toBeInTheDocument()  // gone with the screen
 })
 
 // --- Training ---
