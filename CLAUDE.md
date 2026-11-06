@@ -85,6 +85,7 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Apply: `uv run python scripts/migrate.py` (Supabase CLI pinned to 2.121.0, D-024; reads `DATABASE_URL` from `.env`; then sets up LangGraph's checkpointer tables in the `langgraph` schema, D-012)
 - LLM cost per day: `uv run python scripts/daily_cost.py` (last 14 days; pass a number for more)
 - Check the Gemini key and models with one tiny real call (about $0.00005): `PYTHONPATH=. uv run python scripts/llm_smoke.py [small|mid]` (PowerShell: `$env:PYTHONPATH='.'` first)
+- Try the exercise picker for a made-up user (real library + real Gemini, about a cent, saves nothing): `PYTHONPATH=. uv run python scripts/pick_demo.py ppl_3 intermediate gym knee`
 
 **Food data (`backend/`, D-037)**
 - Download/verify the open datasets into `data/raw/` (git-ignored): `uv run python -m fooddata.download` (add `--check` to verify without network). Sources, licences, credits and SHA-256 are in `data/sources.json`.

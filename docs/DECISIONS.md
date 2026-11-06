@@ -473,3 +473,30 @@ Tried in a throwaway environment outside the project (nothing was added to `pypr
 - **Cost is an estimate** from a price table in code (paid-tier text prices). An unknown model is billed at the highest known price so a surprise never looks cheap.
 - **Not done yet:** Gemini context caching (CLAUDE.md says use it only where it really saves money; system prompts are still short) and LangSmith tracing; both are revisited when the prompts grow (Phase 7).
 - Verified with two real calls (small and mid): reply "ready", 8 in / 18 out tokens, about $0.00005 each.
+
+## D-052 — Exercise picking: the model chooses keys, code decides what is allowed
+**Status:** Accepted (Step 6.6b, 2026-11-06). Venkat chose the recommended "stable" option.
+`app/calc/day_picks.py` (rules), `app/llm/picker_prompt.py` (prompt + parsing), `app/workflows/pick_exercises.py` (the loop).
+- **Candidates per day (code):** from the exercises already filtered for this user (injuries, level, place, equipment), a day gets those whose movement pattern is one of the day's patterns AND that train one of the day's muscles. Blocked exercises are never used. Exercises still in "review" status ARE allowed (none are signed off yet; the library screen shows them as unverified). Revisit when Venkat signs off the injury tags.
+- **Exercises per day:** beginner 4, intermediate 5, advanced 6 (fewer if the library has fewer).
+- **The model (mid tier, temperature 0, JSON only):** gets only our own exercise list (key, name, muscles, pattern), the day labels, level and goal. No user free text and no health data go in, so there is nothing to inject. It is told not to write numbers; any numbers are ignored anyway (sets/reps/rest come from D-049 in 6.6c).
+- **Validation (code):** every key must be in that day's list, no repeats, exactly the wanted count, no more than 3 from one movement (more for a day with one movement, like a chest day), and enough different movements. A day that fails is re-asked ONCE with the reasons (only the failed days, to save tokens). If it still fails, or the model is down or rate-limited, code picks (round-robin over the day's movements, big lifts first, easiest first, avoiding exercises used on other days). So a plan is always complete and valid.
+- **Order is fixed by code:** big compound lifts, then single-muscle work, then core. The model's own order is kept inside each group.
+- **A day with no allowed exercise** (e.g. a home user with no equipment on a leg day) is reported as "none" with a plain note, never filled with something unsuitable.
+- **Stable on purpose (temperature 0):** the same inputs gave the identical week on three real runs. Variety can be added later (a "swap this exercise" action is planned).
+- **Real-run check:** intermediate gym user with a knee injury, PPL: 68 of 102 exercises allowed; the leg day got hinge/hip work and no squats or lunges. Beginner at home with no equipment: 28 allowed; days A and C share two exercises because the pool is small. Cost about $0.001 per week-plan pick.
+- The Gemini reasoning tokens count toward `max_tokens`, so the picker allows 4000.
+
+## D-053 — A generated workout is a pending proposal; code lays out the week and sets the numbers
+**Status:** Accepted (Step 6.6c, 2026-11-06)
+`app/calc/workout_plan.py`, `app/workflows/generate_workout_plan.py`, `app/db/proposals.py`, `app/api/plans.py`.
+- **Endpoints:** `POST /plans/workout/generate` (one mid-tier model call, about 13 s with Gemini 2.5 Flash, so the screen needs a loading state) and `GET /plans/proposals/pending`. The result is a `plan_proposals` row (type `workout_change`, source `plan_generation`, status `pending`). **No `workout_plans` row exists until the user approves (Step 6.6d).**
+- **Payload** (versioned JSON): split, week start, level, goal, an optional doctor note, and seven days (Monday to Sunday). Each training day lists exercises by stable `exercise_key` (not database id) with position, sets, reps min/max, rest and a note. Keys are mapped to ids on approval.
+- **Week layout is fixed in code:** 1 day → Wed; 2 → Mon, Thu; 3 → Mon, Wed, Fri; 4 → Mon, Tue, Thu, Fri; 5 → Mon, Tue, Wed, Fri, Sat; 6 → Mon to Sat. The plan starts on the coming Monday (today if it is Monday). The user can move days later (weekday editing is a separate roadmap item).
+- **Numbers come only from `prescribe()` (D-049)** using the effective pace. **Health flags** (any screening flag) make the plan more conservative: one set fewer per exercise (never below 2) plus a "check with your doctor" note on the plan (brief section 7).
+- **Cardio and mobility are skipped** (they have no prescription yet). Timed holds (plank, wall sit) are stored as 1 rep with the note "Hold 30-45 seconds"; the screen must show the note, not "1 x 1".
+- **Validated twice:** `validate_payload` runs before saving (a failure is our bug, so it raises and saves nothing) and will run again when the user approves. It checks seven days in order, 1 to 10 exercises on training days, no duplicates, positions, sets 1-10, reps, rest 0-600, and that every key is in the library.
+- **Too few exercises means a refusal, not a thin plan:** a training day needs at least 3 possible exercises (`MIN_DAY_EXERCISES`). Found by testing: with every injury ticked, only 2 of 102 exercises were allowed and the picker would have produced a one-exercise day. The user now gets a 409 naming the days and no proposal is saved.
+- **Double-tap protection:** a pending proposal for the same split made in the last 60 seconds is returned instead of calling the model again. A newer generation expires the older pending one (status `expired`), so there is at most one pending generated workout per user.
+- **Nothing sensitive in the model call** (D-052); no database transaction is open while the model thinks.
+- Real run: intermediate gym user, upper/lower 4 days: 20 exercises, all four days chosen by the model, rules applied by code, cost under a cent.

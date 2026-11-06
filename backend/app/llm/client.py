@@ -56,16 +56,18 @@ def model_name(tier: Tier) -> str:
     return s.gemini_mid_model if tier == "mid" else s.gemini_small_model
 
 
-def build_chat_model(tier: Tier, max_tokens: int, temperature: float = 0.2) -> Any:
+def build_chat_model(tier: Tier, max_tokens: int, temperature: float = 0.2, json_mode: bool = False) -> Any:
     """A LangChain chat model for this tier. Imported lazily so offline tests never need the network."""
     from langchain_google_genai import ChatGoogleGenerativeAI
 
+    extra: dict[str, Any] = {"response_mime_type": "application/json"} if json_mode else {}
     return ChatGoogleGenerativeAI(
         model=model_name(tier),
         api_key=get_settings().gemini_api_key.get_secret_value(),
         max_output_tokens=max_tokens,
         temperature=temperature,
         max_retries=0,   # we retry ourselves, so we can log and cap it
+        **extra,
     )
 
 
@@ -95,6 +97,8 @@ def call_llm(
     node: str,
     max_tokens: int,
     user_id: UUID | None = None,
+    temperature: float = 0.2,
+    json_mode: bool = False,
     model: Any | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> LLMResult:
@@ -102,7 +106,7 @@ def call_llm(
     if max_tokens <= 0:
         raise ValueError("max_tokens must be a positive number")
     name = model_name(tier)
-    chat = model if model is not None else build_chat_model(tier, max_tokens)
+    chat = model if model is not None else build_chat_model(tier, max_tokens, temperature, json_mode)
     started = time.monotonic()
 
     def log(status: str, tokens: tuple[int, int, int] = (0, 0, 0), code: str | None = None) -> int:
