@@ -4,8 +4,9 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 4 — Food data COMPLETE (2026-11-06). Next: Phase 5 (exercise library + workout plans, per brief section 14).
-**Decisions logged:** D-003 to D-040.
+**Phase:** 5 — Exercise library, in progress (Phase 4 food data COMPLETE 2026-11-06).
+**Decisions logged:** D-003 to D-042 (D-042 = added requirements, see below).
+**Phase 5:** 5.1 Free Exercise DB download + reader + find done (D-041). Waiting on "go" for 5.2 (curated `data/exercises.csv` + validator + review report).
 **Last completed:** 3.10: frontend live at https://ai-fitness-agent-one.vercel.app (D-036). Checked: no secrets in public JS, backend URL baked in, SPA reloads, security headers, CORS from the Vercel origin, and a full onboarding through production (targets match a hand calculation). Venkat tested sign-up → onboarding → targets on the live site: works.
 **Earlier:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
 **Earlier:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
@@ -107,13 +108,34 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 
 **Phase 4 complete (2026-11-06).** 179 foods in Supabase (98 USDA, 70 CoFID, 11 computed recipes; 95 verified, 84 in review), 280 local names, 96 household units, 14 recorded gaps. Every value passed tested checks (energy, macros, ranges, diet class, cross-source, dish bands). Search with misspellings and Indian names; meal logging via form with nutrition computed in code; credits page. Open items for Venkat: permission emails (IFCT, INDB), katori/glass sizes (D-040), recipe sign-off.
 
+## Phase 5 — Exercise library (D-041: curate ~100, cross-check against Free Exercise DB)
+
+- [x] 5.1 Free Exercise DB (The Unlicense, 876 exercises) pinned to commit `f00c92c7dcf1` (2026-09-27) with SHA-256 in `data/sources.json`; downloader now also verifies JSON lists (`format: json`, `expect_keys`). `exercisedata/freedb.py` reader (their "expert" → our "advanced"; missing equipment stays unknown), `exercisedata/find.py` to look up ids. Not in the Docker image (dev tool). 1453 tests pass.
+- [ ] 5.2 `data/exercises.csv` (~100 gym + home exercises, our cues and injury tags) + validator (vocabulary, cue length, injury-tag rules by movement pattern, cross-check id/level/equipment/muscles) + review report
+- [ ] 5.3 Load into Supabase `exercises` (stable key, upsert, like D-039)
+- [ ] 5.4 Filter by the user's location, equipment, injuries and experience (pure code + tests) + endpoint
+- [ ] 5.5 Exercise library screen
+
 ## Phase 7 notes (requested by Venkat, 2026-11-05)
 
 - The coach chat must let users discuss diet, exercises, and more, grounded in *their* profile, targets, and plans (not generic answers). Depends on Phases 4–6 (food DB, exercise library, plans).
 
+## Added requirements (Venkat, 2026-11-06; D-042, brief section 16)
+
+Planned, not started. Order: finish Phase 5, then:
+- [ ] 6.0 Onboarding additions: pace (fast/normal/slow), cuisine (Indian only for now), gym/home/both question; migration + screens
+- [ ] 6.x Workout split recommender (PPL, Arnold, upper/lower, full body, bro split ...) + routine by experience level
+- [ ] 6.x Goal-date prediction (pure Python, within safety limits)
+- [ ] 6.x/9.x Edit workout per weekday (API, then screen)
+- [ ] 7.x NeMo Guardrails (D-043): input + output rails layered on top of the code guards; compatibility check first (Python 3.14, D-030, image size, Gemini)
+- [ ] 7.x Floating help bot (app guide, intent `app_help`) in the app shell
+- [ ] 8.x/9.x Statistics for workouts and diet
+- [ ] 9.x UI design foundation + polish (a small design-tokens step before the Phase 6 screens)
+- [ ] Later (ask first): more cuisines, each with its own licence-checked data
+
 ## Phases 5-11
 
-Not started. See `docs/PROJECT_BRIEF.md` section 14.
+Phase 5 in progress; 6-11 not started. See `docs/PROJECT_BRIEF.md` section 14.
 
 ## Mock data / placeholders (`# MOCK:`)
 

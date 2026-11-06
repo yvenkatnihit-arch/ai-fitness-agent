@@ -1,5 +1,5 @@
 {
-  "_about": "Food data sources (D-037). `backend/fooddata/download.py` downloads each file into data/raw/ (not committed) and fills in sha256/size/downloaded_at here, so we can prove exactly which file every food came from.",
+  "_about": "Open data sources (food: D-037; exercises: D-041). `backend/fooddata/download.py` downloads each file into data/raw/ (not committed) and fills in sha256/size/downloaded_at here, so we can prove exactly which file every value came from.",
   "sources": [
     {
       "key": "usda_sr_legacy",
@@ -37,6 +37,32 @@
       "sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
       "size_bytes": 4629542,
       "downloaded_at": "2026-11-05T15:53:28+00:00"
+    },
+    {
+      "key": "free_exercise_db",
+      "kind": "exercises",
+      "name": "Free Exercise DB (yuhonas/free-exercise-db)",
+      "url": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5/dist/exercises.json",
+      "file": "free_exercise_db_2026-09-27.json",
+      "release": "commit f00c92c7dcf1 (2026-09-27)",
+      "license": "The Unlicense (public domain)",
+      "license_url": "https://unlicense.org/",
+      "credit": "Free Exercise DB by yuhonas and contributors, released into the public domain. github.com/yuhonas/free-exercise-db",
+      "homepage": "https://github.com/yuhonas/free-exercise-db",
+      "use": "Cross-check only (D-041): names, muscles, equipment and level of our curated exercises. We don't copy its instructions or images.",
+      "format": "json",
+      "expect_keys": [
+        "id",
+        "name",
+        "level",
+        "equipment",
+        "primaryMuscles",
+        "secondaryMuscles",
+        "category"
+      ],
+      "downloaded_at": "2026-11-06T05:37:08+00:00",
+      "sha256": "5bb747e3fc658f095a60dcbf6d53c96627acdcc6ffb6fffde86f7e26995d40bf",
+      "size_bytes": 1005327
     }
   ],
   "_not_used": [

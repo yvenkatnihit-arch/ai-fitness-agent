@@ -331,3 +331,41 @@ How each unit's grams are known (`fooddata/units.py`, `data/food_units.csv`, tes
 Standard volumes: **katori = 150 ml, glass = 250 ml** (one constant, `VOLUME_ML`). Options considered for katori: 100 ml (small), 150 ml (common standard), 200 ml (large). Home sizes vary; the UI should let people adjust portions.
 - No unit is guessed: foods without a citable weight (paratha, puri, samosa, gulab jamun, paneer cube) have no unit yet and are logged in grams.
 - The loader replaces each food's units on every run (nothing references `food_units`; logs store grams).
+
+## D-041 — Exercise library: curated by us, cross-checked against a public-domain dataset
+**Status:** Accepted (Venkat, 2026-11-06: "Curate ~100, cross-check")
+Checked 2026-11-06:
+- **Free Exercise DB** (github.com/yuhonas/free-exercise-db): **The Unlicense** (public domain, SPDX `Unlicense` per GitHub). 876 exercises with name, level (beginner/intermediate/expert), equipment (sometimes missing), primary/secondary muscles, category, long instructions, images. **No injury/contraindication fields.**
+- **wger**: code AGPL-3.0; exercise data "Creative Commons, see individual entries" (licence varies per exercise, some share-alike). → not used.
+Options: (1) curate ~100 ourselves and cross-check against Free Exercise DB; (2) import Free Exercise DB and filter; (3) curate with no cross-check.
+Choice: **(1)**.
+- `data/exercises.csv` (Step 5.2): ~100 common gym + home exercises in our vocabulary (`app/core/vocabulary.py`), our own 2–4 line form cues, and conservative injury (contraindication) tags. No dataset has injury tags, so these are ours: code rules require them for risky patterns, and Venkat reviews them.
+- Each row cites a Free Exercise DB id where one exists; code checks the id exists and compares level, equipment and main muscles. We never copy its instructions or images.
+- The dataset is pinned to one commit (`f00c92c7dcf1`, 2026-09-27) with SHA-256 in `data/sources.json`, downloaded to `data/raw/` like the food data.
+
+## D-042 — Scope additions requested by Venkat (2026-11-06)
+**Status:** Accepted as roadmap items (build order in `PROJECT_BRIEF.md` section 16). Nothing here changes a fixed decision yet; two items need a go-ahead from Venkat when we reach them (marked ⚠).
+Requested: (1) user edits their own workout per weekday; (2) an always-on small help chatbot that knows the whole app; (3) workouts chosen by gym experience level; (4) progress statistics for workouts and diet; (5) cuisine choice (Indian first, others later); (6) several workout splits recommended (push/pull/legs, Arnold, upper/lower, full body, ...); (7) a pace question at onboarding (fast/intense, normal, slow); (8) a goal-date prediction after the plan; (9) location/equipment question (gym, home, both); (10) an attractive UI.
+Rules that stay in force:
+- **Pace never overrides safety (`safety_config.py`).** "Fast and intense" means the fastest rate inside the limits (max 25% deficit, ~1% body weight/week, +10% surplus); it is not a way around them. The prediction uses the same capped rate.
+- **Goal date is computed in plain Python** (weight gap ÷ planned weekly rate, from the 7-day trend), shown as an estimate with a range. The LLM only words it.
+- **Splits are rules in code** (days per week + experience + location → candidate splits with a reason); the LLM never invents a split or an exercise. The user picks one.
+- **User's own edits to their plan apply immediately** (they are the user's decision). Only *agent-made* changes need the approval step. ⚠ Confirm this reading of the "no plan changes without approval" rule when we build it (Phase 6).
+- **Help bot answers from a written app guide** (one maintained source file, tested against the real routes), not from the model's memory. It is separate from the coach: it never reads health data and never gives fitness advice.
+- **Cuisines:** the foods table gets a `cuisine` column; Indian stays the only cuisine until its data is validated. ⚠ Each new cuisine needs its own licence-checked dataset (same D-037 process), and it changes the "Indian foods" wording in the brief; ask before starting.
+- **UI:** shared design tokens and components first, so every new screen looks consistent; full polish in Phase 9.
+
+**Answers (Venkat, 2026-11-06):** (1) Yes: the user's own workout edits apply immediately; only agent-made changes need approval. (2) The design-foundation step comes right after Phase 5.
+
+## D-043 — NVIDIA NeMo Guardrails for input and output guardrails
+**Status:** Requested by Venkat (2026-11-06); to be built after Phase 5, before/with the chat flow (Phase 7). **Final design confirmed with Venkat at that step.**
+What NeMo Guardrails is: an open-source toolkit that wraps an LLM app with "rails" (input rails, output rails, topic/dialog rails), written as config + Colang flows, with built-in checks for jailbreaks, off-topic requests and self-checks.
+Plan: **layered, not replaced.**
+1. **Layer 1, code (stays):** crisis/self-harm and eating-disorder patterns, extreme-diet requests, and numeric limits from `safety_config.py`. Deterministic, no LLM, no extra cost. A crisis message must never depend on a model call.
+2. **Layer 2, NeMo (new):** input rails (jailbreak/prompt-injection, off-topic, medical-diagnosis and drug/steroid requests) and output rails (banned content, tone, "no diagnosis", self-check of the answer). Its `risk_flag`-style extra check replaces the custom small-model safety check in the brief.
+Trade-offs to settle at build time:
+- **Cost/latency:** some rails call an LLM. Use the small Gemini model, run LLM rails only when Layer 1 or the router flags risk, and measure with `agent_runs`.
+- **Dependencies:** check Python 3.14 support, the `exclude-newer` age rule (D-030), Docker image size on Render's free tier, and `langchain-google-genai` compatibility *before* adding it. If it does not fit, fallback: keep the code guards and implement the same rails as our own small-model checks.
+- **Streaming:** output rails need the full text, which already matches D-007 (guard runs before streaming).
+- **Testing:** each rail gets eval cases in `evals/` (Phase 7), and results are recorded in PROGRESS.md.
+Brief sections 4.2 and 7 are to be updated when this is built.

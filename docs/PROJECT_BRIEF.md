@@ -287,3 +287,25 @@ Don't write code yet. First:
 6. Create `docs/PROGRESS.md` and `docs/DECISIONS.md`.
 
 Then stop and wait for my go-ahead.
+
+## 16. Additional requirements (Venkat, 2026-11-06; D-042)
+
+Added after Phase 4. The roadmap in section 14 stays; these items slot into it as below.
+
+| # | Requirement | Where it lands |
+|---|---|---|
+| 1 | **Pace** question in onboarding: fast & intense / normal / slow. Sets the weekly rate inside the safety limits. | Phase 6.0 (onboarding step + migration) |
+| 2 | **Location / equipment** question: gym, home, or both; what equipment they can use. (Partly built: onboarding already asks for equipment and days.) | Phase 6.0, reused by 5.4 filter |
+| 3 | **Cuisine** choice; diet assigned from that cuisine. Indian first, more later. | Column + preference in 6.0; new cuisine data = a later phase (⚠ ask first) |
+| 4 | **Workout split recommendation**: push/pull/legs, Arnold, upper/lower, full body, bro split and more, picked by days/week + experience + location. | Phase 6 (rules in code, user chooses) |
+| 5 | **Routine by experience level** (sets, reps, rest, exercise difficulty). | Phase 6 (already planned: code rules by level) |
+| 6 | **Edit workout per weekday** (swap/add/remove exercises, move days). Only library exercises. | Phase 6 (API) + Phase 9 (screen) |
+| 7 | **Goal-date prediction** shown with the plan. | Phase 6 (pure calc + tests), re-estimated weekly in Phase 8 |
+| 8 | **Statistics**: workout progress (volume, PRs, adherence) and diet (calories/macros vs target, trends) from the user's logs. Code only, no LLM. | Phase 8 data, Phase 9 pages |
+| 9 | **Help chatbot**: small floating toggle on every screen; knows every feature and how the app works. | Shell widget in Phase 7 with the chat; the guide file is written as features ship |
+| 10 | **Attractive UI**: design tokens, components, mobile-first, motion kept light. | Design foundation before Phase 6 screens; polish in Phase 9 |
+
+### 16.1 Architecture notes for these items
+- The help bot is a fourth router intent (`app_help`) answered from a maintained guide file (`docs`-style markdown shipped with the backend, split into small sections, retrieved by simple search first; embeddings only if search proves weak). It has no access to health data.
+- The coach chat and help bot share the same widget and graph; the router decides which one answers. The widget is mounted once in the app shell so it is on every screen.
+- Splits and goal dates are deterministic modules in `app/calc/` with unit tests, like BMR and TDEE.

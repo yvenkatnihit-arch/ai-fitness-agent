@@ -1,9 +1,10 @@
-"""Download the open food datasets listed in data/sources.json into data/raw/ (D-037).
+"""Download the open datasets listed in data/sources.json into data/raw/ (food: D-037, exercises: D-041).
 
     uv run python -m fooddata.download          # download what's missing, verify everything
     uv run python -m fooddata.download --check  # verify existing files only, no network
 
-For each file it checks it is a complete, readable archive with the expected contents, then
+For each file it checks it is complete and readable with the expected contents (a zip/xlsx archive with
+`expect_members`, or a JSON list whose items have `expect_keys`), then
 records size, SHA-256 and download date in data/sources.json. If a file we already recorded
 changes upstream (different SHA-256), it stops instead of silently using different data.
 """
@@ -49,9 +50,25 @@ def check_archive(path: Path, expect_members: list[str]) -> None:
             raise SourceError(f"{path.name}: expected files missing: {missing}")
 
 
+def check_json_list(path: Path, expect_keys: list[str]) -> None:
+    """A JSON file that must be a non-empty list of objects, each with these keys."""
+    try:
+        items = json.loads(path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise SourceError(f"{path.name} is not valid JSON (incomplete download or an error page?): {error}") from None
+    if not isinstance(items, list) or not items or not all(isinstance(i, dict) for i in items):
+        raise SourceError(f"{path.name}: expected a non-empty list of objects")
+    missing = sorted({k for i in items for k in expect_keys if k not in i})
+    if missing:
+        raise SourceError(f"{path.name}: some items lack {missing}")
+
+
 def verify(source: dict, path: Path) -> dict:
     """Check the file and return its size/hash. Refuses a file whose hash changed since we recorded it."""
-    check_archive(path, source["expect_members"])
+    if source.get("format") == "json":
+        check_json_list(path, source["expect_keys"])
+    else:
+        check_archive(path, source["expect_members"])
     digest = sha256_of(path)
     if source.get("sha256") and source["sha256"] != digest:
         raise SourceError(

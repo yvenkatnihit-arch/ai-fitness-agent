@@ -55,4 +55,5 @@ def test_every_source_in_the_manifest_has_licence_credit_and_https_url():
     for source in manifest["sources"]:
         assert source["url"].startswith("https://"), source["key"]
         assert source["license"] and source["credit"], source["key"]
-        assert source["expect_members"], source["key"]
+        # what "complete" means depends on the format: archive members, or keys of each JSON item
+        assert source["expect_keys"] if source.get("format") == "json" else source["expect_members"], source["key"]
