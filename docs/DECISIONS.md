@@ -462,3 +462,14 @@ Tried in a throwaway environment outside the project (nothing was added to `pypr
 - Energy per kg is 7700 kcal (D-022), also for gains; real gains are a mix of muscle and fat, so for gain goals the date is rougher still.
 - Worked example (80 kg man, TDEE 2759, normal pace, 75 kg target): 71 days earliest, 84 likely, 102 latest; slow pace 142 / 167 / 203 days; fast 57 / 67 / 81 days.
 - **Test hygiene lesson:** a database test I wrote updated goals with no user filter, which would have changed every real user's goal. The tool's safety check refused to run it. All DB tests that update or delete must filter by the scratch user's id.
+
+## D-051 — One LLM module: tiers from .env, required max_tokens, own retries, every call logged
+**Status:** Accepted (Step 6.6a, 2026-11-06)
+`app/llm/` is the only code that knows about Gemini (`client.py`, `pricing.py`, `runs.py`), so the provider can be swapped later.
+- **Tiers:** "small" and "mid" read model IDs from `GEMINI_SMALL_MODEL` / `GEMINI_MID_MODEL`; no ID in logic. Both are `gemini-2.5-flash` today (D-015), which Google retires on 2026-12-01: change `.env` before then.
+- **`max_tokens` is required** and must be positive, so no call can run away.
+- **We retry ourselves** (LangChain's retry is off): up to 3 retries after 1, 3 and 8 seconds plus jitter, only for 429 / quota / 503 / overloaded. Still failing: `LLMBusy` ("The coach is busy right now..."). Any other error: `LLMFailed` with a generic message; the real error goes to the logs only (it could contain a key).
+- **Every call is logged** to `agent_runs` (tokens, cached tokens, estimated cost, latency, status). Logging can never fail a user's request. Only the final outcome of a retried call is logged.
+- **Cost is an estimate** from a price table in code (paid-tier text prices). An unknown model is billed at the highest known price so a surprise never looks cheap.
+- **Not done yet:** Gemini context caching (CLAUDE.md says use it only where it really saves money; system prompts are still short) and LangSmith tracing; both are revisited when the prompts grow (Phase 7).
+- Verified with two real calls (small and mid): reply "ready", 8 in / 18 out tokens, about $0.00005 each.
