@@ -65,7 +65,7 @@ def meal_plan(conn, uid, week=MONDAY, status="pending", approved=False):
 def food(conn):
     return conn.execute(
         "insert into public.foods (name, diet_class, kcal_per_100g, protein_g_per_100g, carbs_g_per_100g,"
-        " fat_g_per_100g, source) values ('Test roti', 'vegan', 297, 9.8, 46.4, 7.5, 'test') returning id"
+        " fat_g_per_100g, source, key) values ('Test roti', 'vegan', 297, 9.8, 46.4, 7.5, 'test', 'test_roti') returning id"
     ).fetchone()[0]
 
 

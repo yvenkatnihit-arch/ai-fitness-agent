@@ -36,8 +36,8 @@ def test_signed_out_visitors_cannot_read(admin_conn, table):
 
 FOOD_INSERT = """
     insert into public.foods (name, diet_class, kcal_per_100g, protein_g_per_100g,
-                              carbs_g_per_100g, fat_g_per_100g, source)
-    values (%s, 'vegan', %s, %s, %s, %s, 'test')
+                              carbs_g_per_100g, fat_g_per_100g, source, key)
+    values (%s, 'vegan', %s, %s, %s, %s, 'test', 'test_' || substr(md5(random()::text), 1, 12))
     returning id
 """
 

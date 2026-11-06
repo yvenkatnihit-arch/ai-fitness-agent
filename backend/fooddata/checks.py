@@ -129,7 +129,8 @@ DISH_KCAL_RANGES: dict[str, tuple[int, int]] = {
     "dish_snack": (150, 520),      # samosa, pakora, namkeen
     "dish_breakfast": (40, 300),   # porridge ~70, omelette ~190
     "dish_side": (40, 220),        # raita, boiled potato, grilled chicken
-    "dish_sweet": (150, 480),      # halwa, gulab jamun, kulfi
+    "dish_sweet": (150, 560),      # kheer ~170, halwa ~350, ghee-rich ladoo ~520
+    "dish_soup": (10, 120),        # rasam ~30, thicker soups up to ~100
 }
 
 

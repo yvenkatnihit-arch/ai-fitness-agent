@@ -310,3 +310,13 @@ Conversion (`fooddata/carbs.py`, tested):
 - USDA: available = by-difference − total dietary fibre. If fibre is unknown, we can't convert → flagged, not guessed.
 - CoFID: as weighed = starch/1.10 + oligosaccharides/1.10 + (glucose + fructose + galactose) + (sucrose + maltose + lactose)/1.05 when the breakdown is known. If only starch and total sugars are known: starch/1.10 + sugars/1.05, marked approximate (a warning in the review report). Otherwise flagged.
 Trade-off: differs slightly from the "Total carbohydrate" printed on Indian packaged-food labels (FSSAI); the app labels the figure "carbs (excl. fibre)".
+
+## D-039 — Foods get a stable key; the loader upserts and never deletes
+**Status:** Accepted (Step 4.5a, 2026-11-06; Venkat said "go" on the plan)
+Problem: meal plans and logs point to `foods.id` (`on delete restrict`), so reloading the food data by deleting and re-inserting rows would break them or change ids.
+Options: (A) upsert on the existing unique (name, source); (B) add our own stable `key` (`toor_dal`, `idli`) and upsert on it; (C) delete and reload.
+Choice: **(B)**. Migration `20261106120000_foods_key_review.sql` adds `foods.key` (unique, `^[a-z0-9_]{1,60}$`) and `foods.review_status` (`ready` | `review`).
+Why: renaming a food (fixing its display name) must not create a second row; (A) would. (C) is impossible once logs exist.
+- `uv run python -m fooddata.load` runs in one transaction and is idempotent: a second run updates every row and inserts none (tested). Synonyms are replaced from `local_names` each run.
+- Foods removed from the CSV are reported, never deleted.
+- Both `ready` and `review` rows are loaded while we use test data; the app can later prefer `ready` foods or show a "values being verified" badge.

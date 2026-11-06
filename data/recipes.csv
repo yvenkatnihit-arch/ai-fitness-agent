@@ -1,0 +1,12 @@
+key,name,local_names,category,cooked_g,reviewed_by,note
+idli,Idli,,dish_breakfast,720,,2:1 parboiled rice and urad dal batter; steamed; about 18 idlis of 40 g; salt not counted
+dosa,Plain dosa,dosai,dish_breakfast,500,,Rice and urad dal batter; about 10 dosas of 50 g with 2.5 g oil each
+upma,Upma,uppittu;rava upma,dish_breakfast,400,,Sooji roasted then cooked in about 250 ml water; curry leaves left out (a gap; negligible weight)
+rasam,Rasam,saaru;chaaru,dish_soup,600,,Thin tamarind-tomato soup with a little toor dal; mostly water so the cooked weight is about 4x the raw weight
+kadhi,Kadhi,,dish_dal,500,,Curd and besan simmered with about 300 ml water; oil tadka
+keema,Keema,mutton keema,dish_curry_meat,400,,USDA goat is lean (109 kcal raw); keema mince is often fattier so real values may be higher
+kheer,Kheer,payasam;payesh,dish_sweet,700,,Whole milk simmered with rice until reduced to about 700 g
+khoa,Khoa (mawa),khoya;mawa,dairy,180,,Whole milk boiled down to about 18 % of its weight (khoa has about 25-35 % moisture); USDA cow milk is 3.25 % fat so khoa from buffalo or full-cream milk is richer (about 420 kcal)
+barfi,Milk barfi,burfi;khoa barfi,dish_sweet,240,,Plain barfi: whole milk boiled down to khoa plus sugar
+besan_ladoo,Besan ladoo,besan laddu,dish_sweet,220,,Besan roasted in ghee; sugar added; a little moisture lost while roasting
+papad,Papad (roasted),poppadum;appalam,dish_snack,100,,Urad dal papad roasted; fried papad absorbs oil so log oil separately

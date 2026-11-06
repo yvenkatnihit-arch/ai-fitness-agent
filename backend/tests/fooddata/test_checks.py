@@ -116,6 +116,9 @@ def test_diet_class_rules(name, category, diet_class, ok):
         ("dish_dal", 324, False),       # raw dal mapped as cooked dal
         ("dish_bread", 202, True),      # chapati without fat
         ("dish_bread", 90, False),
+        ("dish_soup", 30, True),        # rasam
+        ("dish_dal", 30, False),        # ...would be too thin for a dal
+        ("dish_sweet", 520, True),      # besan ladoo
         ("pulse", 324, True),           # raw ingredients have no dish range
         ("dish_sweet", None, True),     # unknown energy is handled by check_required
     ],

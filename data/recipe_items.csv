@@ -1,0 +1,55 @@
+recipe,ingredient,raw_g,note
+idli,rice_parboiled,200,idli rice
+idli,urad_dal,100,
+dosa,rice_white,200,
+dosa,urad_dal,50,
+dosa,fenugreek_seed,5,
+dosa,oil_sunflower,25,oil used on the tawa
+upma,sooji,100,
+upma,oil_sunflower,15,
+upma,onion,50,
+upma,green_chilli,5,
+upma,ginger,5,
+upma,mustard_seed,2,
+upma,chana_dal,5,for the tadka
+rasam,toor_dal,20,
+rasam,tomato,100,
+rasam,tamarind,10,
+rasam,oil_sunflower,5,tadka
+rasam,mustard_seed,1,
+rasam,cumin,2,
+rasam,chilli_powder,1,
+rasam,garlic,5,
+rasam,coriander_leaves,5,
+rasam,turmeric,0.5,
+kadhi,curd,200,
+kadhi,besan,25,
+kadhi,oil_sunflower,10,tadka
+kadhi,mustard_seed,1,
+kadhi,cumin,1,
+kadhi,fenugreek_seed,1,
+kadhi,turmeric,1,
+kadhi,ginger,5,
+kadhi,green_chilli,5,
+keema,mutton,250,minced
+keema,onion,100,
+keema,tomato,100,
+keema,green_peas,50,
+keema,oil_sunflower,20,
+keema,ginger,10,
+keema,garlic,10,
+keema,chilli_powder,3,
+keema,cumin,2,
+keema,turmeric,1,
+kheer,milk_whole,1000,about 970 ml
+kheer,rice_white,50,
+kheer,sugar,70,
+kheer,almonds,10,
+kheer,cashews,10,
+khoa,milk_whole,1000,about 970 ml
+barfi,milk_whole,1000,about 970 ml
+barfi,sugar,60,
+besan_ladoo,besan,100,
+besan_ladoo,ghee,50,
+besan_ladoo,sugar,80,powdered
+papad,urad_dal,100,ground to flour

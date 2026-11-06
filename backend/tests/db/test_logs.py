@@ -48,7 +48,7 @@ WEIGHT_INSERT = "insert into public.body_weight_entries (user_id, measured_on, w
 def food(conn):
     return conn.execute(
         "insert into public.foods (name, diet_class, kcal_per_100g, protein_g_per_100g, carbs_g_per_100g,"
-        " fat_g_per_100g, source) values ('Test curd', 'vegetarian', 60, 3.1, 4.4, 3.4, 'test') returning id"
+        " fat_g_per_100g, source, key) values ('Test curd', 'vegetarian', 60, 3.1, 4.4, 3.4, 'test', 'test_curd') returning id"
     ).fetchone()[0]
 
 

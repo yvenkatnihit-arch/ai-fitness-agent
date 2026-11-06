@@ -1,169 +1,180 @@
-key,name,local_names,category,diet_class,source,source_id,source_name,kcal,protein_g,carbs_g,fat_g,fiber_g,carbs_quality,match
-toor_dal,Toor dal (split pigeon peas),arhar dal;tuvar dal;togari bele,pulse,vegan,uk_cofid,13-104,"Beans, pigeon peas, dahl, dried, raw",324.0,21.8,51.45,1.9,,exact,exact
-moong_whole,Moong (whole green gram),sabut moong;green gram;pesarlu,pulse,vegan,usda_sr_legacy,174256,"Mung beans, mature seeds, raw",347.0,23.86,46.32,1.15,16.3,exact,exact
-moong_dal,Moong dal (split green gram),mung dal;pesara pappu;hesaru bele,pulse,vegan,usda_sr_legacy,174256,"Mung beans, mature seeds, raw",347.0,23.86,46.32,1.15,16.3,exact,close
-chana_whole,Kala chana (whole chickpeas),chole;kabuli chana;bengal gram,pulse,vegan,usda_sr_legacy,173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",378.0,20.47,50.75,6.04,12.2,exact,exact
-chana_dal,Chana dal (split chickpeas),bengal gram dal;kadale bele,pulse,vegan,usda_sr_legacy,173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",378.0,20.47,50.75,6.04,12.2,exact,close
-masoor_dal,Masoor dal (split red lentils),red lentils;masur dal,pulse,vegan,uk_cofid,13-657,"Lentils, red, split, dried, raw",311.0,25.6,46.6,1.8,17.4,exact,exact
-masoor_whole,Masoor (whole lentils),sabut masoor;brown lentils,pulse,vegan,usda_sr_legacy,172420,"Lentils, raw",352.0,24.63,52.65,1.06,10.7,exact,exact
-urad_dal,Urad dal (split black gram),dhuli urad;minapa pappu;uddina bele,pulse,vegan,uk_cofid,13-060,"Black gram, duhli urad dahl, split, dried, raw",298.0,27.2,38.34,1.4,,exact,exact
-rajma,Rajma (red kidney beans),kidney beans,pulse,vegan,usda_sr_legacy,173744,"Beans, kidney, red, mature seeds, raw",337.0,22.53,46.09,1.06,15.2,exact,exact
-lobia,Lobia (black-eyed peas),chawli;alasande;cowpeas,pulse,vegan,usda_sr_legacy,173758,"Cowpeas, common (blackeyes, crowder, southern), mature seeds, raw",336.0,23.52,49.43,1.26,10.6,exact,exact
-besan,Besan (gram flour),chickpea flour;kadale hittu,pulse,vegan,usda_sr_legacy,174288,Chickpea flour (besan),387.0,22.39,47.02,6.69,10.8,exact,exact
-soybean,Soybeans (dried),soya beans,pulse,vegan,usda_sr_legacy,174270,"Soybeans, mature seeds, raw",446.0,36.49,20.86,19.94,9.3,exact,exact
-tofu,Tofu (firm),soya paneer,pulse,vegan,usda_sr_legacy,172475,"Tofu, raw, firm, prepared with calcium sulfate",144.0,17.27,0.48,8.72,2.3,exact,exact
-atta,Atta (whole wheat flour),gehun ka atta;chapati flour,cereal,vegan,usda_sr_legacy,168893,"Wheat flour, whole-grain (Includes foods for USDA's Food Distribution Program)",340.0,13.21,61.27,2.5,10.7,exact,close
-rice_white,Rice (white raw),chawal;arisi;akki,cereal,vegan,usda_sr_legacy,169756,"Rice, white, long-grain, regular, raw, unenriched",365.0,7.13,78.65,0.66,1.3,exact,close
-rice_brown,Brown rice (raw),,cereal,vegan,usda_sr_legacy,169703,"Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)",367.0,7.54,72.65,3.2,3.6,exact,exact
-rice_parboiled,Parboiled rice (raw),ukda chawal;boiled rice;puzhungal arisi,cereal,vegan,usda_sr_legacy,169758,"Rice, white, long-grain, parboiled, unenriched, dry",374.0,7.51,79.09,1.03,1.8,exact,exact
-sooji,Sooji (semolina),rava;suji,cereal,vegan,usda_sr_legacy,168933,"Semolina, unenriched",360.0,12.68,68.93,1.05,3.9,exact,exact
-oats,Oats (rolled),porridge oats,cereal,vegan,uk_cofid,11-788,"Porridge oats, unfortified",381.0,10.9,64.29,8.1,7.8,approximate,exact
-jowar,Jowar (sorghum grain),jonna;jola,cereal,vegan,usda_sr_legacy,169716,Sorghum grain,329.0,10.62,65.39,3.46,6.7,exact,exact
-jowar_flour,Jowar flour,jowar atta,cereal,vegan,usda_sr_legacy,168943,"Sorghum flour, whole-grain",359.0,8.43,70.04,3.34,6.6,exact,exact
-paneer,Paneer,cottage cheese (Indian),dairy,vegetarian,uk_cofid,12-495,"Cheese, Paneer",328.0,26.0,0.86,24.5,0.0,exact,exact
-curd,Curd (plain whole milk),dahi;mosaru;thayir,dairy,vegetarian,usda_sr_legacy,171284,"Yogurt, plain, whole milk",61.0,3.47,4.66,3.25,0.0,exact,exact
-milk_whole,Milk (whole),doodh;full cream milk,dairy,vegetarian,usda_sr_legacy,172217,"Milk, whole, 3.25% milkfat, without added vitamin A and vitamin D",61.0,3.15,4.78,3.27,0.0,exact,close
-milk_toned_low,Milk (double toned / 1 %),double toned milk,dairy,vegetarian,usda_sr_legacy,173441,"Milk, fluid, 1% fat, without added vitamin A and vitamin D",42.0,3.37,4.99,0.97,0.0,exact,close
-ghee,Ghee,clarified butter;neyyi;tuppa,fat_oil,vegetarian,usda_sr_legacy,171314,"Butter, Clarified butter (ghee)",900.0,0.0,0.0,100.0,0.0,exact,exact
-oil_mustard,Mustard oil,sarson ka tel,fat_oil,vegan,usda_sr_legacy,172337,"Oil, mustard",884.0,0.0,0.0,100.0,0.0,exact,exact
-oil_soybean,Soybean oil,refined oil,fat_oil,vegan,usda_sr_legacy,171411,"Oil, soybean, salad or cooking",884.0,0.0,0.0,100.0,0.0,exact,exact
-oil_sunflower,Sunflower oil,,fat_oil,vegan,uk_cofid,17-045,"Oil, sunflower",899.0,0.0,0.0,99.9,0.0,exact,exact
-oil_groundnut,Groundnut oil,peanut oil;kadalai ennai,fat_oil,vegan,usda_sr_legacy,171410,"Oil, peanut, salad or cooking",884.0,0.0,0.0,100.0,0.0,exact,exact
-oil_coconut,Coconut oil,nariyal tel;thengai ennai,fat_oil,vegan,usda_sr_legacy,171412,"Oil, coconut",892.0,0.0,0.0,99.06,0.0,exact,exact
-egg,Egg (whole),anda;mutta;motte,egg,eggetarian,usda_sr_legacy,171287,"Egg, whole, raw, fresh",143.0,12.56,0.72,9.51,0.0,exact,exact
-chicken_breast,Chicken breast (skinless),murgh,meat,non_vegetarian,usda_sr_legacy,171509,"Chicken, broilers or fryers, breast, skinless, boneless, meat only, with added solution, raw",108.0,20.32,0.0,3.0,0.0,exact,exact
-chicken_thigh,Chicken thigh (skinless),,meat,non_vegetarian,usda_sr_legacy,173627,"Chicken, broilers or fryers, dark meat, thigh, meat only, raw",121.0,19.66,0.0,4.12,0.0,exact,exact
-mutton,Mutton (goat meat),gosht;goat,meat,non_vegetarian,usda_sr_legacy,175303,"Game meat, goat, raw",109.0,20.6,0.0,2.31,0.0,exact,exact
-mackerel,Mackerel,bangda;ayala;bangude,fish,non_vegetarian,usda_sr_legacy,173672,"Fish, mackerel, Pacific and jack, mixed species, raw",158.0,20.07,0.0,7.89,0.0,exact,close
-prawns,Prawns (raw),jhinga;chemmeen,fish,non_vegetarian,uk_cofid,16-387,"Prawns, king, raw",77.0,17.6,0.0,0.7,0.0,exact,exact
-peanuts,Peanuts (raw),moongphali;groundnut;kadalai,nut_seed,vegan,usda_sr_legacy,172430,"Peanuts, all types, raw",567.0,25.8,7.63,49.24,8.5,exact,exact
-almonds,Almonds,badam,nut_seed,vegan,usda_sr_legacy,170567,"Nuts, almonds",579.0,21.15,9.05,49.93,12.5,exact,exact
-cashews,Cashews (raw),kaju,nut_seed,vegan,usda_sr_legacy,170162,"Nuts, cashew nuts, raw",553.0,18.22,26.89,43.85,3.3,exact,exact
-coconut_fresh,Coconut (fresh),nariyal;thengai,nut_seed,vegan,usda_sr_legacy,170169,"Nuts, coconut meat, raw",354.0,3.33,6.23,33.49,9.0,exact,exact
-potato,Potato,aloo;batata,vegetable,vegan,usda_sr_legacy,170026,"Potatoes, flesh and skin, raw",77.0,2.05,15.39,0.09,2.1,exact,exact
-onion,Onion,pyaz;kanda;vengayam,vegetable,vegan,usda_sr_legacy,170000,"Onions, raw",40.0,1.1,7.64,0.1,1.7,exact,exact
-tomato,Tomato,tamatar,vegetable,vegan,usda_sr_legacy,170457,"Tomatoes, red, ripe, raw, year round average",18.0,0.88,2.69,0.2,1.2,exact,exact
-spinach,Spinach,palak;keerai,vegetable,vegan,usda_sr_legacy,168462,"Spinach, raw",23.0,2.86,1.43,0.39,2.2,exact,exact
-cauliflower,Cauliflower,gobi;phool gobi,vegetable,vegan,usda_sr_legacy,169986,"Cauliflower, raw",25.0,1.92,2.97,0.28,2.0,exact,exact
-cabbage,Cabbage,patta gobi;muttaikose,vegetable,vegan,usda_sr_legacy,169975,"Cabbage, raw",25.0,1.28,3.3,0.1,2.5,exact,exact
-okra,Okra,bhindi;vendakkai,vegetable,vegan,usda_sr_legacy,169260,"Okra, raw",33.0,1.93,4.25,0.19,3.2,exact,exact
-brinjal,Brinjal (eggplant),baingan;vankaya;kathirikai,vegetable,vegan,usda_sr_legacy,169228,"Eggplant, raw",25.0,0.98,2.88,0.18,3.0,exact,exact
-carrot,Carrot,gajar,vegetable,vegan,usda_sr_legacy,170393,"Carrots, raw",41.0,0.93,6.78,0.24,2.8,exact,exact
-green_peas,Green peas,matar;pattani,vegetable,vegan,usda_sr_legacy,170419,"Peas, green, raw",81.0,5.42,8.75,0.4,5.7,exact,exact
-karela,Bitter gourd,karela;pavakkai;hagalakai,vegetable,vegan,uk_cofid,13-252,"Gourd, karela, raw",11.0,1.6,0.73,0.2,2.6,exact,exact
-lauki,Bottle gourd,lauki;dudhi;sorakaya,vegetable,vegan,usda_sr_legacy,169232,"Gourd, white-flowered (calabash), raw",14.0,0.62,2.89,0.02,0.5,exact,exact
-cucumber,Cucumber,kheera;khira,vegetable,vegan,usda_sr_legacy,168409,"Cucumber, with peel, raw",15.0,0.65,3.13,0.11,0.5,exact,exact
-banana,Banana,kela;vazhaipazham,fruit,vegan,usda_sr_legacy,173944,"Bananas, raw",89.0,1.09,20.24,0.33,2.6,exact,exact
-mango,Mango,aam;mamidi,fruit,vegan,usda_sr_legacy,169910,"Mangos, raw",60.0,0.82,13.38,0.38,1.6,exact,exact
-guava,Guava,amrood;peru,fruit,vegan,usda_sr_legacy,173044,"Guavas, common, raw",68.0,2.55,8.92,0.95,5.4,exact,close
-papaya,Papaya,papita,fruit,vegan,usda_sr_legacy,169926,"Papayas, raw",43.0,0.47,9.12,0.26,1.7,exact,exact
-orange,Orange,santra;narangi,fruit,vegan,usda_sr_legacy,169097,"Oranges, raw, all commercial varieties",47.0,0.94,9.35,0.12,2.4,exact,exact
-sugar,Sugar,cheeni;shakkar,sweetener,vegan,usda_sr_legacy,169655,"Sugars, granulated",387.0,0.0,99.98,0.0,0.0,exact,exact
-honey,Honey,shahad;madhu,sweetener,vegetarian,usda_sr_legacy,169640,Honey,304.0,0.3,82.2,0.0,0.2,exact,exact
-turmeric,Turmeric (ground),haldi;manjal;arishina,spice,vegan,usda_sr_legacy,172231,"Spices, turmeric, ground",312.0,9.68,44.44,3.25,22.7,exact,exact
-chilli_powder,Red chilli powder,lal mirch;kashmiri mirch;milagai thool,spice,vegan,usda_sr_legacy,170932,"Spices, pepper, red or cayenne",318.0,12.01,29.43,17.27,27.2,exact,exact
-cumin,Cumin seeds,jeera;jeerige,spice,vegan,usda_sr_legacy,170923,"Spices, cumin seed",375.0,17.81,33.74,22.27,10.5,exact,exact
-coriander_seed,Coriander seeds / powder,dhania;kothamalli vidhai,spice,vegan,usda_sr_legacy,170922,"Spices, coriander seed",298.0,12.37,13.09,17.77,41.9,exact,exact
-mustard_seed,Mustard seeds,rai;sarson;kadugu;sasive,spice,vegan,usda_sr_legacy,170929,"Spices, mustard seed, ground",508.0,26.08,15.89,36.24,12.2,exact,close
-fenugreek_seed,Fenugreek seeds,methi dana;vendhayam,spice,vegan,usda_sr_legacy,171324,"Spices, fenugreek seed",323.0,23.0,33.75,6.41,24.6,exact,exact
-ginger,Ginger (fresh),adrak;inji;shunti,vegetable,vegan,usda_sr_legacy,169231,"Ginger root, raw",80.0,1.82,15.77,0.75,2.0,exact,exact
-garlic,Garlic,lehsun;poondu;bellulli,vegetable,vegan,usda_sr_legacy,169230,"Garlic, raw",149.0,6.36,30.96,0.5,2.1,exact,exact
-green_chilli,Green chilli,hari mirch;pachai milagai,vegetable,vegan,usda_sr_legacy,170497,"Peppers, hot chili, green, raw",40.0,2.0,7.96,0.2,1.5,exact,exact
-coriander_leaves,Coriander leaves,hara dhania;kothamalli,vegetable,vegan,usda_sr_legacy,169997,"Coriander (cilantro) leaves, raw",23.0,2.13,0.87,0.52,2.8,exact,exact
-mint,Mint leaves,pudina,vegetable,vegan,usda_sr_legacy,173475,"Spearmint, fresh",44.0,3.29,1.61,0.73,6.8,exact,exact
-drumstick,Drumstick (pods),sahjan;murungakkai;nuggekai,vegetable,vegan,usda_sr_legacy,170483,"Drumstick pods, raw",37.0,2.1,5.33,0.2,3.2,exact,exact
-drumstick_leaves,Drumstick leaves,moringa leaves;murungai keerai,vegetable,vegan,usda_sr_legacy,168416,"Drumstick leaves, raw",64.0,9.4,6.28,1.4,2.0,exact,exact
-pumpkin,Pumpkin,kaddu;parangikai,vegetable,vegan,usda_sr_legacy,168448,"Pumpkin, raw",26.0,1.0,6.0,0.1,0.5,exact,exact
-beetroot,Beetroot,chukandar,vegetable,vegan,usda_sr_legacy,169145,"Beets, raw",43.0,1.61,6.76,0.17,2.8,exact,exact
-mooli,Radish (white),mooli;mullangi,vegetable,vegan,usda_sr_legacy,168451,"Radishes, oriental, raw",18.0,0.6,2.5,0.1,1.6,exact,exact
-capsicum,Capsicum (green),shimla mirch;bell pepper,vegetable,vegan,usda_sr_legacy,170427,"Peppers, sweet, green, raw",20.0,0.86,2.94,0.17,1.7,exact,exact
-french_beans,French beans,beans;phalli;beans palya,vegetable,vegan,usda_sr_legacy,169961,"Beans, snap, green, raw",31.0,1.83,4.27,0.22,2.7,exact,exact
-ridge_gourd,Ridge gourd,turai;peerkangai;heerekai,vegetable,vegan,uk_cofid,13-254,"Gourd, ridge, raw",17.0,0.8,3.28,0.1,,exact,exact
-mushroom,Mushroom (white button),khumb,vegetable,vegan,usda_sr_legacy,169251,"Mushrooms, white, raw",22.0,3.09,2.26,0.34,1.0,exact,exact
-sweet_potato,Sweet potato,shakarkandi;sakkaravalli kizhangu,vegetable,vegan,usda_sr_legacy,168482,"Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)",86.0,1.57,17.12,0.05,3.0,exact,exact
-arbi,Colocasia (taro root),arbi;seppankizhangu;kesu,vegetable,vegan,usda_sr_legacy,169308,"Taro, raw",112.0,1.5,22.36,0.2,4.1,exact,exact
-sweet_corn,Sweet corn,makka;butta,vegetable,vegan,usda_sr_legacy,169998,"Corn, sweet, yellow, raw",86.0,3.27,16.7,1.35,2.0,exact,exact
-apple,Apple (with skin),seb,fruit,vegan,usda_sr_legacy,168202,"Apples, raw, golden delicious, with skin",57.0,0.28,11.2,0.15,2.4,exact,close
-grapes,Grapes,angoor;draksha,fruit,vegan,usda_sr_legacy,174683,"Grapes, red or green (European type, such as Thompson seedless), raw",69.0,0.72,17.2,0.16,0.9,exact,exact
-watermelon,Watermelon,tarbooz;kalingad,fruit,vegan,usda_sr_legacy,167765,"Watermelon, raw",30.0,0.61,7.15,0.15,0.4,exact,exact
-pomegranate,Pomegranate,anar;dalimbe,fruit,vegan,usda_sr_legacy,169134,"Pomegranates, raw",83.0,1.67,14.7,1.17,4.0,exact,exact
-pineapple,Pineapple,ananas,fruit,vegan,usda_sr_legacy,169124,"Pineapple, raw, all varieties",50.0,0.54,11.72,0.12,1.4,exact,exact
-chikoo,Sapota,chikoo;sapota,fruit,vegan,usda_sr_legacy,167759,"Sapodilla, raw",83.0,0.44,14.66,1.1,5.3,exact,exact
-lemon_juice,Lemon juice,nimbu ras;elumichai,fruit,vegan,usda_sr_legacy,167747,"Lemon juice, raw",22.0,0.35,6.6,0.24,0.3,exact,exact
-dates,Dates,khajoor;pericham pazham,fruit,vegan,usda_sr_legacy,171726,"Dates, deglet noor",282.0,2.45,67.03,0.39,8.0,exact,close
-raisins,Raisins,kishmish;ularntha thiratchai,fruit,vegan,usda_sr_legacy,168165,"Raisins, dark, seedless (Includes foods for USDA's Food Distribution Program)",299.0,3.3,74.82,0.25,4.5,exact,exact
-coconut_milk,Coconut milk,nariyal doodh;thengai paal,nut_seed,vegan,usda_sr_legacy,170172,"Nuts, coconut milk, raw (liquid expressed from grated meat and water)",230.0,2.29,3.34,23.84,2.2,exact,exact
-tamarind,Tamarind (pulp),imli;puli;hunase,fruit,vegan,usda_sr_legacy,167763,"Tamarinds, raw",239.0,2.8,57.4,0.6,5.1,exact,exact
-sesame,Sesame seeds,til;ellu,nut_seed,vegan,usda_sr_legacy,170150,"Seeds, sesame seeds, whole, dried",573.0,17.73,11.65,49.67,11.8,exact,exact
-flaxseed,Flaxseed,alsi;agase,nut_seed,vegan,usda_sr_legacy,169414,"Seeds, flaxseed",534.0,18.29,1.58,42.16,27.3,exact,exact
-chia,Chia seeds,sabja (not the same);chia,nut_seed,vegan,usda_sr_legacy,170554,"Seeds, chia seeds, dried",486.0,16.54,7.72,30.74,34.4,exact,exact
-pistachio,Pistachios,pista,nut_seed,vegan,usda_sr_legacy,170184,"Nuts, pistachio nuts, raw",560.0,20.16,16.57,45.32,10.6,exact,exact
-walnut,Walnuts,akhrot,nut_seed,vegan,usda_sr_legacy,170187,"Nuts, walnuts, english",654.0,15.23,7.01,65.21,6.7,exact,exact
-peanuts_roasted,Peanuts (dry roasted),bhuna moongphali,nut_seed,vegan,uk_cofid,14-878,"Peanuts, dry roasted",590.0,25.7,9.53,49.8,7.6,approximate,exact
-butter,Butter (salted),makhan;benne,fat_oil,vegetarian,usda_sr_legacy,173410,"Butter, salted",717.0,0.85,0.06,81.11,0.0,exact,exact
-vanaspati,Vanaspati (vegetable ghee),dalda,fat_oil,vegan,uk_cofid,12-502,Ghee made from vegetable oil,900.0,0.1,0.0,100.0,0.0,exact,exact
-cream,Fresh cream,malai,dairy,vegetarian,usda_sr_legacy,170859,"Cream, fluid, heavy whipping",340.0,2.84,2.84,36.08,0.0,exact,close
-chaas,Buttermilk (chaas),chaas;majjige;mor,dairy,vegetarian,usda_sr_legacy,170874,"Milk, buttermilk, fluid, cultured, lowfat",40.0,3.31,4.79,1.07,0.0,exact,close
-maida,Maida (refined wheat flour),all-purpose flour,cereal,vegan,usda_sr_legacy,169761,"Wheat flour, white, all-purpose, unenriched",364.0,10.33,73.61,0.98,2.7,exact,exact
-bread_white,White bread,double roti;pav,cereal,vegan,usda_sr_legacy,174924,"Bread, white, commercially prepared (includes soft bread crumbs)",266.0,8.85,46.72,3.33,2.7,exact,close
-sabudana,Sabudana (tapioca pearls),sago;javvarisi,cereal,vegan,usda_sr_legacy,169717,"Tapioca, pearl, dry",358.0,0.19,87.79,0.02,0.9,exact,exact
-cornflakes,Cornflakes,,cereal,vegan,uk_cofid,11-745,"Breakfast cereal, cornflakes, unfortified",378.0,7.1,83.22,0.8,2.6,approximate,exact
-masoor_dal_cooked,Masoor dal (cooked plain),red lentil dal,dish_dal,vegan,uk_cofid,13-658,"Lentils, red, split, dried, boiled in unsalted water",102.0,8.1,15.38,0.7,6.3,exact,exact
-urad_dal_cooked,Urad dal (cooked),maa ki dal,dish_dal,vegetarian,uk_cofid,12-468,"Urad dahl, homemade",81.0,4.8,7.97,3.2,2.7,exact,close
-mixed_dal,Mixed dal (cooked),panchmel dal,dish_dal,vegetarian,uk_cofid,13-484,"Dahl, mixed, homemade",60.0,4.9,8.21,0.7,3.1,exact,close
-chana_dal_cooked,Chana dal (cooked),,dish_dal,vegetarian,uk_cofid,15-641,"Curry, chick pea dhal, homemade",152.0,7.9,15.13,6.1,,exact,close
-moong_dal_tomato,Moong dal with tomato (cooked),,dish_dal,vegetarian,uk_cofid,15-132,"Curry, mung bean dahl and tomato, homemade",95.0,5.6,10.34,3.6,2.6,exact,close
-moong_dal_bengali,Moong dal Bengali style (cooked),mung dal,dish_dal,vegetarian,uk_cofid,15-768,"Curry, mung bean dahl, Bengali, homemade",74.0,4.2,6.11,3.4,,approximate,close
-sambar,Sambar,sambhar;kuzhambu,dish_dal,vegetarian,uk_cofid,12-467,"Sambar, homemade",49.0,3.1,7.2,0.9,2.4,exact,close
-rajma_curry,Rajma (kidney bean curry),rajma masala,dish_dal,vegetarian,uk_cofid,15-146,"Curry, red kidney bean, Punjabi, homemade",106.0,4.7,9.17,5.6,3.8,exact,close
-chole,Chole (chickpea curry),chana masala;chhole,dish_dal,vegetarian,uk_cofid,15-744,"Curry, chick pea, whole, Gujerati type, homemade",183.0,9.7,18.6,7.6,4.7,approximate,close
-whole_moong_curry,Whole moong curry,sabut moong dal,dish_dal,vegetarian,uk_cofid,15-490,"Curry, mung bean, whole, Punjabi, homemade",74.0,4.2,7.16,2.8,1.9,exact,close
-khichdi,Khichdi,khichadi;pongal,dish_rice,vegan,uk_cofid,15-529,"Khichadi, with vegetable oil",169.0,4.8,24.37,5.2,1.4,approximate,close
-rice_cooked,Steamed white rice,chawal;bhaat;annam,dish_rice,vegan,usda_sr_legacy,169757,"Rice, white, long-grain, regular, unenriched, cooked without salt",130.0,2.69,27.77,0.28,0.4,exact,exact
-basmati_cooked,Basmati rice (cooked),,dish_rice,vegan,uk_cofid,11-858,"Rice, white, basmati, boiled in unsalted water",117.0,2.8,24.09,0.7,0.6,approximate,exact
-brown_rice_cooked,Brown rice (cooked),,dish_rice,vegan,uk_cofid,11-867,"Rice, brown, basmati, boiled in unsalted water",131.0,3.3,26.1,1.1,1.2,approximate,exact
-pulao_plain,Plain pulao,pilau;jeera rice,dish_rice,vegetarian,uk_cofid,11-968,"Rice, pilau, plain, homemade",134.0,2.5,22.15,3.7,0.6,exact,close
-veg_pulao,Vegetable pulao,veg pilau,dish_rice,vegetarian,uk_cofid,12-472,"Pilau, vegetable, homemade",112.0,3.3,20.57,1.5,2.2,exact,close
-chicken_biryani,Chicken biryani,,dish_rice,non_vegetarian,uk_cofid,19-454,"Biryani, chicken, takeaway",163.0,8.5,11.58,7.4,1.2,approximate,close
-mutton_biryani,Mutton biryani,gosht biryani,dish_rice,non_vegetarian,uk_cofid,19-591,"Curry, lamb biryani, homemade",195.0,7.1,18.54,9.2,0.6,approximate,close
-roti,Roti / chapati (no fat),phulka;chapati;poli,dish_bread,vegan,uk_cofid,11-459,"Chapatis, made without fat",202.0,7.3,39.8,1.0,,approximate,exact
-roti_with_fat,Roti / chapati with ghee or oil,chapati with ghee,dish_bread,vegetarian,uk_cofid,11-987,"Chapatis, made with fat, retail",328.0,8.1,43.99,12.8,,approximate,close
-paratha,Plain paratha,parotta,dish_bread,vegetarian,uk_cofid,11-1104,"Paratha, homemade",333.0,7.8,41.67,14.4,4.9,approximate,close
-mooli_paratha,Mooli paratha,radish paratha,dish_bread,vegetarian,uk_cofid,11-912,"Mooli paratha, homemade",171.0,5.9,30.87,2.3,4.8,exact,close
-puri,Puri,poori,dish_bread,vegetarian,uk_cofid,11-911,"Puri, homemade",366.0,7.2,33.14,22.3,3.5,exact,close
-naan,Naan,,dish_bread,vegetarian,uk_cofid,11-973,"Bread, naan, retail",285.0,7.8,45.68,7.3,2.9,approximate,close
-aloo_gobi,Aloo gobi,,dish_sabzi,vegetarian,uk_cofid,15-679,"Bhaji, cauliflower and potato, homemade",106.0,3.3,9.52,6.8,2.3,exact,close
-aloo_pyaz,Aloo pyaz sabzi,potato onion sabzi,dish_sabzi,vegetarian,uk_cofid,15-690,"Bhaji, potato and onion, homemade",162.0,2.1,15.25,10.1,2.6,exact,close
-bhindi_sabzi,Bhindi sabzi,okra fry;bhindi masala,dish_sabzi,vegan,uk_cofid,15-685,"Bhaji, okra, Bangladeshi, with vegetable oil, homemade",97.0,2.4,6.95,6.4,3.3,exact,close
-cabbage_aloo,Cabbage aloo sabzi,patta gobi,dish_sabzi,vegan,uk_cofid,15-675,"Bhaji, cabbage and potato, with vegetable oil",108.0,2.7,8.67,6.8,4.1,approximate,close
-aloo_gobi_matar,Aloo gobi matar,,dish_sabzi,vegan,uk_cofid,15-022,"Bhaji, cauliflower, potato and pea, with vegetable oil",166.0,3.4,7.57,13.7,1.9,exact,close
-palak_sabzi,Palak sabzi,spinach bhaji,dish_sabzi,vegetarian,uk_cofid,15-694,"Bhaji, spinach, homemade",83.0,3.3,2.18,6.9,2.4,approximate,close
-baingan_aloo,Baingan aloo,brinjal potato sabzi,dish_sabzi,vegetarian,uk_cofid,15-669,"Bhaji, aubergine and potato, homemade",135.0,1.8,12.35,8.8,1.4,exact,close
-methi_aloo,Methi aloo,,dish_sabzi,vegetarian,uk_cofid,15-628,"Methi aloo, homemade",142.0,2.7,9.31,10.4,2.9,exact,close
-saag,Saag,sarson ka saag,dish_sabzi,vegetarian,uk_cofid,15-629,"Saag, homemade",111.0,3.3,4.68,8.8,2.3,exact,close
-bombay_potato,Dry aloo sabzi,bombay potato;aloo fry,dish_sabzi,vegetarian,uk_cofid,15-739,"Curry, Bombay potato, homemade",118.0,1.8,12.6,6.7,1.9,approximate,close
-aloo_matar,Aloo matar,potato pea curry,dish_sabzi,vegetarian,uk_cofid,15-781,"Curry, potato and pea, homemade",92.0,2.7,10.43,3.7,3.1,approximate,close
-chicken_curry,Chicken curry,,dish_curry_meat,non_vegetarian,uk_cofid,19-322,"Curry, chicken, average, takeaway",145.0,11.7,2.23,9.8,2.2,approximate,close
-chicken_korma,Chicken korma,,dish_curry_meat,non_vegetarian,uk_cofid,19-565,"Curry, chicken korma, homemade",127.0,14.6,3.94,5.1,0.7,approximate,close
-mutton_curry,Mutton rogan josh,mutton curry,dish_curry_meat,non_vegetarian,uk_cofid,19-595,"Curry, lamb rogan josh, homemade",149.0,14.4,3.13,9.1,1.8,approximate,close
-fish_curry,Fish curry,,dish_curry_meat,non_vegetarian,uk_cofid,16-364,"Curry, fish, homemade",139.0,11.3,1.88,9.6,2.1,exact,close
-egg_curry,Egg curry,anda curry,dish_curry_meat,eggetarian,uk_cofid,15-754,"Curry, egg, with rapeseed oil, homemade",149.0,5.3,3.42,12.2,1.4,approximate,close
-egg_aloo_curry,Egg and potato curry,anda aloo,dish_curry_meat,eggetarian,uk_cofid,15-750,"Curry, egg and potato, homemade",138.0,7.5,5.61,9.3,1.1,approximate,close
-raita,Raita,,dish_side,vegetarian,uk_cofid,17-832,"Raita, homemade",57.0,4.4,5.52,2.4,0.4,approximate,close
-boiled_egg,Boiled egg,anda,dish_side,eggetarian,uk_cofid,12-940,"Eggs, chicken, whole, boiled",143.0,14.1,0.0,9.6,0.0,exact,exact
-grilled_chicken,Grilled chicken breast (no skin),,dish_side,non_vegetarian,uk_cofid,18-323,"Chicken, breast, grilled without skin, meat only",148.0,32.0,0.0,2.2,0.0,exact,exact
-boiled_potato,Boiled potato,ubla aloo,dish_side,vegan,uk_cofid,13-490,"Potatoes, old, boiled in unsalted water, flesh only",74.0,1.8,15.97,0.1,1.6,exact,exact
-chana_boiled,Boiled kabuli chana,boiled chickpeas,dish_side,vegan,uk_cofid,13-662,"Beans, chick peas, Kabuli, whole, dried, boiled in unsalted water",129.0,8.4,16.67,3.0,10.6,exact,exact
-moong_boiled,Boiled whole moong,,dish_side,vegan,uk_cofid,13-664,"Beans, mung, whole, dried, boiled in unsalted water",100.0,8.6,14.38,0.7,6.1,exact,exact
-rajma_boiled,Boiled rajma,boiled kidney beans,dish_side,vegan,uk_cofid,13-659,"Beans, red kidney, dried, boiled in unsalted water",100.0,8.6,13.76,1.0,11.1,exact,exact
-oats_water,Oats porridge (with water),,dish_breakfast,vegan,uk_cofid,11-1107,"Porridge, made with water",47.0,1.4,8.0,1.0,1.0,approximate,exact
-oats_milk,Oats porridge (milk and water),,dish_breakfast,vegetarian,uk_cofid,11-1106,"Porridge, made with milk and water",72.0,3.1,10.38,1.9,1.0,approximate,exact
-omelette,Plain omelette,anda omelette,dish_breakfast,eggetarian,uk_cofid,12-946,"Omelette, plain, homemade",191.0,10.9,0.0,16.4,0.0,exact,close
-samosa,Vegetable samosa,,dish_snack,vegetarian,uk_cofid,15-305,"Samosas, vegetable, retail",217.0,5.1,27.41,9.3,3.5,exact,close
-pakora,Vegetable pakora,pakoda;bhajji,dish_snack,vegetarian,uk_cofid,11-1101,"Pakoras, homemade",173.0,8.1,17.0,8.1,4.5,approximate,close
-onion_pakora,Onion pakora,kanda bhaji;onion bhajia,dish_snack,vegetarian,uk_cofid,15-828,"Pakora/bhajia, onion, fried in vegetable oil, homemade",270.0,11.2,21.97,14.7,5.7,approximate,close
-namkeen_mixture,Namkeen mixture,bombay mix;chiwda mixture,dish_snack,vegetarian,uk_cofid,17-764,Bombay mix,503.0,18.8,32.01,32.9,8.8,approximate,close
-gajar_halwa,Gajar halwa,carrot halwa,dish_sweet,vegetarian,uk_cofid,17-798,"Halva, carrot, homemade",354.0,4.8,41.6,16.6,4.7,approximate,close
-sooji_halwa,Sooji halwa,rava kesari;sheera,dish_sweet,vegetarian,uk_cofid,17-799,"Halva, semolina, homemade",342.0,2.2,46.17,16.7,0.5,approximate,close
-gulab_jamun,Gulab jamun,,dish_sweet,vegetarian,uk_cofid,11-1081,"Gulab jamen/jambu, homemade",273.0,6.5,46.9,6.6,0.5,approximate,close
-kulfi,Kulfi,,dish_sweet,vegetarian,uk_cofid,12-606,"Kulfi, homemade",457.0,5.7,13.13,42.4,0.5,approximate,close
+key,name,local_names,category,diet_class,source,source_id,source_name,kcal,protein_g,carbs_g,fat_g,fiber_g,carbs_quality,match,status
+toor_dal,Toor dal (split pigeon peas),arhar dal;tuvar dal;togari bele,pulse,vegan,uk_cofid,13-104,"Beans, pigeon peas, dahl, dried, raw",324.0,21.8,51.45,1.9,,exact,exact,ready
+moong_whole,Moong (whole green gram),sabut moong;green gram;pesarlu,pulse,vegan,usda_sr_legacy,174256,"Mung beans, mature seeds, raw",347.0,23.86,46.32,1.15,16.3,exact,exact,ready
+moong_dal,Moong dal (split green gram),mung dal;pesara pappu;hesaru bele,pulse,vegan,usda_sr_legacy,174256,"Mung beans, mature seeds, raw",347.0,23.86,46.32,1.15,16.3,exact,close,review
+chana_whole,Kala chana (whole chickpeas),chole;kabuli chana;bengal gram,pulse,vegan,usda_sr_legacy,173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",378.0,20.47,50.75,6.04,12.2,exact,exact,ready
+chana_dal,Chana dal (split chickpeas),bengal gram dal;kadale bele,pulse,vegan,usda_sr_legacy,173756,"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw",378.0,20.47,50.75,6.04,12.2,exact,close,review
+masoor_dal,Masoor dal (split red lentils),red lentils;masur dal,pulse,vegan,uk_cofid,13-657,"Lentils, red, split, dried, raw",311.0,25.6,46.6,1.8,17.4,exact,exact,ready
+masoor_whole,Masoor (whole lentils),sabut masoor;brown lentils,pulse,vegan,usda_sr_legacy,172420,"Lentils, raw",352.0,24.63,52.65,1.06,10.7,exact,exact,ready
+urad_dal,Urad dal (split black gram),dhuli urad;minapa pappu;uddina bele,pulse,vegan,uk_cofid,13-060,"Black gram, duhli urad dahl, split, dried, raw",298.0,27.2,38.34,1.4,,exact,exact,ready
+rajma,Rajma (red kidney beans),kidney beans,pulse,vegan,usda_sr_legacy,173744,"Beans, kidney, red, mature seeds, raw",337.0,22.53,46.09,1.06,15.2,exact,exact,ready
+lobia,Lobia (black-eyed peas),chawli;alasande;cowpeas,pulse,vegan,usda_sr_legacy,173758,"Cowpeas, common (blackeyes, crowder, southern), mature seeds, raw",336.0,23.52,49.43,1.26,10.6,exact,exact,ready
+besan,Besan (gram flour),chickpea flour;kadale hittu,pulse,vegan,usda_sr_legacy,174288,Chickpea flour (besan),387.0,22.39,47.02,6.69,10.8,exact,exact,ready
+soybean,Soybeans (dried),soya beans,pulse,vegan,usda_sr_legacy,174270,"Soybeans, mature seeds, raw",446.0,36.49,20.86,19.94,9.3,exact,exact,ready
+tofu,Tofu (firm),soya paneer,pulse,vegan,usda_sr_legacy,172475,"Tofu, raw, firm, prepared with calcium sulfate",144.0,17.27,0.48,8.72,2.3,exact,exact,ready
+atta,Atta (whole wheat flour),gehun ka atta;chapati flour,cereal,vegan,usda_sr_legacy,168893,"Wheat flour, whole-grain (Includes foods for USDA's Food Distribution Program)",340.0,13.21,61.27,2.5,10.7,exact,close,review
+rice_white,Rice (white raw),chawal;arisi;akki,cereal,vegan,usda_sr_legacy,169756,"Rice, white, long-grain, regular, raw, unenriched",365.0,7.13,78.65,0.66,1.3,exact,close,review
+rice_brown,Brown rice (raw),,cereal,vegan,usda_sr_legacy,169703,"Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)",367.0,7.54,72.65,3.2,3.6,exact,exact,ready
+rice_parboiled,Parboiled rice (raw),ukda chawal;boiled rice;puzhungal arisi,cereal,vegan,usda_sr_legacy,169758,"Rice, white, long-grain, parboiled, unenriched, dry",374.0,7.51,79.09,1.03,1.8,exact,exact,ready
+sooji,Sooji (semolina),rava;suji,cereal,vegan,usda_sr_legacy,168933,"Semolina, unenriched",360.0,12.68,68.93,1.05,3.9,exact,exact,ready
+oats,Oats (rolled),porridge oats,cereal,vegan,uk_cofid,11-788,"Porridge oats, unfortified",381.0,10.9,64.29,8.1,7.8,approximate,exact,review
+jowar,Jowar (sorghum grain),jonna;jola,cereal,vegan,usda_sr_legacy,169716,Sorghum grain,329.0,10.62,65.39,3.46,6.7,exact,exact,ready
+jowar_flour,Jowar flour,jowar atta,cereal,vegan,usda_sr_legacy,168943,"Sorghum flour, whole-grain",359.0,8.43,70.04,3.34,6.6,exact,exact,ready
+paneer,Paneer,cottage cheese (Indian),dairy,vegetarian,uk_cofid,12-495,"Cheese, Paneer",328.0,26.0,0.86,24.5,0.0,exact,exact,ready
+curd,Curd (plain whole milk),dahi;mosaru;thayir,dairy,vegetarian,usda_sr_legacy,171284,"Yogurt, plain, whole milk",61.0,3.47,4.66,3.25,0.0,exact,exact,ready
+milk_whole,Milk (whole),doodh;full cream milk,dairy,vegetarian,usda_sr_legacy,172217,"Milk, whole, 3.25% milkfat, without added vitamin A and vitamin D",61.0,3.15,4.78,3.27,0.0,exact,close,review
+milk_toned_low,Milk (double toned / 1 %),double toned milk,dairy,vegetarian,usda_sr_legacy,173441,"Milk, fluid, 1% fat, without added vitamin A and vitamin D",42.0,3.37,4.99,0.97,0.0,exact,close,review
+ghee,Ghee,clarified butter;neyyi;tuppa,fat_oil,vegetarian,usda_sr_legacy,171314,"Butter, Clarified butter (ghee)",900.0,0.0,0.0,100.0,0.0,exact,exact,ready
+oil_mustard,Mustard oil,sarson ka tel,fat_oil,vegan,usda_sr_legacy,172337,"Oil, mustard",884.0,0.0,0.0,100.0,0.0,exact,exact,ready
+oil_soybean,Soybean oil,refined oil,fat_oil,vegan,usda_sr_legacy,171411,"Oil, soybean, salad or cooking",884.0,0.0,0.0,100.0,0.0,exact,exact,ready
+oil_sunflower,Sunflower oil,,fat_oil,vegan,uk_cofid,17-045,"Oil, sunflower",899.0,0.0,0.0,99.9,0.0,exact,exact,ready
+oil_groundnut,Groundnut oil,peanut oil;kadalai ennai,fat_oil,vegan,usda_sr_legacy,171410,"Oil, peanut, salad or cooking",884.0,0.0,0.0,100.0,0.0,exact,exact,ready
+oil_coconut,Coconut oil,nariyal tel;thengai ennai,fat_oil,vegan,usda_sr_legacy,171412,"Oil, coconut",892.0,0.0,0.0,99.06,0.0,exact,exact,ready
+egg,Egg (whole),anda;mutta;motte,egg,eggetarian,usda_sr_legacy,171287,"Egg, whole, raw, fresh",143.0,12.56,0.72,9.51,0.0,exact,exact,ready
+chicken_breast,Chicken breast (skinless),murgh,meat,non_vegetarian,usda_sr_legacy,171509,"Chicken, broilers or fryers, breast, skinless, boneless, meat only, with added solution, raw",108.0,20.32,0.0,3.0,0.0,exact,exact,ready
+chicken_thigh,Chicken thigh (skinless),,meat,non_vegetarian,usda_sr_legacy,173627,"Chicken, broilers or fryers, dark meat, thigh, meat only, raw",121.0,19.66,0.0,4.12,0.0,exact,exact,ready
+mutton,Mutton (goat meat),gosht;goat,meat,non_vegetarian,usda_sr_legacy,175303,"Game meat, goat, raw",109.0,20.6,0.0,2.31,0.0,exact,exact,ready
+mackerel,Mackerel,bangda;ayala;bangude,fish,non_vegetarian,usda_sr_legacy,173672,"Fish, mackerel, Pacific and jack, mixed species, raw",158.0,20.07,0.0,7.89,0.0,exact,close,review
+prawns,Prawns (raw),jhinga;chemmeen,fish,non_vegetarian,uk_cofid,16-387,"Prawns, king, raw",77.0,17.6,0.0,0.7,0.0,exact,exact,ready
+peanuts,Peanuts (raw),moongphali;groundnut;kadalai,nut_seed,vegan,usda_sr_legacy,172430,"Peanuts, all types, raw",567.0,25.8,7.63,49.24,8.5,exact,exact,ready
+almonds,Almonds,badam,nut_seed,vegan,usda_sr_legacy,170567,"Nuts, almonds",579.0,21.15,9.05,49.93,12.5,exact,exact,ready
+cashews,Cashews (raw),kaju,nut_seed,vegan,usda_sr_legacy,170162,"Nuts, cashew nuts, raw",553.0,18.22,26.89,43.85,3.3,exact,exact,ready
+coconut_fresh,Coconut (fresh),nariyal;thengai,nut_seed,vegan,usda_sr_legacy,170169,"Nuts, coconut meat, raw",354.0,3.33,6.23,33.49,9.0,exact,exact,ready
+potato,Potato,aloo;batata,vegetable,vegan,usda_sr_legacy,170026,"Potatoes, flesh and skin, raw",77.0,2.05,15.39,0.09,2.1,exact,exact,ready
+onion,Onion,pyaz;kanda;vengayam,vegetable,vegan,usda_sr_legacy,170000,"Onions, raw",40.0,1.1,7.64,0.1,1.7,exact,exact,ready
+tomato,Tomato,tamatar,vegetable,vegan,usda_sr_legacy,170457,"Tomatoes, red, ripe, raw, year round average",18.0,0.88,2.69,0.2,1.2,exact,exact,ready
+spinach,Spinach,palak;keerai,vegetable,vegan,usda_sr_legacy,168462,"Spinach, raw",23.0,2.86,1.43,0.39,2.2,exact,exact,ready
+cauliflower,Cauliflower,gobi;phool gobi,vegetable,vegan,usda_sr_legacy,169986,"Cauliflower, raw",25.0,1.92,2.97,0.28,2.0,exact,exact,ready
+cabbage,Cabbage,patta gobi;muttaikose,vegetable,vegan,usda_sr_legacy,169975,"Cabbage, raw",25.0,1.28,3.3,0.1,2.5,exact,exact,ready
+okra,Okra,bhindi;vendakkai,vegetable,vegan,usda_sr_legacy,169260,"Okra, raw",33.0,1.93,4.25,0.19,3.2,exact,exact,ready
+brinjal,Brinjal (eggplant),baingan;vankaya;kathirikai,vegetable,vegan,usda_sr_legacy,169228,"Eggplant, raw",25.0,0.98,2.88,0.18,3.0,exact,exact,ready
+carrot,Carrot,gajar,vegetable,vegan,usda_sr_legacy,170393,"Carrots, raw",41.0,0.93,6.78,0.24,2.8,exact,exact,ready
+green_peas,Green peas,matar;pattani,vegetable,vegan,usda_sr_legacy,170419,"Peas, green, raw",81.0,5.42,8.75,0.4,5.7,exact,exact,ready
+karela,Bitter gourd,karela;pavakkai;hagalakai,vegetable,vegan,uk_cofid,13-252,"Gourd, karela, raw",11.0,1.6,0.73,0.2,2.6,exact,exact,ready
+lauki,Bottle gourd,lauki;dudhi;sorakaya,vegetable,vegan,usda_sr_legacy,169232,"Gourd, white-flowered (calabash), raw",14.0,0.62,2.89,0.02,0.5,exact,exact,ready
+cucumber,Cucumber,kheera;khira,vegetable,vegan,usda_sr_legacy,168409,"Cucumber, with peel, raw",15.0,0.65,3.13,0.11,0.5,exact,exact,ready
+banana,Banana,kela;vazhaipazham,fruit,vegan,usda_sr_legacy,173944,"Bananas, raw",89.0,1.09,20.24,0.33,2.6,exact,exact,ready
+mango,Mango,aam;mamidi,fruit,vegan,usda_sr_legacy,169910,"Mangos, raw",60.0,0.82,13.38,0.38,1.6,exact,exact,ready
+guava,Guava,amrood;peru,fruit,vegan,usda_sr_legacy,173044,"Guavas, common, raw",68.0,2.55,8.92,0.95,5.4,exact,close,review
+papaya,Papaya,papita,fruit,vegan,usda_sr_legacy,169926,"Papayas, raw",43.0,0.47,9.12,0.26,1.7,exact,exact,ready
+orange,Orange,santra;narangi,fruit,vegan,usda_sr_legacy,169097,"Oranges, raw, all commercial varieties",47.0,0.94,9.35,0.12,2.4,exact,exact,ready
+sugar,Sugar,cheeni;shakkar,sweetener,vegan,usda_sr_legacy,169655,"Sugars, granulated",387.0,0.0,99.98,0.0,0.0,exact,exact,ready
+honey,Honey,shahad;madhu,sweetener,vegetarian,usda_sr_legacy,169640,Honey,304.0,0.3,82.2,0.0,0.2,exact,exact,ready
+turmeric,Turmeric (ground),haldi;manjal;arishina,spice,vegan,usda_sr_legacy,172231,"Spices, turmeric, ground",312.0,9.68,44.44,3.25,22.7,exact,exact,ready
+chilli_powder,Red chilli powder,lal mirch;kashmiri mirch;milagai thool,spice,vegan,usda_sr_legacy,170932,"Spices, pepper, red or cayenne",318.0,12.01,29.43,17.27,27.2,exact,exact,review
+cumin,Cumin seeds,jeera;jeerige,spice,vegan,usda_sr_legacy,170923,"Spices, cumin seed",375.0,17.81,33.74,22.27,10.5,exact,exact,review
+coriander_seed,Coriander seeds / powder,dhania;kothamalli vidhai,spice,vegan,usda_sr_legacy,170922,"Spices, coriander seed",298.0,12.37,13.09,17.77,41.9,exact,exact,review
+mustard_seed,Mustard seeds,rai;sarson;kadugu;sasive,spice,vegan,usda_sr_legacy,170929,"Spices, mustard seed, ground",508.0,26.08,15.89,36.24,12.2,exact,close,review
+fenugreek_seed,Fenugreek seeds,methi dana;vendhayam,spice,vegan,usda_sr_legacy,171324,"Spices, fenugreek seed",323.0,23.0,33.75,6.41,24.6,exact,exact,review
+ginger,Ginger (fresh),adrak;inji;shunti,vegetable,vegan,usda_sr_legacy,169231,"Ginger root, raw",80.0,1.82,15.77,0.75,2.0,exact,exact,ready
+garlic,Garlic,lehsun;poondu;bellulli,vegetable,vegan,usda_sr_legacy,169230,"Garlic, raw",149.0,6.36,30.96,0.5,2.1,exact,exact,review
+green_chilli,Green chilli,hari mirch;pachai milagai,vegetable,vegan,usda_sr_legacy,170497,"Peppers, hot chili, green, raw",40.0,2.0,7.96,0.2,1.5,exact,exact,ready
+coriander_leaves,Coriander leaves,hara dhania;kothamalli,vegetable,vegan,usda_sr_legacy,169997,"Coriander (cilantro) leaves, raw",23.0,2.13,0.87,0.52,2.8,exact,exact,ready
+mint,Mint leaves,pudina,vegetable,vegan,usda_sr_legacy,173475,"Spearmint, fresh",44.0,3.29,1.61,0.73,6.8,exact,exact,ready
+drumstick,Drumstick (pods),sahjan;murungakkai;nuggekai,vegetable,vegan,usda_sr_legacy,170483,"Drumstick pods, raw",37.0,2.1,5.33,0.2,3.2,exact,exact,ready
+drumstick_leaves,Drumstick leaves,moringa leaves;murungai keerai,vegetable,vegan,usda_sr_legacy,168416,"Drumstick leaves, raw",64.0,9.4,6.28,1.4,2.0,exact,exact,ready
+pumpkin,Pumpkin,kaddu;parangikai,vegetable,vegan,usda_sr_legacy,168448,"Pumpkin, raw",26.0,1.0,6.0,0.1,0.5,exact,exact,ready
+beetroot,Beetroot,chukandar,vegetable,vegan,usda_sr_legacy,169145,"Beets, raw",43.0,1.61,6.76,0.17,2.8,exact,exact,ready
+mooli,Radish (white),mooli;mullangi,vegetable,vegan,usda_sr_legacy,168451,"Radishes, oriental, raw",18.0,0.6,2.5,0.1,1.6,exact,exact,ready
+capsicum,Capsicum (green),shimla mirch;bell pepper,vegetable,vegan,usda_sr_legacy,170427,"Peppers, sweet, green, raw",20.0,0.86,2.94,0.17,1.7,exact,exact,ready
+french_beans,French beans,beans;phalli;beans palya,vegetable,vegan,usda_sr_legacy,169961,"Beans, snap, green, raw",31.0,1.83,4.27,0.22,2.7,exact,exact,ready
+ridge_gourd,Ridge gourd,turai;peerkangai;heerekai,vegetable,vegan,uk_cofid,13-254,"Gourd, ridge, raw",17.0,0.8,3.28,0.1,,exact,exact,ready
+mushroom,Mushroom (white button),khumb,vegetable,vegan,usda_sr_legacy,169251,"Mushrooms, white, raw",22.0,3.09,2.26,0.34,1.0,exact,exact,ready
+sweet_potato,Sweet potato,shakarkandi;sakkaravalli kizhangu,vegetable,vegan,usda_sr_legacy,168482,"Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)",86.0,1.57,17.12,0.05,3.0,exact,exact,ready
+arbi,Colocasia (taro root),arbi;seppankizhangu;kesu,vegetable,vegan,usda_sr_legacy,169308,"Taro, raw",112.0,1.5,22.36,0.2,4.1,exact,exact,ready
+sweet_corn,Sweet corn,makka;butta,vegetable,vegan,usda_sr_legacy,169998,"Corn, sweet, yellow, raw",86.0,3.27,16.7,1.35,2.0,exact,exact,ready
+apple,Apple (with skin),seb,fruit,vegan,usda_sr_legacy,168202,"Apples, raw, golden delicious, with skin",57.0,0.28,11.2,0.15,2.4,exact,close,review
+grapes,Grapes,angoor;draksha,fruit,vegan,usda_sr_legacy,174683,"Grapes, red or green (European type, such as Thompson seedless), raw",69.0,0.72,17.2,0.16,0.9,exact,exact,ready
+watermelon,Watermelon,tarbooz;kalingad,fruit,vegan,usda_sr_legacy,167765,"Watermelon, raw",30.0,0.61,7.15,0.15,0.4,exact,exact,ready
+pomegranate,Pomegranate,anar;dalimbe,fruit,vegan,usda_sr_legacy,169134,"Pomegranates, raw",83.0,1.67,14.7,1.17,4.0,exact,exact,ready
+pineapple,Pineapple,ananas,fruit,vegan,usda_sr_legacy,169124,"Pineapple, raw, all varieties",50.0,0.54,11.72,0.12,1.4,exact,exact,ready
+chikoo,Sapota,chikoo;sapota,fruit,vegan,usda_sr_legacy,167759,"Sapodilla, raw",83.0,0.44,14.66,1.1,5.3,exact,exact,ready
+lemon_juice,Lemon juice,nimbu ras;elumichai,fruit,vegan,usda_sr_legacy,167747,"Lemon juice, raw",22.0,0.35,6.6,0.24,0.3,exact,exact,ready
+dates,Dates,khajoor;pericham pazham,fruit,vegan,usda_sr_legacy,171726,"Dates, deglet noor",282.0,2.45,67.03,0.39,8.0,exact,close,review
+raisins,Raisins,kishmish;ularntha thiratchai,fruit,vegan,usda_sr_legacy,168165,"Raisins, dark, seedless (Includes foods for USDA's Food Distribution Program)",299.0,3.3,74.82,0.25,4.5,exact,exact,ready
+coconut_milk,Coconut milk,nariyal doodh;thengai paal,nut_seed,vegan,usda_sr_legacy,170172,"Nuts, coconut milk, raw (liquid expressed from grated meat and water)",230.0,2.29,3.34,23.84,2.2,exact,exact,ready
+tamarind,Tamarind (pulp),imli;puli;hunase,fruit,vegan,usda_sr_legacy,167763,"Tamarinds, raw",239.0,2.8,57.4,0.6,5.1,exact,exact,ready
+sesame,Sesame seeds,til;ellu,nut_seed,vegan,usda_sr_legacy,170150,"Seeds, sesame seeds, whole, dried",573.0,17.73,11.65,49.67,11.8,exact,exact,ready
+flaxseed,Flaxseed,alsi;agase,nut_seed,vegan,usda_sr_legacy,169414,"Seeds, flaxseed",534.0,18.29,1.58,42.16,27.3,exact,exact,ready
+chia,Chia seeds,sabja (not the same);chia,nut_seed,vegan,usda_sr_legacy,170554,"Seeds, chia seeds, dried",486.0,16.54,7.72,30.74,34.4,exact,exact,ready
+pistachio,Pistachios,pista,nut_seed,vegan,usda_sr_legacy,170184,"Nuts, pistachio nuts, raw",560.0,20.16,16.57,45.32,10.6,exact,exact,ready
+walnut,Walnuts,akhrot,nut_seed,vegan,usda_sr_legacy,170187,"Nuts, walnuts, english",654.0,15.23,7.01,65.21,6.7,exact,exact,ready
+peanuts_roasted,Peanuts (dry roasted),bhuna moongphali,nut_seed,vegan,uk_cofid,14-878,"Peanuts, dry roasted",590.0,25.7,9.53,49.8,7.6,approximate,exact,review
+butter,Butter (salted),makhan;benne,fat_oil,vegetarian,usda_sr_legacy,173410,"Butter, salted",717.0,0.85,0.06,81.11,0.0,exact,exact,ready
+vanaspati,Vanaspati (vegetable ghee),dalda,fat_oil,vegan,uk_cofid,12-502,Ghee made from vegetable oil,900.0,0.1,0.0,100.0,0.0,exact,exact,ready
+cream,Fresh cream,malai,dairy,vegetarian,usda_sr_legacy,170859,"Cream, fluid, heavy whipping",340.0,2.84,2.84,36.08,0.0,exact,close,review
+chaas,Buttermilk (chaas),chaas;majjige;mor,dairy,vegetarian,usda_sr_legacy,170874,"Milk, buttermilk, fluid, cultured, lowfat",40.0,3.31,4.79,1.07,0.0,exact,close,review
+maida,Maida (refined wheat flour),all-purpose flour,cereal,vegan,usda_sr_legacy,169761,"Wheat flour, white, all-purpose, unenriched",364.0,10.33,73.61,0.98,2.7,exact,exact,ready
+bread_white,White bread,double roti;pav,cereal,vegan,usda_sr_legacy,174924,"Bread, white, commercially prepared (includes soft bread crumbs)",266.0,8.85,46.72,3.33,2.7,exact,close,review
+sabudana,Sabudana (tapioca pearls),sago;javvarisi,cereal,vegan,usda_sr_legacy,169717,"Tapioca, pearl, dry",358.0,0.19,87.79,0.02,0.9,exact,exact,ready
+cornflakes,Cornflakes,,cereal,vegan,uk_cofid,11-745,"Breakfast cereal, cornflakes, unfortified",378.0,7.1,83.22,0.8,2.6,approximate,exact,review
+masoor_dal_cooked,Masoor dal (cooked plain),red lentil dal,dish_dal,vegan,uk_cofid,13-658,"Lentils, red, split, dried, boiled in unsalted water",102.0,8.1,15.38,0.7,6.3,exact,exact,ready
+urad_dal_cooked,Urad dal (cooked),maa ki dal,dish_dal,vegetarian,uk_cofid,12-468,"Urad dahl, homemade",81.0,4.8,7.97,3.2,2.7,exact,close,review
+mixed_dal,Mixed dal (cooked),panchmel dal,dish_dal,vegetarian,uk_cofid,13-484,"Dahl, mixed, homemade",60.0,4.9,8.21,0.7,3.1,exact,close,review
+chana_dal_cooked,Chana dal (cooked),,dish_dal,vegetarian,uk_cofid,15-641,"Curry, chick pea dhal, homemade",152.0,7.9,15.13,6.1,,exact,close,review
+moong_dal_tomato,Moong dal with tomato (cooked),,dish_dal,vegetarian,uk_cofid,15-132,"Curry, mung bean dahl and tomato, homemade",95.0,5.6,10.34,3.6,2.6,exact,close,review
+moong_dal_bengali,Moong dal Bengali style (cooked),mung dal,dish_dal,vegetarian,uk_cofid,15-768,"Curry, mung bean dahl, Bengali, homemade",74.0,4.2,6.11,3.4,,approximate,close,review
+sambar,Sambar,sambhar;kuzhambu,dish_dal,vegetarian,uk_cofid,12-467,"Sambar, homemade",49.0,3.1,7.2,0.9,2.4,exact,close,review
+rajma_curry,Rajma (kidney bean curry),rajma masala,dish_dal,vegetarian,uk_cofid,15-146,"Curry, red kidney bean, Punjabi, homemade",106.0,4.7,9.17,5.6,3.8,exact,close,review
+chole,Chole (chickpea curry),chana masala;chhole,dish_dal,vegetarian,uk_cofid,15-744,"Curry, chick pea, whole, Gujerati type, homemade",183.0,9.7,18.6,7.6,4.7,approximate,close,review
+whole_moong_curry,Whole moong curry,sabut moong dal,dish_dal,vegetarian,uk_cofid,15-490,"Curry, mung bean, whole, Punjabi, homemade",74.0,4.2,7.16,2.8,1.9,exact,close,review
+khichdi,Khichdi,khichadi;pongal,dish_rice,vegan,uk_cofid,15-529,"Khichadi, with vegetable oil",169.0,4.8,24.37,5.2,1.4,approximate,close,review
+rice_cooked,Steamed white rice,chawal;bhaat;annam,dish_rice,vegan,usda_sr_legacy,169757,"Rice, white, long-grain, regular, unenriched, cooked without salt",130.0,2.69,27.77,0.28,0.4,exact,exact,ready
+basmati_cooked,Basmati rice (cooked),,dish_rice,vegan,uk_cofid,11-858,"Rice, white, basmati, boiled in unsalted water",117.0,2.8,24.09,0.7,0.6,approximate,exact,review
+brown_rice_cooked,Brown rice (cooked),,dish_rice,vegan,uk_cofid,11-867,"Rice, brown, basmati, boiled in unsalted water",131.0,3.3,26.1,1.1,1.2,approximate,exact,review
+pulao_plain,Plain pulao,pilau;jeera rice,dish_rice,vegetarian,uk_cofid,11-968,"Rice, pilau, plain, homemade",134.0,2.5,22.15,3.7,0.6,exact,close,review
+veg_pulao,Vegetable pulao,veg pilau,dish_rice,vegetarian,uk_cofid,12-472,"Pilau, vegetable, homemade",112.0,3.3,20.57,1.5,2.2,exact,close,review
+chicken_biryani,Chicken biryani,,dish_rice,non_vegetarian,uk_cofid,19-454,"Biryani, chicken, takeaway",163.0,8.5,11.58,7.4,1.2,approximate,close,review
+mutton_biryani,Mutton biryani,gosht biryani,dish_rice,non_vegetarian,uk_cofid,19-591,"Curry, lamb biryani, homemade",195.0,7.1,18.54,9.2,0.6,approximate,close,review
+roti,Roti / chapati (no fat),phulka;chapati;poli,dish_bread,vegan,uk_cofid,11-459,"Chapatis, made without fat",202.0,7.3,39.8,1.0,,approximate,exact,review
+roti_with_fat,Roti / chapati with ghee or oil,chapati with ghee,dish_bread,vegetarian,uk_cofid,11-987,"Chapatis, made with fat, retail",328.0,8.1,43.99,12.8,,approximate,close,review
+paratha,Plain paratha,parotta,dish_bread,vegetarian,uk_cofid,11-1104,"Paratha, homemade",333.0,7.8,41.67,14.4,4.9,approximate,close,review
+mooli_paratha,Mooli paratha,radish paratha,dish_bread,vegetarian,uk_cofid,11-912,"Mooli paratha, homemade",171.0,5.9,30.87,2.3,4.8,exact,close,review
+puri,Puri,poori,dish_bread,vegetarian,uk_cofid,11-911,"Puri, homemade",366.0,7.2,33.14,22.3,3.5,exact,close,review
+naan,Naan,,dish_bread,vegetarian,uk_cofid,11-973,"Bread, naan, retail",285.0,7.8,45.68,7.3,2.9,approximate,close,review
+aloo_gobi,Aloo gobi,,dish_sabzi,vegetarian,uk_cofid,15-679,"Bhaji, cauliflower and potato, homemade",106.0,3.3,9.52,6.8,2.3,exact,close,review
+aloo_pyaz,Aloo pyaz sabzi,potato onion sabzi,dish_sabzi,vegetarian,uk_cofid,15-690,"Bhaji, potato and onion, homemade",162.0,2.1,15.25,10.1,2.6,exact,close,review
+bhindi_sabzi,Bhindi sabzi,okra fry;bhindi masala,dish_sabzi,vegan,uk_cofid,15-685,"Bhaji, okra, Bangladeshi, with vegetable oil, homemade",97.0,2.4,6.95,6.4,3.3,exact,close,review
+cabbage_aloo,Cabbage aloo sabzi,patta gobi,dish_sabzi,vegan,uk_cofid,15-675,"Bhaji, cabbage and potato, with vegetable oil",108.0,2.7,8.67,6.8,4.1,approximate,close,review
+aloo_gobi_matar,Aloo gobi matar,,dish_sabzi,vegan,uk_cofid,15-022,"Bhaji, cauliflower, potato and pea, with vegetable oil",166.0,3.4,7.57,13.7,1.9,exact,close,review
+palak_sabzi,Palak sabzi,spinach bhaji,dish_sabzi,vegetarian,uk_cofid,15-694,"Bhaji, spinach, homemade",83.0,3.3,2.18,6.9,2.4,approximate,close,review
+baingan_aloo,Baingan aloo,brinjal potato sabzi,dish_sabzi,vegetarian,uk_cofid,15-669,"Bhaji, aubergine and potato, homemade",135.0,1.8,12.35,8.8,1.4,exact,close,review
+methi_aloo,Methi aloo,,dish_sabzi,vegetarian,uk_cofid,15-628,"Methi aloo, homemade",142.0,2.7,9.31,10.4,2.9,exact,close,review
+saag,Saag,sarson ka saag,dish_sabzi,vegetarian,uk_cofid,15-629,"Saag, homemade",111.0,3.3,4.68,8.8,2.3,exact,close,review
+bombay_potato,Dry aloo sabzi,bombay potato;aloo fry,dish_sabzi,vegetarian,uk_cofid,15-739,"Curry, Bombay potato, homemade",118.0,1.8,12.6,6.7,1.9,approximate,close,review
+aloo_matar,Aloo matar,potato pea curry,dish_sabzi,vegetarian,uk_cofid,15-781,"Curry, potato and pea, homemade",92.0,2.7,10.43,3.7,3.1,approximate,close,review
+chicken_curry,Chicken curry,,dish_curry_meat,non_vegetarian,uk_cofid,19-322,"Curry, chicken, average, takeaway",145.0,11.7,2.23,9.8,2.2,approximate,close,review
+chicken_korma,Chicken korma,,dish_curry_meat,non_vegetarian,uk_cofid,19-565,"Curry, chicken korma, homemade",127.0,14.6,3.94,5.1,0.7,approximate,close,review
+mutton_curry,Mutton rogan josh,mutton curry,dish_curry_meat,non_vegetarian,uk_cofid,19-595,"Curry, lamb rogan josh, homemade",149.0,14.4,3.13,9.1,1.8,approximate,close,review
+fish_curry,Fish curry,,dish_curry_meat,non_vegetarian,uk_cofid,16-364,"Curry, fish, homemade",139.0,11.3,1.88,9.6,2.1,exact,close,review
+egg_curry,Egg curry,anda curry,dish_curry_meat,eggetarian,uk_cofid,15-754,"Curry, egg, with rapeseed oil, homemade",149.0,5.3,3.42,12.2,1.4,approximate,close,review
+egg_aloo_curry,Egg and potato curry,anda aloo,dish_curry_meat,eggetarian,uk_cofid,15-750,"Curry, egg and potato, homemade",138.0,7.5,5.61,9.3,1.1,approximate,close,review
+raita,Raita,,dish_side,vegetarian,uk_cofid,17-832,"Raita, homemade",57.0,4.4,5.52,2.4,0.4,approximate,close,review
+boiled_egg,Boiled egg,anda,dish_side,eggetarian,uk_cofid,12-940,"Eggs, chicken, whole, boiled",143.0,14.1,0.0,9.6,0.0,exact,exact,ready
+grilled_chicken,Grilled chicken breast (no skin),,dish_side,non_vegetarian,uk_cofid,18-323,"Chicken, breast, grilled without skin, meat only",148.0,32.0,0.0,2.2,0.0,exact,exact,ready
+boiled_potato,Boiled potato,ubla aloo,dish_side,vegan,uk_cofid,13-490,"Potatoes, old, boiled in unsalted water, flesh only",74.0,1.8,15.97,0.1,1.6,exact,exact,ready
+chana_boiled,Boiled kabuli chana,boiled chickpeas,dish_side,vegan,uk_cofid,13-662,"Beans, chick peas, Kabuli, whole, dried, boiled in unsalted water",129.0,8.4,16.67,3.0,10.6,exact,exact,ready
+moong_boiled,Boiled whole moong,,dish_side,vegan,uk_cofid,13-664,"Beans, mung, whole, dried, boiled in unsalted water",100.0,8.6,14.38,0.7,6.1,exact,exact,ready
+rajma_boiled,Boiled rajma,boiled kidney beans,dish_side,vegan,uk_cofid,13-659,"Beans, red kidney, dried, boiled in unsalted water",100.0,8.6,13.76,1.0,11.1,exact,exact,ready
+oats_water,Oats porridge (with water),,dish_breakfast,vegan,uk_cofid,11-1107,"Porridge, made with water",47.0,1.4,8.0,1.0,1.0,approximate,exact,review
+oats_milk,Oats porridge (milk and water),,dish_breakfast,vegetarian,uk_cofid,11-1106,"Porridge, made with milk and water",72.0,3.1,10.38,1.9,1.0,approximate,exact,review
+omelette,Plain omelette,anda omelette,dish_breakfast,eggetarian,uk_cofid,12-946,"Omelette, plain, homemade",191.0,10.9,0.0,16.4,0.0,exact,close,review
+samosa,Vegetable samosa,,dish_snack,vegetarian,uk_cofid,15-305,"Samosas, vegetable, retail",217.0,5.1,27.41,9.3,3.5,exact,close,review
+pakora,Vegetable pakora,pakoda;bhajji,dish_snack,vegetarian,uk_cofid,11-1101,"Pakoras, homemade",173.0,8.1,17.0,8.1,4.5,approximate,close,review
+onion_pakora,Onion pakora,kanda bhaji;onion bhajia,dish_snack,vegetarian,uk_cofid,15-828,"Pakora/bhajia, onion, fried in vegetable oil, homemade",270.0,11.2,21.97,14.7,5.7,approximate,close,review
+namkeen_mixture,Namkeen mixture,bombay mix;chiwda mixture,dish_snack,vegetarian,uk_cofid,17-764,Bombay mix,503.0,18.8,32.01,32.9,8.8,approximate,close,review
+gajar_halwa,Gajar halwa,carrot halwa,dish_sweet,vegetarian,uk_cofid,17-798,"Halva, carrot, homemade",354.0,4.8,41.6,16.6,4.7,approximate,close,review
+sooji_halwa,Sooji halwa,rava kesari;sheera,dish_sweet,vegetarian,uk_cofid,17-799,"Halva, semolina, homemade",342.0,2.2,46.17,16.7,0.5,approximate,close,review
+gulab_jamun,Gulab jamun,,dish_sweet,vegetarian,uk_cofid,11-1081,"Gulab jamen/jambu, homemade",273.0,6.5,46.9,6.6,0.5,approximate,close,review
+kulfi,Kulfi,,dish_sweet,vegetarian,uk_cofid,12-606,"Kulfi, homemade",457.0,5.7,13.13,42.4,0.5,approximate,close,review
+idli,Idli,,dish_breakfast,vegan,computed,idli,Recipe: Idli,145.28,5.86,27.29,0.48,,exact,recipe,review
+dosa,Plain dosa,dosai,dish_breakfast,vegan,computed,dosa,Recipe: Plain dosa,223.98,5.8,35.63,5.46,,exact,recipe,review
+upma,Upma,uppittu;rava upma,dish_breakfast,vegan,computed,upma,Recipe: Upma,137.48,3.74,19.2,4.29,1.44,exact,recipe,review
+rasam,Rasam,saaru;chaaru,dish_soup,vegan,computed,rasam,Recipe: Rasam,29.59,1.12,3.61,1.11,,exact,recipe,review
+kadhi,Kadhi,,dish_dal,vegetarian,computed,kadhi,Recipe: Kadhi,65.97,2.7,4.71,3.78,0.71,exact,recipe,review
+keema,Keema,mutton keema,dish_curry_meat,non_vegetarian,computed,keema,Recipe: Keema,148.47,14.46,5.35,6.84,1.85,exact,recipe,review
+kheer,Kheer,payasam;payesh,dish_sweet,vegetarian,computed,kheer,Recipe: Kheer,168.09,5.57,22.96,6.06,0.32,exact,recipe,review
+khoa,Khoa (mawa),khoya;mawa,dairy,vegetarian,computed,khoa,Recipe: Khoa (mawa),338.89,17.5,26.56,18.17,0.0,exact,recipe,review
+barfi,Milk barfi,burfi;khoa barfi,dish_sweet,vegetarian,computed,barfi,Recipe: Milk barfi,350.92,13.12,44.91,13.63,0.0,exact,recipe,review
+besan_ladoo,Besan ladoo,besan laddu,dish_sweet,vegetarian,computed,besan_ladoo,Recipe: Besan ladoo,521.18,10.18,57.73,25.77,4.91,exact,recipe,review
+papad,Papad (roasted),poppadum;appalam,dish_snack,vegan,computed,papad,Recipe: Papad (roasted),298.0,27.2,38.34,1.4,,exact,recipe,review

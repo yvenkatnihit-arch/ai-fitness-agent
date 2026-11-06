@@ -114,7 +114,6 @@ butter,Butter (salted),makhan;benne,fat_oil,vegetarian,usda_sr_legacy,173410,uk_
 vanaspati,Vanaspati (vegetable ghee),dalda,fat_oil,vegan,uk_cofid,12-502,,,exact,Hydrogenated vegetable fat; plant-based despite the name
 cream,Fresh cream,malai,dairy,vegetarian,usda_sr_legacy,170859,,,close,US heavy cream (36 % fat); Indian fresh cream is usually 25 %
 chaas,Buttermilk (chaas),chaas;majjige;mor,dairy,vegetarian,usda_sr_legacy,170874,,,close,US low-fat cultured buttermilk; Indian chaas is diluted curd with similar values
-khoa,Khoa (mawa),khoya;mawa,dairy,vegetarian,,,,,none,GAP: not in USDA or CoFID. Needs IFCT
 maida,Maida (refined wheat flour),all-purpose flour,cereal,vegan,usda_sr_legacy,169761,,,exact,
 bread_white,White bread,double roti;pav,cereal,vegan,usda_sr_legacy,174924,,,close,US commercial white bread; Indian bread and pav are similar per 100 g
 sabudana,Sabudana (tapioca pearls),sago;javvarisi,cereal,vegan,usda_sr_legacy,169717,,,exact,
@@ -179,16 +178,6 @@ gajar_halwa,Gajar halwa,carrot halwa,dish_sweet,vegetarian,uk_cofid,17-798,,,clo
 sooji_halwa,Sooji halwa,rava kesari;sheera,dish_sweet,vegetarian,uk_cofid,17-799,,,close,
 gulab_jamun,Gulab jamun,,dish_sweet,vegetarian,uk_cofid,11-1081,,,close,
 kulfi,Kulfi,,dish_sweet,vegetarian,uk_cofid,12-606,,,close,CoFID recipe is very rich (42 g fat); compare with IFCT later
-idli,Idli,,dish_breakfast,vegan,,,,,none,GAP: not in USDA or CoFID
-dosa,Plain dosa,dosai,dish_breakfast,vegan,,,,,none,GAP: CoFID only has the dosa filling (15-513)
-upma,Upma,uppittu,dish_breakfast,vegetarian,,,,,none,GAP: not in USDA or CoFID
-rasam,Rasam,saaru,dish_dal,vegan,,,,,none,GAP: not in USDA or CoFID
-kadhi,Kadhi,,dish_dal,vegetarian,,,,,none,GAP: not in USDA or CoFID
-keema,Keema,mutton keema,dish_curry_meat,non_vegetarian,,,,,none,GAP: not in USDA or CoFID
-kheer,Kheer,payasam,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
-rasgulla,Rasgulla,,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
-barfi,Barfi,burfi,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
-jalebi,Jalebi,,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
-ladoo,Ladoo,laddu,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
-papad,Papad,poppadum;appalam,dish_snack,vegan,,,,,none,GAP: not in USDA or CoFID
+rasgulla,Rasgulla,,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID; no recipe because whey loss and syrup uptake vary too much to estimate without measured data
+jalebi,Jalebi,,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID; no recipe because the oil and syrup it soaks up vary too much to estimate without measured data
 chivda,Chivda,chevda;poha chivda,dish_snack,vegan,,,,,none,GAP: CoFID 17-782 has no carbohydrate breakdown so carbs cannot be computed
