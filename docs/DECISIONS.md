@@ -426,3 +426,18 @@ Roadmap: `PATCH /profile` and the settings screen come before the bot tool (Phas
 - **Running it:** the job needs a scheduler. Render's free web service sleeps, so it can't run its own timer; a scheduled trigger (Supabase `pg_cron`, GitHub Actions or Render cron) calls one protected backend endpoint once a day. Decide which at build time.
 - **Data:** a `nudges` table (user, rule, text, created, seen, dismissed, acted) with RLS; the same table feeds the "pending proposals" badge on the dashboard.
 - **Tests:** each rule is a pure function over dates and logs (unit tested), plus cooldown, daily cap, opt-out, and eating-disorder wording tests.
+
+## D-048 — Workout splits: a fixed catalogue and transparent ranking, in code
+**Status:** Accepted with defaults (Step 6.2, 2026-11-06); Venkat can tune the table
+The model never invents a split. `app/calc/splits.py` holds 10 splits (full body 1/2/3/4 days, push-pull-legs 3 and 6 days, upper/lower 4, upper/lower + PPL 5, body-part 5, Arnold 6). Each lists its training days, the muscles and the movement patterns of each day (the library's own vocabulary, now shared in `app/core/vocabulary.py`).
+Ranking rule (visible, tested): candidates are the splits with exactly the user's number of training days (7 days = a 6-day split plus one easy recovery day). Score = level suitability (0 too demanding, 1 works, 2 well suited; a fixed table per split) + 1 if each muscle is trained twice a week or more. "best" = top score (and at least 2), "good" = 2 or more, "possible" otherwise. Reasons and cautions are generated from the same facts (days, frequency, level, goal), so the wording is always true to the numbers.
+Options considered: (a) let the LLM propose splits; (b) a fixed catalogue with a score. Chose **(b)**: predictable, testable, and the plan generator needs a known structure to pick exercises for.
+Not decided yet: home- or equipment-specific splits. The frequency rule is a rule of thumb, not medical advice.
+
+## D-043 addendum — NeMo Guardrails compatibility check (2026-11-06)
+Tried in a throwaway environment outside the project (nothing was added to `pyproject.toml`):
+- **Python 3.14:** `nemoguardrails 0.24.1` resolves and installs with our D-030 cutoff (2026-10-22), alongside our pinned packages (57 → 105 packages), and imports. Caveat: PyPI's page lists support for Python 3.10–3.13 only, so 3.14 is unofficial: pin the exact version and re-run our tests on every upgrade.
+- **Size and memory:** about +100 MB of installed packages (numpy, onnxruntime, fastembed and friends), about +60 MB of memory and 3 s to import. The embedding model was not loaded in checker-only mode. Render's free tier has 512 MB, so watch memory when it is added.
+- **Checker-only mode works:** with `options={"rails": ["input"]}` / `["output"]` NeMo only runs our input or output rails and leaves the answer to our own LangGraph. A rail written as a Python action (no LLM) blocked "500 calories a day" and a banned word in 10–25 ms and passed normal text through unchanged. Default mode (NeMo writing the reply itself) needs an LLM, so we never use it.
+- **Not tested yet:** the built-in LLM-based rails (self-check, jailbreak, topic checks) with Gemini through `langchain-google-genai`. Needs the Gemini key and a measured cost; done when the chat is built (Phase 7).
+- **Honest scope:** for plain pattern checks our own Python functions are just as good. NeMo earns its place with the LLM-based rails and readable Colang rules. Layered plan from D-043 stands: crisis, extreme-diet and numeric limits stay as code; NeMo adds the LLM-judged rails, run only when flagged.

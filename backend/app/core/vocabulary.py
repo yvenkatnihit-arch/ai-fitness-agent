@@ -33,7 +33,20 @@ Pace = Literal["slow", "normal", "fast"]
 # Cuisines with validated food data. A new one is added here only after its foods are loaded.
 Cuisine = Literal["indian"]
 
+# What an exercise trains and how it moves (the exercise library and the workout splits both use these).
+MuscleGroup = Literal[
+    "chest", "back", "shoulders", "biceps", "triceps", "forearms", "abs", "glutes",
+    "quads", "hamstrings", "calves", "hips", "lower_back", "traps", "neck", "full_body",
+]
+# Same list as the movement_pattern check in the exercises table (tests/test_vocabulary_matches_db.py).
+MovementPattern = Literal[
+    "squat", "hinge", "lunge", "push_horizontal", "push_vertical",
+    "pull_horizontal", "pull_vertical", "carry", "core", "cardio", "mobility",
+]
+
 PACES = get_args(Pace)
+MUSCLE_GROUPS = get_args(MuscleGroup)
+MOVEMENT_PATTERNS = get_args(MovementPattern)
 CUISINES = get_args(Cuisine)
 DIET_TYPES = get_args(DietType)
 EXPERIENCE_LEVELS = get_args(ExperienceLevel)

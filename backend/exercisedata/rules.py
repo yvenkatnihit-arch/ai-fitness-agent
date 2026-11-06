@@ -6,17 +6,9 @@ these tags"; they make us err on the side of hiding an exercise from a user who 
 
 import re
 
-# Muscle groups in OUR words (the exercises table stores free text, so the list lives here).
-MUSCLE_GROUPS = (
-    "chest", "back", "shoulders", "biceps", "triceps", "forearms", "abs", "glutes",
-    "quads", "hamstrings", "calves", "hips", "lower_back", "traps", "neck", "full_body",
-)
-
-# Same list as the movement_pattern check in the exercises table.
-MOVEMENT_PATTERNS = (
-    "squat", "hinge", "lunge", "push_horizontal", "push_vertical",
-    "pull_horizontal", "pull_vertical", "carry", "core", "cardio", "mobility",
-)
+# Muscle groups and movement patterns are shared with the app (the workout splits use them too),
+# so they are defined once in app/core/vocabulary.py.
+from app.core.vocabulary import MOVEMENT_PATTERNS, MUSCLE_GROUPS  # noqa: F401  (re-exported for checks.py)
 
 # Free Exercise DB muscle -> our muscle group (cross-check only).
 FREE_DB_MUSCLES = {
