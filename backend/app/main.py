@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import db
-from app.api import foods, me, onboarding, targets
+from app.api import foods, meals, me, onboarding, targets
 from app.core.config import get_app_settings
 from app.core.errors import register_error_handlers
 from app.core.logging import setup_logging
@@ -40,6 +40,7 @@ app.include_router(me.router)
 app.include_router(onboarding.router)
 app.include_router(targets.router)
 app.include_router(foods.router)
+app.include_router(meals.router)
 
 
 @app.get("/health")
