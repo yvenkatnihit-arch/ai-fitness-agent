@@ -12,3 +12,17 @@ export type Targets = {
   doctor_note: string | null
   focus_on_habits: boolean
 }
+
+// Mirrors backend/app/schemas/forecast.py. Dates are ISO strings (YYYY-MM-DD); the backend does all the maths.
+export type Forecast = {
+  status: 'ready' | 'no_target' | 'wrong_direction' | 'already_there' | 'not_moving' | 'too_far' | 'habits_only'
+  message: string
+  current_weight_kg: number | null
+  target_weight_kg: number | null
+  weekly_change_kg: number | null // negative = losing
+  earliest: string | null
+  likely: string | null
+  latest: string | null
+  weeks_likely: number | null
+  note: string | null
+}

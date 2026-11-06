@@ -173,6 +173,11 @@ def _cautions(split: Split, level: str, goal: str, recovery: int) -> tuple[str, 
     return tuple(cautions)
 
 
+def fits_days(split_key: str, days_per_week: int) -> bool:
+    """Is this split one of the choices for this number of days? (7 days = a six-day split plus a recovery day.)"""
+    return split_key in BY_KEY and BY_KEY[split_key].training_days == _training_days_for(days_per_week)
+
+
 def split_by_key(key: str) -> Split:
     if key not in BY_KEY:
         raise ValueError(f"unknown split {key!r}")

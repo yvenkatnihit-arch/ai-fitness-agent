@@ -1,6 +1,6 @@
 """What the split recommendation endpoint returns."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.calc.splits import Recommendation
 
@@ -28,7 +28,17 @@ class SplitRecommendationsOut(BaseModel):
     days_per_week: int
     level: str
     goal: str
+    chosen_key: str | None   # the split the user picked, while it still fits their days
     recommendations: list[RecommendationOut]
+
+
+class SplitChoiceIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    split_key: str = Field(min_length=3, max_length=40, pattern=r"^[a-z0-9_]+$")
+
+
+class SplitChoiceOut(BaseModel):
+    split_key: str
 
 
 def to_recommendation_out(rec: Recommendation) -> RecommendationOut:

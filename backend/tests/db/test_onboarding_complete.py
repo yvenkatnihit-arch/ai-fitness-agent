@@ -129,6 +129,26 @@ def test_the_chosen_pace_changes_the_saved_target_and_is_recorded(client, users)
     assert recorded == "fast"                                              # inputs record what the numbers were based on
 
 
+def test_the_goal_date_forecast_uses_the_saved_target_weight_and_the_chosen_pace(client, users):
+    assert onboard(client, pace="normal").status_code == 200
+    normal = client.get("/targets/forecast").json()
+    assert normal["status"] == "ready" and normal["current_weight_kg"] == 58.0 and normal["target_weight_kg"] == 54.0
+    assert normal["earliest"] < normal["likely"] < normal["latest"] and normal["weekly_change_kg"] < 0
+
+    with admin_transaction("test: switch the goal to a slow pace") as conn:
+        # Only this test's scratch user: this is the real database, so never an unfiltered update.
+        conn.execute("update public.goals set pace = 'slow' where user_id = %s and active", (users[0],))
+    slow = client.get("/targets/forecast").json()
+    assert slow["likely"] > normal["likely"]                                  # a slower pace takes longer
+
+
+def test_forecast_is_404_before_onboarding_and_never_shows_another_users_weight(client, users):
+    assert client.get("/targets/forecast").status_code == 404
+    assert onboard(client).status_code == 200
+    client.session.user_id = users[1]                                         # a different, un-onboarded user
+    assert client.get("/targets/forecast").status_code == 404
+
+
 def test_fast_with_a_health_flag_is_held_back_and_the_user_is_told(client):
     body = onboard(client, pace="fast", diabetes=True).json()
     assert body["calorie_target_kcal"] == round(expected({"diabetes"}, "fast").calorie_target_kcal)

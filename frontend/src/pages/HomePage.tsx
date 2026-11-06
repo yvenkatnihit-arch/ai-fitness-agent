@@ -7,7 +7,8 @@ import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import type { OnboardingStatus } from '../onboarding/types'
 import { TargetsView } from '../targets/TargetsView'
-import type { Targets } from '../targets/types'
+import { ForecastCard } from '../targets/ForecastCard'
+import type { Forecast, Targets } from '../targets/types'
 
 // Home: unfinished users go to onboarding; finished users see their daily targets.
 // The full dashboard (today's progress, workout, logs) replaces this in Phase 9.
@@ -16,6 +17,7 @@ export function HomePage() {
   const api = useApi()
   const [status, setStatus] = useState<OnboardingStatus | null>(null)
   const [targets, setTargets] = useState<Targets | null>(null)
+  const [forecast, setForecast] = useState<Forecast | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
 
   useEffect(() => {
@@ -28,6 +30,9 @@ export function HomePage() {
         if (current.completed) {
           const loaded = await api.get<Targets>('/targets/current')
           if (!cancelled) setTargets(loaded)
+          // The goal date is a bonus: if it can't load, the rest of the page still works.
+          const dated = await api.get<Forecast>('/targets/forecast').catch(() => null)
+          if (!cancelled) setForecast(dated)
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof ApiError ? e : new ApiError(0, 'Something went wrong. Please try again.'))
@@ -58,12 +63,16 @@ export function HomePage() {
       {error && <FormError message={error.message} requestId={error.requestId} />}
       {!error && !targets && <p className="text-center text-sm text-muted">Loading…</p>}
       {targets && (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           <ButtonLink to="/log">Log a meal</ButtonLink>
-          <ButtonLink to="/exercises" variant="secondary">Exercise library</ButtonLink>
+          <div className="grid grid-cols-2 gap-3">
+            <ButtonLink to="/exercises" variant="secondary">Exercise library</ButtonLink>
+            <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
+          </div>
         </div>
       )}
       {targets && <TargetsView targets={targets} />}
+      {targets && forecast && <ForecastCard forecast={forecast} />}
       <Link to="/sources" className="text-center text-xs text-muted underline">Data sources</Link>
     </PageShell>
   )

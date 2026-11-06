@@ -24,6 +24,36 @@ def test_inputs_come_from_the_training_step_and_the_active_goal(user_conn):
     assert repo.read_split_inputs(user_conn) == repo.SplitInputs(4, "intermediate", "muscle_gain")
 
 
+def test_the_chosen_split_is_saved_and_read_back(user_conn):
+    assert repo.read_split_inputs(user_conn).chosen_key is None
+    repo.save_split_choice(user_conn, "upper_lower_4")
+    assert repo.read_split_inputs(user_conn).chosen_key == "upper_lower_4"
+    repo.save_split_choice(user_conn, "full_body_4")                # changing your mind replaces it
+    assert repo.read_split_inputs(user_conn).chosen_key == "full_body_4"
+
+
+def test_another_users_choice_is_not_visible_or_changeable(user_conn, add_user, act_as):
+    repo.save_split_choice(user_conn, "upper_lower_4")
+    user_conn.execute("reset role")
+    stranger = add_user(user_conn)
+    user_conn.execute("update public.profiles set days_per_week = 4, experience_level = 'beginner' where id = %s", (stranger,))
+    user_conn.execute("insert into public.goals (user_id, goal_type, start_weight_kg) values (%s, 'fat_loss', 70)", (stranger,))
+    act_as(user_conn, stranger)
+    assert repo.read_split_inputs(user_conn).chosen_key is None     # their own row, not ours
+    repo.save_split_choice(user_conn, "full_body_4")
+    user_conn.execute("reset role")
+    keys = {r[0] for r in user_conn.execute("select split_key from public.profiles where split_key is not null")}
+    assert keys == {"upper_lower_4", "full_body_4"}                  # two separate rows, neither overwrote the other
+
+
+def test_the_database_refuses_a_malformed_split_key(user_conn):
+    import psycopg
+
+    with pytest.raises(psycopg.errors.CheckViolation):
+        with user_conn.transaction():
+            repo.save_split_choice(user_conn, "Not A Key!")
+
+
 def test_missing_training_or_goal_gives_none(scratch_user, act_as):
     conn, uid = scratch_user
     conn.execute("update public.profiles set days_per_week = 4 where id = %s", (uid,))   # no level, no goal

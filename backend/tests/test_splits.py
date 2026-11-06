@@ -1,6 +1,6 @@
 import pytest
 
-from app.calc.splits import BY_KEY, CATALOGUE, check_catalogue, recommend_splits, split_by_key
+from app.calc.splits import BY_KEY, CATALOGUE, check_catalogue, fits_days, recommend_splits, split_by_key
 
 
 def keys(days, level="beginner", goal="muscle_gain"):
@@ -76,6 +76,14 @@ def test_only_the_top_scoring_splits_are_called_best():
 def test_days_outside_one_to_seven_or_not_whole_are_refused_with_a_clear_error(bad):
     with pytest.raises(ValueError, match="whole number"):
         recommend_splits(bad, "beginner", "fat_loss")
+
+
+@pytest.mark.parametrize("key,days,expected", [
+    ("upper_lower_4", 4, True), ("upper_lower_4", 5, False), ("ppl_6", 6, True), ("ppl_6", 7, True),
+    ("full_body_3", 3, True), ("full_body_3", 4, False), ("bro_7", 4, False), ("", 4, False),
+])
+def test_a_split_fits_only_its_own_number_of_days(key, days, expected):
+    assert fits_days(key, days) is expected
 
 
 def test_unknown_level_and_split_key_are_refused():

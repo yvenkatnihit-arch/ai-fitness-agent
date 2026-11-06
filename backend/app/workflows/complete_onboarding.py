@@ -5,12 +5,12 @@ No LLM anywhere: the numbers come from app/calc (CLAUDE.md: "the LLM never does 
 
 from uuid import UUID
 
-from app.calc.age import age_on
-from app.calc.engine import BodyProfile, Targets, calculate_targets
+from app.calc.engine import Targets, calculate_targets
 from app.core.time import india_today
 from app.db import admin_transaction, user_transaction
 from app.db import onboarding as onboarding_repo
 from app.db import targets as targets_repo
+from app.workflows.inputs import body_profile
 
 
 class StepsMissing(onboarding_repo.OnboardingError):
@@ -33,16 +33,7 @@ def complete_onboarding(user_id: UUID) -> Targets:
 
     # 2. Calculate in code (Phase 1 engine).
     today = india_today()
-    profile = BodyProfile(
-        weight_kg=saved.weight_kg,
-        height_cm=saved.height_cm,
-        age_years=age_on(saved.date_of_birth, today),
-        sex=saved.sex,
-        activity_level=saved.activity_level,
-        goal=saved.goal_type,
-        screening_flags=saved.flags,
-        pace=saved.pace,
-    )
+    profile = body_profile(saved, today)
     targets = calculate_targets(profile)
     inputs = {
         "weight_kg": profile.weight_kg, "height_cm": profile.height_cm, "age_years": profile.age_years,
