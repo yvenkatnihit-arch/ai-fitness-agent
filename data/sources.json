@@ -1,0 +1,45 @@
+{
+  "_about": "Food data sources (D-037). `backend/fooddata/download.py` downloads each file into data/raw/ (not committed) and fills in sha256/size/downloaded_at here, so we can prove exactly which file every food came from.",
+  "sources": [
+    {
+      "key": "usda_sr_legacy",
+      "name": "USDA FoodData Central - SR Legacy",
+      "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+      "file": "usda_sr_legacy_2018-04.zip",
+      "release": "2018-04",
+      "license": "Public domain (CC0 1.0)",
+      "credit": "U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. fdc.nal.usda.gov",
+      "expect_members": [
+        "food.csv",
+        "nutrient.csv",
+        "food_nutrient.csv",
+        "food_category.csv"
+      ],
+      "sha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+      "size_bytes": 6074592,
+      "downloaded_at": "2026-11-05T15:53:22+00:00"
+    },
+    {
+      "key": "uk_cofid",
+      "name": "McCance and Widdowson's Composition of Foods Integrated Dataset (CoFID) 2021",
+      "url": "https://assets.publishing.service.gov.uk/media/60538b91e90e07527df82ae4/McCance_Widdowsons_Composition_of_Foods_Integrated_Dataset_2021..xlsx",
+      "file": "uk_cofid_2021.xlsx",
+      "release": "2021-03",
+      "license": "Open Government Licence v3.0 (credit required)",
+      "credit": "Public Health England (2021). McCance and Widdowson's The Composition of Foods Integrated Dataset 2021. Contains public sector information licensed under the Open Government Licence v3.0.",
+      "expect_members": [
+        "xl/workbook.xml"
+      ],
+      "sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+      "size_bytes": 4629542,
+      "downloaded_at": "2026-11-05T15:53:28+00:00"
+    }
+  ],
+  "_not_used": [
+    {
+      "key": "usda_foundation",
+      "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_csv_2026-10-29.zip",
+      "reason": "Checked 2026-11-05: this release has no food.csv / food_nutrient.csv (per-food values), only lab sub-sample results. Averaging those ourselves would re-create USDA's statistics and risk errors, so it is left out. SR Legacy + CoFID cover our needs; an older Foundation release with the standard layout can be added later if a gap appears."
+    }
+  ]
+}

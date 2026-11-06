@@ -10,6 +10,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+# Downloaded food datasets (large, re-downloadable; provenance is in data/sources.json)
+data/raw/
+
 # Node
 node_modules/
 dist/

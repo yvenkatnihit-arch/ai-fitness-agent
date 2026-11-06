@@ -4,8 +4,8 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 
 ## Current status
 
-**Phase:** 3 — Onboarding + first deployment COMPLETE (optional 3.11 macro chart pending). Next: Phase 4 (food data).
-**Decisions logged:** D-003 to D-036. Brief updated to match.
+**Phase:** 3 — Onboarding + first deployment COMPLETE, including 3.11 (macro donut). Next: Phase 4 (food data).
+**Decisions logged:** D-003 to D-037. Brief updated to match.
 **Last completed:** 3.10: frontend live at https://ai-fitness-agent-one.vercel.app (D-036). Checked: no secrets in public JS, backend URL baked in, SPA reloads, security headers, CORS from the Vercel origin, and a full onboarding through production (targets match a hand calculation). Venkat tested sign-up → onboarding → targets on the live site: works.
 **Earlier:** 3.9: backend live on Render at https://ai-fitness-agent-5dq9.onrender.com (Docker, Singapore, Free). Dockerfile + `.dockerignore`; image checked locally, then the same checks pass on Render (health, ready, CORS, real Supabase token on `/me`, onboarding status, 422). First deploy failed on the build context (fixed in Render settings, see D-033).
 **Earlier:** 3.8: results screen (`targets/TargetsView.tsx`): daily calories (Indian digit grouping) and macros exactly as the backend sent them, "Why these numbers", doctor note, habits view with no numbers for eating-disorder history; home loads `/targets/current` once onboarding is done. 48 frontend tests, build, lint passing.
@@ -17,7 +17,7 @@ Updated at the end of every step. Format: `[x]` done, `[~]` in progress, `[ ]` n
 **Earlier:** 3.2: onboarding endpoints (`app/api/onboarding.py` → `app/db/onboarding.py`, all under RLS): `GET /onboarding/status`, `PUT /onboarding/{consent,basics,goal,preferences,training,screening}`. Consent first (409), goal needs basics (409), target-weight direction check (`app/calc/goals.py`, 422), locked after onboarding (409). Migration 8: `profiles.consent_version`. 1096 fast + 153 DB tests passing; 0 rows left behind.
 **Earlier:** 3.1: onboarding request models (`app/schemas/onboarding.py`), `app/calc/age.py`, `app/core/vocabulary.py`, `app/core/time.py`.
 **Last commit:** `9de2d29` (Dockerfile). Docs updates since then not committed yet.
-**Waiting on:** Venkat to look at the donut locally, then "commit" to deploy it (one push updates Render + Vercel); then Phase 4 planning.
+**Phase 4:** 4.0 licence review (D-037) and 4.2 downloads done. 4.1: Venkat sends the two permission emails. Waiting on "go" for 4.3 (ingredient mapping + validation).
 **Phase 2 check questions:** skipped for now; can revisit anytime.
 **Phase 1 check questions:** skipped for now; can revisit anytime.
 
@@ -76,9 +76,21 @@ Decisions: D-031 (email confirmation off for now), D-032 (supabase-js for Auth o
 - [x] 3.8 Results screen: targets, reasons, doctor note, habits view
 - [x] 3.9 Backend Dockerfile (built locally) + deploy to Render: https://ai-fitness-agent-5dq9.onrender.com
 - [x] 3.10 Frontend deploy to Vercel + end-to-end check in production: live, checked by script, and tested by Venkat (2026-11-05)
-- [x] 3.11 (requested by Venkat) Macro donut chart on the results screen: `calorie_shares()` in `app/calc/macros.py` (largest-remainder rounding, always sums to 100, tested) → `protein_pct/carbs_pct/fat_pct` in the targets API (hidden in the habits view); `targets/MacroDonut.tsx` draws an SVG donut (calorie total in the centre, 2.5 px gaps, segment tooltips, screen-reader summary) + a legend with grams and %. Colours from the data-viz palette, validated (CVD-safe; aqua <3:1 on white, so values are always shown as text). 1271 backend fast + 7 DB onboarding-complete + 50 frontend tests passing. Not deployed yet.
+- [x] 3.11 (requested by Venkat) Macro donut chart on the results screen: `calorie_shares()` in `app/calc/macros.py` (largest-remainder rounding, always sums to 100, tested) → `protein_pct/carbs_pct/fat_pct` in the targets API (hidden in the habits view); `targets/MacroDonut.tsx` draws an SVG donut (calorie total in the centre, 2.5 px gaps, segment tooltips, screen-reader summary) + a legend with grams and %. Colours from the data-viz palette, validated (CVD-safe; aqua <3:1 on white, so values are always shown as text). 1271 backend fast + 7 DB onboarding-complete + 50 frontend tests passing. Venkat tested locally; deployed as `c7cceef` (live API sends 33/42/25 for the test person; live site includes the donut; no secret keys in the public JS. The two `sb_secret_` text matches are key-type checks in supabase-js and our own guard, not keys).
 
 **Phase 3 complete (2026-11-05)** apart from the optional 3.11. Live: https://ai-fitness-agent-one.vercel.app (Vercel) → https://ai-fitness-agent-5dq9.onrender.com (Render) → Supabase.
+
+## Phase 4 — Food data (D-037: open data now + permission requests in parallel)
+
+- [x] 4.0 Dataset license and format review (IFCT 2017, INDB, USDA FDC, UK CoFID) → D-037
+- [~] 4.1 Permission request emails to NIN (IFCT 2017) and the INDB authors: drafted by Claude, **sent by Venkat**
+- [x] 4.2 Download script (`backend/fooddata/download.py`) for USDA SR Legacy (7,793 foods) + UK CoFID 2021 → `data/raw/` (git-ignored); archive + expected-files checks; URL, date, size, SHA-256 in `data/sources.json`; refuses silently changed upstream files. USDA Foundation 2026-10 dropped: it lacks per-food summary files (recorded under `_not_used`).
+- [ ] 4.3 Ingredient list (~150–200 Indian-cooking ingredients) mapped to USDA/CoFID IDs, diet class per item; importer + **validation checks** (ranges, Atwater energy check, macros ≤ 100 g, diet-class rules, duplicates, cross-source agreement) + review report
+- [ ] 4.4 Indian dish recipes (~100–150, raw grams + cooked yield) → nutrition per 100 g computed by tested code; plausibility checks; Venkat reviews the list
+- [ ] 4.5 Load into Supabase (`foods`), synonyms (dahi = curd, chawal = rice…), household units (katori, piece, cup…) with checks
+- [ ] 4.6 Food search endpoint (fuzzy, synonyms, diet filter) + tests
+- [ ] 4.7 Meal logging via a form (backend computes the nutrition snapshot) + UI
+- [ ] 4.8 "Data sources" credits in the app
 
 ## Phase 7 notes (requested by Venkat, 2026-11-05)
 

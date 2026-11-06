@@ -85,6 +85,9 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Apply: `uv run python scripts/migrate.py` (Supabase CLI pinned to 2.121.0, D-024; reads `DATABASE_URL` from `.env`; then sets up LangGraph's checkpointer tables in the `langgraph` schema, D-012)
 - LLM cost per day: `uv run python scripts/daily_cost.py` (last 14 days; pass a number for more)
 
+**Food data (`backend/`, D-037)**
+- Download/verify the open datasets into `data/raw/` (git-ignored): `uv run python -m fooddata.download` (add `--check` to verify without network). Sources, licences, credits and SHA-256 are in `data/sources.json`.
+
 **Docker (`backend/`)**
 - Build the image: `docker build -t ai-fitness-backend .`
 - Run it locally (secrets from `.env` at run time, never in the image): `docker run --rm --name ai-fitness-backend-local --env-file .env -p 8000:8000 ai-fitness-backend` → http://127.0.0.1:8000/health

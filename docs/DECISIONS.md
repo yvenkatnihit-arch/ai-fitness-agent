@@ -285,3 +285,17 @@ Only Venkat, with test data. Before friends: privacy note and consent copy revie
 - Render `CORS_ORIGINS=http://localhost:5173,https://ai-fitness-agent-one.vercel.app`. Vercel's other preview domains are intentionally not allowed.
 - Supabase Auth Site URL = the Vercel domain, and redirect URLs for it and localhost (needed once email confirmation is on).
 - Checked 2026-11-05: full onboarding through production with the Vercel origin (CORS ok on every response), targets match a hand calculation, about 0.5–0.65 s per request (Singapore ↔ Mumbai).
+
+## D-037 — Food data sources
+**Status:** Accepted (Venkat, 2026-11-05: "option 2 + 1, and make sure the data is valid and right")
+License review (Phase 4 start, not legal advice):
+- **IFCT 2017** (NIN-ICMR): © NIN-ICMR, no public reuse license; ICMR terms forbid commercial reuse without permission. → permission needed.
+- **INDB** (Jaacks Lab, 2024): the paper is CC BY, but the GitHub data has **no license** (all rights reserved). It is derived from IFCT, and its recipes come from copyrighted cookbooks and blogs. → permission needed.
+- **USDA FoodData Central**: public domain (CC0); credit requested. → usable freely.
+- **UK CoFID**: Open Government Licence (credit required) for the GOV.UK **file download**; the Quadram CoFID **API** is CC BY-NC-SA, so we don't use it. → usable with credit.
+Choice: **2 + 1**.
+- Build now on **USDA FDC + UK CoFID** ingredients, plus **our own Indian dish recipes**: ingredient lists in raw grams + cooked yield, drafted by Claude, reviewed by Venkat, nutrition computed by tested code, `source = computed`.
+- In parallel, Venkat asks NIN (IFCT 2017) and the INDB authors for permission. If granted, add them as a higher-priority source (the `foods.source` column + unique (name, source) already support several sources).
+- Every source is credited in the app ("Data sources").
+- Raw downloads are kept out of git (`data/raw/`, re-downloadable). The download script records URL, date and SHA-256 for provenance.
+- **Validation is code, with tests** (Phase 4 plan): units and ranges, energy consistency (Atwater 4/4/9 vs stated kcal), macros ≤ 100 g per 100 g, diet-class rules, duplicates, cross-source agreement where both sources have the item, plausibility bands for cooked dishes, and a review report of flagged rows for a human to check.
