@@ -218,3 +218,107 @@ Carbs = available carbohydrate as weighed (D-038). `?` = not measured in the sou
 | Boiled kabuli chana | vegan | uk_cofid `13-662`<br><sub>Beans, chick peas, Kabuli, whole, dried, boiled in unsalted </sub> | 129.0 | 8.4 | 16.7 | 3.0 | 10.6 |  |
 | Boiled whole moong | vegan | uk_cofid `13-664`<br><sub>Beans, mung, whole, dried, boiled in unsalted water</sub> | 100.0 | 8.6 | 14.4 | 0.7 | 6.1 | Boiled whole beans (not sprouted) |
 | Boiled rajma | vegan | uk_cofid `13-659`<br><sub>Beans, red kidney, dried, boiled in unsalted water</sub> | 100.0 | 8.6 | 13.8 | 1.0 | 11.1 |  |
+
+## Household units (96 ok, 0 blocked)
+
+From `data/food_units.csv`. katori = 150 ml, glass = 250 ml (D-040).
+
+
+| Food | Unit | Grams | How we know |
+|---|---|---|---|
+| urad_dal_cooked | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| mixed_dal | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| chana_dal_cooked | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| moong_dal_tomato | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| moong_dal_bengali | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| sambar | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| rajma_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| chole | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| whole_moong_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| kadhi | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| rasam | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| chicken_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| chicken_korma | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| mutton_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| fish_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| egg_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| egg_aloo_curry | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| kheer | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| khichdi | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| oats_water | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| oats_milk | katori | 152.8 | katori 150 ml x density from USDA SR Legacy 172921: 1 cup = 241 g |
+| masoor_dal_cooked | katori | 125.5 | katori 150 ml x density from USDA SR Legacy 172421: 1 cup = 198 g |
+| aloo_gobi | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| aloo_pyaz | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| bhindi_sabzi | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| cabbage_aloo | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| aloo_gobi_matar | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| palak_sabzi | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| baingan_aloo | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| methi_aloo | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| saag | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| bombay_potato | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| aloo_matar | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| keema | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| upma | katori | 115.4 | katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g |
+| rice_cooked | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| basmati_cooked | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| brown_rice_cooked | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| pulao_plain | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| veg_pulao | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| chicken_biryani | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| mutton_biryani | katori | 100.2 | katori 150 ml x density from USDA SR Legacy 169757: 1 cup = 158 g |
+| chana_boiled | katori | 104 | katori 150 ml x density from USDA SR Legacy 173757: 1 cup = 164 g |
+| rajma_boiled | katori | 112.2 | katori 150 ml x density from USDA SR Legacy 175194: 1 cup = 177 g |
+| moong_boiled | katori | 128.1 | katori 150 ml x density from USDA SR Legacy 174257: 1 cup = 202 g |
+| curd | katori | 155.3 | katori 150 ml x density from USDA SR Legacy 171284: 1 cup = 245 g |
+| raita | katori | 155.3 | katori 150 ml x density from USDA SR Legacy 171284: 1 cup = 245 g |
+| milk_whole | glass | 257.8 | glass 250 ml x density from USDA SR Legacy 172217: 1 cup = 244 g |
+| milk_toned_low | glass | 257.8 | glass 250 ml x density from USDA SR Legacy 173441: 1 cup = 244 g |
+| chaas | glass | 258.9 | glass 250 ml x density from USDA SR Legacy 170874: 1 cup = 245 g |
+| egg | piece | 50 | USDA SR Legacy 171287: 1 large = 50 g |
+| boiled_egg | piece | 50 | USDA SR Legacy 173424: 1 large = 50 g |
+| banana | piece | 118 | USDA SR Legacy 173944: 1 medium = 118 g |
+| apple | piece | 169 | USDA SR Legacy 168202: 1 medium = 169 g |
+| orange | piece | 131 | USDA SR Legacy 169097: 1 fruit = 131 g |
+| guava | piece | 55 | USDA SR Legacy 173044: 1 fruit, without refuse = 55 g |
+| mango | piece | 336 | USDA SR Legacy 169910: 1 fruit without refuse = 336 g |
+| chikoo | piece | 170 | USDA SR Legacy 167759: 1 sapodilla = 170 g |
+| dates | piece | 7.1 | USDA SR Legacy 171726: 1 date, pitted = 7.1 g |
+| almonds | piece | 1.2 | USDA SR Legacy 170567: 1 almond = 1.2 g |
+| bread_white | slice | 25 | USDA SR Legacy 174924: 1 slice = 25 g |
+| onion | piece | 110 | USDA SR Legacy 170000: 1 medium = 110 g |
+| tomato | piece | 123 | USDA SR Legacy 170457: 1 medium whole = 123 g |
+| potato | piece | 213 | USDA SR Legacy 170026: 1 Potato medium = 213 g |
+| boiled_potato | piece | 167 | USDA SR Legacy 170440: 1 medium = 167 g |
+| garlic | piece | 3 | USDA SR Legacy 169230: 1 clove = 3 g |
+| roti | piece | 43 | USDA SR Legacy 174075: 1 piece = 43 g |
+| roti_with_fat | piece | 43 | USDA SR Legacy 174075: 1 piece = 43 g |
+| naan | piece | 90 | USDA SR Legacy 171845: 1 piece = 90 g |
+| idli | piece | 40 | our recipe 'idli': 1 idli = 40 g |
+| dosa | piece | 50 | our recipe 'dosa': 1 dosa = 50 g |
+| oil_groundnut | tsp | 4.5 | USDA SR Legacy 171410: 1 tsp = 4.5 g |
+| oil_groundnut | tbsp | 13.5 | USDA SR Legacy 171410: 1 tbsp = 13.5 g |
+| oil_soybean | tsp | 4.5 | USDA SR Legacy 171411: 1 tsp = 4.5 g |
+| oil_soybean | tbsp | 13.6 | USDA SR Legacy 171411: 1 tbsp = 13.6 g |
+| oil_coconut | tsp | 4.5 | USDA SR Legacy 171412: 1 tsp = 4.5 g |
+| oil_coconut | tbsp | 13.6 | USDA SR Legacy 171412: 1 tbsp = 13.6 g |
+| oil_mustard | tsp | 4.5 | USDA SR Legacy 172337: 1 tsp = 4.5 g |
+| oil_mustard | tbsp | 14 | USDA SR Legacy 172337: 1 tbsp = 14 g |
+| oil_sunflower | tsp | 4.5 | USDA SR Legacy 171411: 1 tsp = 4.5 g |
+| oil_sunflower | tbsp | 13.6 | USDA SR Legacy 171411: 1 tbsp = 13.6 g |
+| ghee | tbsp | 12.8 | USDA SR Legacy 173412: 1 tbsp = 12.8 g |
+| butter | tbsp | 14.2 | USDA SR Legacy 173410: 1 tbsp = 14.2 g |
+| sugar | tsp | 4.2 | USDA SR Legacy 169655: 1 tsp = 4.2 g |
+| honey | tbsp | 21 | USDA SR Legacy 169640: 1 tbsp = 21 g |
+| cream | tbsp | 15 | USDA SR Legacy 170859: 1 tbsp = 15 g |
+| coconut_milk | tbsp | 15 | USDA SR Legacy 170172: 1 tbsp = 15 g |
+| turmeric | tsp | 3 | USDA SR Legacy 172231: 1 tsp = 3 g |
+| chilli_powder | tsp | 1.8 | USDA SR Legacy 170932: 1 tsp = 1.8 g |
+| cumin | tsp | 2.1 | USDA SR Legacy 170923: 1 tsp, whole = 2.1 g |
+| mustard_seed | tsp | 2 | USDA SR Legacy 170929: 1 tsp = 2 g |
+| coriander_seed | tsp | 1.8 | USDA SR Legacy 170922: 1 tsp = 1.8 g |
+| fenugreek_seed | tsp | 3.7 | USDA SR Legacy 171324: 1 tsp = 3.7 g |
+| ginger | tsp | 2 | USDA SR Legacy 169231: 1 tsp = 2 g |
+| flaxseed | tbsp | 10.3 | USDA SR Legacy 169414: 1 tbsp, whole = 10.3 g |
+| sesame | tbsp | 9 | USDA SR Legacy 170150: 1 tbsp = 9 g |

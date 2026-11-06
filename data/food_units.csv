@@ -1,0 +1,97 @@
+key,unit,method,ref,ref_portion,ref_grams,note
+urad_dal_cooked,katori,volume,172921,1 cup,241,dal with liquid: density of a prepared vegetable soup
+mixed_dal,katori,volume,172921,1 cup,241,dal with liquid
+chana_dal_cooked,katori,volume,172921,1 cup,241,dal with liquid
+moong_dal_tomato,katori,volume,172921,1 cup,241,dal with liquid
+moong_dal_bengali,katori,volume,172921,1 cup,241,dal with liquid
+sambar,katori,volume,172921,1 cup,241,
+rajma_curry,katori,volume,172921,1 cup,241,curry with gravy
+chole,katori,volume,172921,1 cup,241,curry with gravy
+whole_moong_curry,katori,volume,172921,1 cup,241,curry with gravy
+kadhi,katori,volume,172921,1 cup,241,
+rasam,katori,volume,172921,1 cup,241,
+chicken_curry,katori,volume,172921,1 cup,241,curry with gravy
+chicken_korma,katori,volume,172921,1 cup,241,curry with gravy
+mutton_curry,katori,volume,172921,1 cup,241,curry with gravy
+fish_curry,katori,volume,172921,1 cup,241,curry with gravy
+egg_curry,katori,volume,172921,1 cup,241,curry with gravy
+egg_aloo_curry,katori,volume,172921,1 cup,241,curry with gravy
+kheer,katori,volume,172921,1 cup,241,liquid sweet
+khichdi,katori,volume,172921,1 cup,241,soft and moist like porridge
+oats_water,katori,volume,172921,1 cup,241,porridge
+oats_milk,katori,volume,172921,1 cup,241,porridge
+masoor_dal_cooked,katori,volume,172421,1 cup,198,boiled lentils without much liquid (matches the CoFID item)
+aloo_gobi,katori,volume,170472,0.5 cup,91,dry sabzi: density of cooked mixed vegetables
+aloo_pyaz,katori,volume,170472,0.5 cup,91,dry sabzi
+bhindi_sabzi,katori,volume,170472,0.5 cup,91,dry sabzi
+cabbage_aloo,katori,volume,170472,0.5 cup,91,dry sabzi
+aloo_gobi_matar,katori,volume,170472,0.5 cup,91,dry sabzi
+palak_sabzi,katori,volume,170472,0.5 cup,91,dry sabzi
+baingan_aloo,katori,volume,170472,0.5 cup,91,dry sabzi
+methi_aloo,katori,volume,170472,0.5 cup,91,dry sabzi
+saag,katori,volume,170472,0.5 cup,91,dry sabzi
+bombay_potato,katori,volume,170472,0.5 cup,91,dry sabzi
+aloo_matar,katori,volume,170472,0.5 cup,91,dry sabzi
+keema,katori,volume,170472,0.5 cup,91,dry dish
+upma,katori,volume,170472,0.5 cup,91,dry dish
+rice_cooked,katori,volume,169757,1 cup,158,cooked rice
+basmati_cooked,katori,volume,169757,1 cup,158,cooked rice
+brown_rice_cooked,katori,volume,169757,1 cup,158,cooked rice
+pulao_plain,katori,volume,169757,1 cup,158,rice dish
+veg_pulao,katori,volume,169757,1 cup,158,rice dish
+chicken_biryani,katori,volume,169757,1 cup,158,rice dish
+mutton_biryani,katori,volume,169757,1 cup,158,rice dish
+chana_boiled,katori,volume,173757,1 cup,164,
+rajma_boiled,katori,volume,175194,1 cup,177,
+moong_boiled,katori,volume,174257,1 cup,202,
+curd,katori,volume,self,1 cup,245,
+raita,katori,volume,171284,1 cup,245,density of plain curd
+milk_whole,glass,volume,self,1 cup,244,
+milk_toned_low,glass,volume,self,1 cup,244,
+chaas,glass,volume,self,1 cup,245,
+egg,piece,usda,self,1 large,50,
+boiled_egg,piece,usda,173424,1 large,50,
+banana,piece,usda,self,1 medium,118,
+apple,piece,usda,self,1 medium,169,
+orange,piece,usda,self,1 fruit,131,
+guava,piece,usda,self,"1 fruit, without refuse",55,
+mango,piece,usda,self,1 fruit without refuse,336,
+chikoo,piece,usda,self,1 sapodilla,170,
+dates,piece,usda,self,"1 date, pitted",7.1,
+almonds,piece,usda,self,1 almond,1.2,
+bread_white,slice,usda,self,1 slice,25,
+onion,piece,usda,self,1 medium,110,
+tomato,piece,usda,self,1 medium whole,123,
+potato,piece,usda,self,1 Potato medium,213,
+boiled_potato,piece,usda,170440,1 medium,167,
+garlic,piece,usda,self,1 clove,3,
+roti,piece,usda,174075,1 piece,43,USDA whole wheat chapati; a home phulka is often 30-40 g
+roti_with_fat,piece,usda,174075,1 piece,43,same size as a plain roti
+naan,piece,usda,171845,1 piece,90,
+idli,piece,recipe,idli,1 idli,40,720 g cooked / 18 idlis
+dosa,piece,recipe,dosa,1 dosa,50,500 g cooked / 10 dosas
+oil_groundnut,tsp,usda,self,1 tsp,4.5,
+oil_groundnut,tbsp,usda,self,1 tbsp,13.5,
+oil_soybean,tsp,usda,self,1 tsp,4.5,
+oil_soybean,tbsp,usda,self,1 tbsp,13.6,
+oil_coconut,tsp,usda,self,1 tsp,4.5,
+oil_coconut,tbsp,usda,self,1 tbsp,13.6,
+oil_mustard,tsp,usda,self,1 tsp,4.5,
+oil_mustard,tbsp,usda,self,1 tbsp,14,
+oil_sunflower,tsp,usda,171411,1 tsp,4.5,vegetable oils weigh the same per spoon (USDA soybean oil)
+oil_sunflower,tbsp,usda,171411,1 tbsp,13.6,vegetable oils weigh the same per spoon (USDA soybean oil)
+ghee,tbsp,usda,173412,1 tbsp,12.8,USDA anhydrous butter oil (ghee)
+butter,tbsp,usda,self,1 tbsp,14.2,
+sugar,tsp,usda,self,1 tsp,4.2,
+honey,tbsp,usda,self,1 tbsp,21,
+cream,tbsp,usda,self,1 tbsp,15,
+coconut_milk,tbsp,usda,self,1 tbsp,15,
+turmeric,tsp,usda,self,1 tsp,3,
+chilli_powder,tsp,usda,self,1 tsp,1.8,
+cumin,tsp,usda,self,"1 tsp, whole",2.1,
+mustard_seed,tsp,usda,self,1 tsp,2,
+coriander_seed,tsp,usda,self,1 tsp,1.8,
+fenugreek_seed,tsp,usda,self,1 tsp,3.7,
+ginger,tsp,usda,self,1 tsp,2,
+flaxseed,tbsp,usda,self,"1 tbsp, whole",10.3,
+sesame,tbsp,usda,self,1 tbsp,9,

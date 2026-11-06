@@ -23,6 +23,7 @@ from fooddata.find import load_all
 from fooddata.records import FoodRecord
 from fooddata.recipes import read_recipes, review_recipes
 from fooddata.review import STATUSES, Reviewed
+from fooddata.units import Unit, build_units, read_unit_rows, recipe_keys, usda_portions, write_units
 
 INGREDIENTS = DATA_DIR / "ingredients.csv"
 VALIDATED = DATA_DIR / "foods_validated.csv"
@@ -151,6 +152,17 @@ def write_outputs(results: list[Reviewed]) -> None:
     REPORT.write_text("\n".join(lines), encoding="utf-8")
 
 
+def write_units_report(units: list[Unit], errors: list[str]) -> None:
+    """Append the household units to the review report, so one file shows everything to check."""
+    lines = ["", f"## Household units ({len(units)} ok, {len(errors)} blocked)", "",
+             "From `data/food_units.csv`. katori = 150 ml, glass = 250 ml (D-040).", ""]
+    lines += [f"- **BLOCKED** {e}" for e in errors]
+    lines += ["", "| Food | Unit | Grams | How we know |", "|---|---|---|---|"]
+    lines += [f"| {u.key} | {u.unit} | {u.grams:g} | {u.source} |" for u in units]
+    with REPORT.open("a", encoding="utf-8") as handle:
+        handle.write("\n".join(lines) + "\n")
+
+
 def main() -> None:
     index = {(f.source, f.source_id): f for f in load_all()}
     results = [review_row(row, index) for row in read_ingredients()]
@@ -167,6 +179,15 @@ def main() -> None:
     for r in results:
         if r.status == "blocked":
             print(f"  BLOCKED {r.row['key']}: " + "; ".join(i.message for i in r.issues if i.severity == "error"))
+
+    # Household units (Step 4.5b) for the foods that made it into foods_validated.csv.
+    food_sources = {r.row["key"]: (r.food.source, r.food.source_id) for r in results if r.status in ("ready", "review")}
+    units, errors = build_units(food_sources, usda_portions(), recipe_keys(), read_unit_rows())
+    write_units(units)
+    write_units_report(units, errors)
+    print(f"units    {len(units)} ok, {len(errors)} blocked")
+    for error in errors:
+        print(f"  BLOCKED unit {error}")
     print(f"report: {REPORT.relative_to(DATA_DIR.parent)}")
 
 

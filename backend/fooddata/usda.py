@@ -32,6 +32,24 @@ def _table(archive: zipfile.ZipFile, name: str) -> list[dict]:
         return list(csv.DictReader(io.TextIOWrapper(raw, encoding="utf-8")))
 
 
+def portion_text(amount: str, unit: str, modifier: str) -> str:
+    """USDA portion as one readable string: ('1', 'cup', '') -> '1 cup'; ('1', '', 'medium') -> '1 medium'."""
+    unit = "" if unit == "undetermined" else unit
+    return " ".join(f"{float(amount):g} {unit} {modifier}".split())
+
+
+def read_portions(path: Path) -> dict[str, list[tuple[str, float]]]:
+    """Measured household portions per food: {fdc_id: [('1 medium (7" to 7-7/8" long)', 118.0), ...]}."""
+    with zipfile.ZipFile(path) as archive:
+        units = {row["id"]: row["name"] for row in _table(archive, "measure_unit.csv")}
+        rows = _table(archive, "food_portion.csv")
+    portions: dict[str, list[tuple[str, float]]] = defaultdict(list)
+    for row in rows:
+        text = portion_text(row["amount"], units.get(row["measure_unit_id"], ""), row["modifier"])
+        portions[row["fdc_id"]].append((text, float(row["gram_weight"])))
+    return dict(portions)
+
+
 def read_sr_legacy(path: Path) -> list[FoodRecord]:
     with zipfile.ZipFile(path) as archive:
         nutrients = _table(archive, "nutrient.csv")

@@ -1,4 +1,5 @@
-"""Load data/foods_validated.csv into Supabase: public.foods + public.food_synonyms (Step 4.5a, D-039).
+"""Load data/foods_validated.csv into Supabase: public.foods + food_synonyms (Step 4.5a, D-039),
+and data/food_units_validated.csv into public.food_units (Step 4.5b, D-040).
 
     uv run python -m fooddata.build              # first: regenerate the validated CSV
     uv run python -m fooddata.load --dry-run     # show what would change, then roll back
@@ -12,12 +13,13 @@ longer in the CSV are reported, never deleted (meal plans and logs may point to 
 
 import argparse
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import psycopg
 
 from fooddata.build import VALIDATED
+from fooddata.units import UNITS_VALIDATED, Unit
 
 MACRO_MASS_LIMIT = 105  # same limit as the foods_macros_fit_in_100g constraint
 
@@ -112,7 +114,9 @@ class LoadResult:
     inserted: int = 0
     updated: int = 0
     synonyms: int = 0
+    units: int = 0
     stale: tuple[str, ...] = ()
+    ids: dict[str, int] = field(default_factory=dict)
 
 
 def load_foods(conn: psycopg.Connection, foods: list[FoodRow]) -> LoadResult:
@@ -120,6 +124,7 @@ def load_foods(conn: psycopg.Connection, foods: list[FoodRow]) -> LoadResult:
     result = LoadResult()
     for food in foods:
         food_id, inserted = conn.execute(UPSERT, food.__dict__).fetchone()
+        result.ids[food.key] = food_id
         if inserted:
             result.inserted += 1
         else:
@@ -134,6 +139,24 @@ def load_foods(conn: psycopg.Connection, foods: list[FoodRow]) -> LoadResult:
     return result
 
 
+def read_units(path: Path = UNITS_VALIDATED) -> list[Unit]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return [Unit(r["key"], r["unit"], float(r["grams"]), r["source"]) for r in csv.DictReader(handle)]
+
+
+def load_units(conn: psycopg.Connection, units: list[Unit], ids: dict[str, int]) -> int:
+    """Replace the household units of every loaded food with the ones in the file.
+    (Nothing points to food_units, and logs store grams, so replacing is safe.)"""
+    missing = sorted({u.key for u in units} - set(ids))
+    if missing:
+        raise ValueError(f"units for foods that were not loaded: {missing}")
+    conn.execute("delete from public.food_units where food_id = any(%s)", (list(ids.values()),))
+    for u in units:
+        conn.execute("insert into public.food_units (food_id, unit, grams, source) values (%s, %s, %s, %s)",
+                     (ids[u.key], u.unit, u.grams, u.source))
+    return len(units)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dry-run", action="store_true", help="show what would change, then roll back")
@@ -144,13 +167,14 @@ def main() -> int:
     foods = read_validated()
     with psycopg.connect(get_settings().database_url.get_secret_value(), connect_timeout=10) as conn:
         result = load_foods(conn, foods)
+        result.units = load_units(conn, read_units(), result.ids)
         if args.dry_run:
             conn.rollback()
         else:
             conn.commit()
     verb = "would be" if args.dry_run else "were"
     print(f"{len(foods)} foods: {result.inserted} {verb} inserted, {result.updated} {verb} updated; "
-          f"{result.synonyms} synonyms")
+          f"{result.synonyms} synonyms, {result.units} household units")
     ready = sum(f.review_status == "ready" for f in foods)
     print(f"review status: {ready} ready, {len(foods) - ready} review")
     if result.stale:

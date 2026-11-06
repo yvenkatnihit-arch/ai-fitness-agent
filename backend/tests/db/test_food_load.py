@@ -4,7 +4,7 @@ import psycopg
 import pytest
 
 from app.core.config import get_settings
-from fooddata.load import load_foods, read_validated
+from fooddata.load import load_foods, load_units, read_units, read_validated
 
 pytestmark = pytest.mark.db
 
@@ -41,3 +41,14 @@ def test_loaded_values_match_the_csv(conn):
     synonyms = {s for (s,) in conn.execute(
         "select synonym from public.food_synonyms s join public.foods f on f.id = s.food_id where f.key = 'curd'")}
     assert {"dahi", "mosaru"} <= synonyms
+
+
+def test_units_load_and_reload_without_duplicates(conn):
+    result = load_foods(conn, read_validated())
+    units = read_units()
+    assert load_units(conn, units, result.ids) == len(units)
+    assert load_units(conn, units, result.ids) == len(units)  # second run replaces, never duplicates
+    assert conn.execute("select count(*) from public.food_units").fetchone()[0] == len(units)
+    grams = conn.execute("select u.grams from public.food_units u join public.foods f on f.id = u.food_id "
+                         "where f.key = 'idli' and u.unit = 'piece'").fetchone()[0]
+    assert float(grams) == 40

@@ -90,7 +90,8 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Run every validation check over the full datasets (nothing is imported): `uv run python -m fooddata.audit`
 - Find a food's exact source id: `uv run python -m fooddata.find "pigeon peas" "paneer"`
 - Validate our ingredient list (`data/ingredients.csv`) and recipes (`data/recipes.csv` + `data/recipe_items.csv`: raw grams + cooked weight; sign off a recipe by filling `reviewed_by`) → `data/foods_validated.csv` + `data/reports/ingredients_review.md`: `uv run python -m fooddata.build`
-- Load the validated foods into Supabase (`foods` + `food_synonyms`; upsert by key, safe to re-run, D-039): `uv run python -m fooddata.load --dry-run`, then `uv run python -m fooddata.load`
+- Household units (`data/food_units.csv`: usda portion / katori-glass volume / recipe piece, D-040) are checked by the same build → `data/food_units_validated.csv`
+- Load the validated foods into Supabase (`foods` + `food_synonyms` + `food_units`; upsert by key, safe to re-run, D-039): `uv run python -m fooddata.load --dry-run`, then `uv run python -m fooddata.load`
 
 **Docker (`backend/`)**
 - Build the image: `docker build -t ai-fitness-backend .`

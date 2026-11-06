@@ -320,3 +320,14 @@ Why: renaming a food (fixing its display name) must not create a second row; (A)
 - `uv run python -m fooddata.load` runs in one transaction and is idempotent: a second run updates every row and inserts none (tested). Synonyms are replaced from `local_names` each run.
 - Foods removed from the CSV are reported, never deleted.
 - Both `ready` and `review` rows are loaded while we use test data; the app can later prefer `ready` foods or show a "values being verified" badge.
+
+## D-040 — Household units: measured USDA portions, standard katori/glass volumes, recipe pieces
+**Status:** Accepted with defaults (Step 4.5b, 2026-11-06); **Venkat to confirm the katori/glass sizes**
+Problem: people log "1 katori dal" or "2 rotis", not grams. Each unit needs a gram weight we can justify.
+How each unit's grams are known (`fooddata/units.py`, `data/food_units.csv`, tested):
+- **usda**: a measured portion from USDA SR Legacy `food_portion.csv` (1 large egg = 50 g, 1 tsp oil = 4.5 g). The build checks that the cited portion and grams exist in the USDA file exactly.
+- **volume** (katori, glass): standard volume × density from a measured USDA cup weight. Liquid dishes (dal, sambar, curries, kheer) use a prepared vegetable soup (241 g/cup, ≈1.02 g/ml), because USDA's "cooked lentils" cup (198 g) is drained lentils, not dal. Dry sabzi uses cooked mixed vegetables (182 g/cup); rice dishes use cooked rice (158 g/cup).
+- **recipe**: the piece size our recipe defines (idli 40 g, dosa 50 g).
+Standard volumes: **katori = 150 ml, glass = 250 ml** (one constant, `VOLUME_ML`). Options considered for katori: 100 ml (small), 150 ml (common standard), 200 ml (large). Home sizes vary; the UI should let people adjust portions.
+- No unit is guessed: foods without a citable weight (paratha, puri, samosa, gulab jamun, paneer cube) have no unit yet and are logged in grams.
+- The loader replaces each food's units on every run (nothing references `food_units`; logs store grams).
