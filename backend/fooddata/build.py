@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from fooddata.carbs import available_carbs
-from fooddata.checks import Issue, check_diet_class, check_food, compare_sources
+from fooddata.checks import Issue, check_diet_class, check_dish_plausibility, check_food, compare_sources
 from fooddata.download import DATA_DIR
 from fooddata.find import load_all
 from fooddata.records import FoodRecord
@@ -73,6 +73,7 @@ def review_row(row: dict, index: dict[tuple[str, str], FoodRecord]) -> Reviewed:
         result.add(Issue("carbs", "warning", carbs.note))
 
     result.add(*check_food(food))
+    result.add(*check_dish_plausibility(row["category"], food.kcal))
     # Diet rules run on BOTH the source's name and ours, so a mislabelled mapping is caught.
     result.add(*check_diet_class(food.name, food.category, row["diet_class"]))
     result.add(*check_diet_class(f"{row['name']} {row['local_names']}", None, row["diet_class"]))

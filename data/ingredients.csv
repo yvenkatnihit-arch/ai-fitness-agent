@@ -65,3 +65,130 @@ orange,Orange,santra;narangi,fruit,vegan,usda_sr_legacy,169097,,,exact,
 sugar,Sugar,cheeni;shakkar,sweetener,vegan,usda_sr_legacy,169655,,,exact,
 jaggery,Jaggery,gur;bellam;vellam,sweetener,vegan,,,,,none,GAP: not in USDA or CoFID. Needs IFCT
 honey,Honey,shahad;madhu,sweetener,vegetarian,usda_sr_legacy,169640,uk_cofid,17-050,exact,Marked vegetarian (not vegan): many vegans avoid honey
+turmeric,Turmeric (ground),haldi;manjal;arishina,spice,vegan,usda_sr_legacy,172231,,,exact,
+chilli_powder,Red chilli powder,lal mirch;kashmiri mirch;milagai thool,spice,vegan,usda_sr_legacy,170932,,,exact,USDA red/cayenne pepper = pure ground chilli. Not USDA "chili powder" which is a US spice blend
+cumin,Cumin seeds,jeera;jeerige,spice,vegan,usda_sr_legacy,170923,,,exact,
+coriander_seed,Coriander seeds / powder,dhania;kothamalli vidhai,spice,vegan,usda_sr_legacy,170922,,,exact,
+mustard_seed,Mustard seeds,rai;sarson;kadugu;sasive,spice,vegan,usda_sr_legacy,170929,,,close,USDA ground mustard seed; whole seeds have the same composition
+fenugreek_seed,Fenugreek seeds,methi dana;vendhayam,spice,vegan,usda_sr_legacy,171324,,,exact,
+garam_masala,Garam masala,,spice,vegan,,,,,none,GAP: CoFID has it but without carbohydrate data; nothing substituted
+ginger,Ginger (fresh),adrak;inji;shunti,vegetable,vegan,usda_sr_legacy,169231,,,exact,
+garlic,Garlic,lehsun;poondu;bellulli,vegetable,vegan,usda_sr_legacy,169230,uk_cofid,13-244,exact,
+green_chilli,Green chilli,hari mirch;pachai milagai,vegetable,vegan,usda_sr_legacy,170497,,,exact,
+curry_leaves,Curry leaves,kadi patta;karuveppilai,vegetable,vegan,,,,,none,GAP: CoFID has them but without carbohydrate data. Used in tiny amounts
+coriander_leaves,Coriander leaves,hara dhania;kothamalli,vegetable,vegan,usda_sr_legacy,169997,,,exact,
+mint,Mint leaves,pudina,vegetable,vegan,usda_sr_legacy,173475,,,exact,USDA spearmint = the common Indian pudina
+methi_leaves,Fenugreek leaves,methi;vendhaya keerai,vegetable,vegan,,,,,none,GAP: CoFID has them but without carbohydrate data. Needs IFCT
+drumstick,Drumstick (pods),sahjan;murungakkai;nuggekai,vegetable,vegan,usda_sr_legacy,170483,uk_cofid,13-238,exact,
+drumstick_leaves,Drumstick leaves,moringa leaves;murungai keerai,vegetable,vegan,usda_sr_legacy,168416,,,exact,
+pumpkin,Pumpkin,kaddu;parangikai,vegetable,vegan,usda_sr_legacy,168448,,,exact,
+beetroot,Beetroot,chukandar,vegetable,vegan,usda_sr_legacy,169145,,,exact,
+mooli,Radish (white),mooli;mullangi,vegetable,vegan,usda_sr_legacy,168451,,,exact,USDA "oriental radish" = the long white mooli
+capsicum,Capsicum (green),shimla mirch;bell pepper,vegetable,vegan,usda_sr_legacy,170427,,,exact,
+french_beans,French beans,beans;phalli;beans palya,vegetable,vegan,usda_sr_legacy,169961,,,exact,
+ridge_gourd,Ridge gourd,turai;peerkangai;heerekai,vegetable,vegan,uk_cofid,13-254,,,exact,
+mushroom,Mushroom (white button),khumb,vegetable,vegan,usda_sr_legacy,169251,uk_cofid,13-505,exact,
+sweet_potato,Sweet potato,shakarkandi;sakkaravalli kizhangu,vegetable,vegan,usda_sr_legacy,168482,uk_cofid,13-463,exact,
+arbi,Colocasia (taro root),arbi;seppankizhangu;kesu,vegetable,vegan,usda_sr_legacy,169308,uk_cofid,13-376,exact,Taro = colocasia root
+suran,Elephant foot yam,suran;jimikand;senai kizhangu,vegetable,vegan,,,,,none,GAP: a different plant from USDA/CoFID "yam"; nothing substituted
+sweet_corn,Sweet corn,makka;butta,vegetable,vegan,usda_sr_legacy,169998,,,exact,
+apple,Apple (with skin),seb,fruit,vegan,usda_sr_legacy,168202,,,close,USDA golden delicious with skin; other varieties are similar
+grapes,Grapes,angoor;draksha,fruit,vegan,usda_sr_legacy,174683,,,exact,
+watermelon,Watermelon,tarbooz;kalingad,fruit,vegan,usda_sr_legacy,167765,,,exact,
+pomegranate,Pomegranate,anar;dalimbe,fruit,vegan,usda_sr_legacy,169134,,,exact,
+pineapple,Pineapple,ananas,fruit,vegan,usda_sr_legacy,169124,,,exact,
+chikoo,Sapota,chikoo;sapota,fruit,vegan,usda_sr_legacy,167759,uk_cofid,14-256,exact,
+lemon_juice,Lemon juice,nimbu ras;elumichai,fruit,vegan,usda_sr_legacy,167747,,,exact,
+dates,Dates,khajoor;pericham pazham,fruit,vegan,usda_sr_legacy,171726,,,close,USDA deglet noor; Indian market dates vary
+raisins,Raisins,kishmish;ularntha thiratchai,fruit,vegan,usda_sr_legacy,168165,,,exact,
+coconut_milk,Coconut milk,nariyal doodh;thengai paal,nut_seed,vegan,usda_sr_legacy,170172,,,exact,
+tamarind,Tamarind (pulp),imli;puli;hunase,fruit,vegan,usda_sr_legacy,167763,,,exact,
+sesame,Sesame seeds,til;ellu,nut_seed,vegan,usda_sr_legacy,170150,,,exact,
+flaxseed,Flaxseed,alsi;agase,nut_seed,vegan,usda_sr_legacy,169414,,,exact,
+chia,Chia seeds,sabja (not the same);chia,nut_seed,vegan,usda_sr_legacy,170554,,,exact,Not sabja (basil seeds) which is a different seed
+pistachio,Pistachios,pista,nut_seed,vegan,usda_sr_legacy,170184,,,exact,
+walnut,Walnuts,akhrot,nut_seed,vegan,usda_sr_legacy,170187,,,exact,
+peanuts_roasted,Peanuts (dry roasted),bhuna moongphali,nut_seed,vegan,uk_cofid,14-878,,,exact,
+makhana,Makhana (fox nut),phool makhana,nut_seed,vegan,,,,,none,GAP: makhana is Euryale ferox; USDA "lotus seeds" is a different plant (often confused). Nothing substituted
+butter,Butter (salted),makhan;benne,fat_oil,vegetarian,usda_sr_legacy,173410,uk_cofid,17-685,exact,
+vanaspati,Vanaspati (vegetable ghee),dalda,fat_oil,vegan,uk_cofid,12-502,,,exact,Hydrogenated vegetable fat; plant-based despite the name
+cream,Fresh cream,malai,dairy,vegetarian,usda_sr_legacy,170859,,,close,US heavy cream (36 % fat); Indian fresh cream is usually 25 %
+chaas,Buttermilk (chaas),chaas;majjige;mor,dairy,vegetarian,usda_sr_legacy,170874,,,close,US low-fat cultured buttermilk; Indian chaas is diluted curd with similar values
+khoa,Khoa (mawa),khoya;mawa,dairy,vegetarian,,,,,none,GAP: not in USDA or CoFID. Needs IFCT
+maida,Maida (refined wheat flour),all-purpose flour,cereal,vegan,usda_sr_legacy,169761,,,exact,
+bread_white,White bread,double roti;pav,cereal,vegan,usda_sr_legacy,174924,,,close,US commercial white bread; Indian bread and pav are similar per 100 g
+sabudana,Sabudana (tapioca pearls),sago;javvarisi,cereal,vegan,usda_sr_legacy,169717,,,exact,
+vermicelli,Vermicelli (wheat),semiya;sevai,cereal,vegan,,,,,none,GAP: only soy vermicelli available; Indian semiya is wheat. Nothing substituted
+cornflakes,Cornflakes,,cereal,vegan,uk_cofid,11-745,,,exact,Unfortified
+masoor_dal_cooked,Masoor dal (cooked plain),red lentil dal,dish_dal,vegan,uk_cofid,13-658,,,exact,Boiled in water with no tadka; log oil/ghee separately
+urad_dal_cooked,Urad dal (cooked),maa ki dal,dish_dal,vegetarian,uk_cofid,12-468,,,close,UK homemade recipe; labelled vegetarian until recipe fat is confirmed
+mixed_dal,Mixed dal (cooked),panchmel dal,dish_dal,vegetarian,uk_cofid,13-484,,,close,UK homemade recipe; labelled vegetarian until recipe fat is confirmed
+chana_dal_cooked,Chana dal (cooked),,dish_dal,vegetarian,uk_cofid,15-641,,,close,UK homemade recipe; labelled vegetarian until recipe fat is confirmed
+moong_dal_tomato,Moong dal with tomato (cooked),,dish_dal,vegetarian,uk_cofid,15-132,,,close,UK homemade recipe; labelled vegetarian until recipe fat is confirmed
+moong_dal_bengali,Moong dal Bengali style (cooked),mung dal,dish_dal,vegetarian,uk_cofid,15-768,,,close,Fibre unknown in CoFID
+sambar,Sambar,sambhar;kuzhambu,dish_dal,vegetarian,uk_cofid,12-467,,,close,UK homemade recipe; South Indian recipes vary a lot
+rajma_curry,Rajma (kidney bean curry),rajma masala,dish_dal,vegetarian,uk_cofid,15-146,,,close,Punjabi style
+chole,Chole (chickpea curry),chana masala;chhole,dish_dal,vegetarian,uk_cofid,15-744,,,close,Gujarati whole chick pea curry
+whole_moong_curry,Whole moong curry,sabut moong dal,dish_dal,vegetarian,uk_cofid,15-490,,,close,Punjabi style
+khichdi,Khichdi,khichadi;pongal,dish_rice,vegan,uk_cofid,15-529,,,close,CoFID recipe made with vegetable oil
+rice_cooked,Steamed white rice,chawal;bhaat;annam,dish_rice,vegan,usda_sr_legacy,169757,uk_cofid,11-862,exact,Long grain; cooked without salt
+basmati_cooked,Basmati rice (cooked),,dish_rice,vegan,uk_cofid,11-858,,,exact,
+brown_rice_cooked,Brown rice (cooked),,dish_rice,vegan,uk_cofid,11-867,,,exact,Brown basmati
+pulao_plain,Plain pulao,pilau;jeera rice,dish_rice,vegetarian,uk_cofid,11-968,,,close,UK homemade recipe; labelled vegetarian until recipe fat is confirmed
+veg_pulao,Vegetable pulao,veg pilau,dish_rice,vegetarian,uk_cofid,12-472,,,close,UK homemade recipe; labelled vegetarian until recipe fat is confirmed
+chicken_biryani,Chicken biryani,,dish_rice,non_vegetarian,uk_cofid,19-454,,,close,UK takeaway average; home biryani may differ
+mutton_biryani,Mutton biryani,gosht biryani,dish_rice,non_vegetarian,uk_cofid,19-591,,,close,CoFID uses lamb; Indian mutton is often goat
+roti,Roti / chapati (no fat),phulka;chapati;poli,dish_bread,vegan,uk_cofid,11-459,usda_sr_legacy,171844,exact,Plain dry roti; USDA cross-check includes some fat
+roti_with_fat,Roti / chapati with ghee or oil,chapati with ghee,dish_bread,vegetarian,uk_cofid,11-987,,,close,Fat type not stated; labelled vegetarian
+paratha,Plain paratha,parotta,dish_bread,vegetarian,uk_cofid,11-1104,,,close,UK homemade recipe
+mooli_paratha,Mooli paratha,radish paratha,dish_bread,vegetarian,uk_cofid,11-912,,,close,Stuffed; lower energy than plain paratha
+puri,Puri,poori,dish_bread,vegetarian,uk_cofid,11-911,,,close,Deep fried; labelled vegetarian until frying fat is confirmed
+naan,Naan,,dish_bread,vegetarian,uk_cofid,11-973,,,close,Usually made with yogurt or milk
+aloo_gobi,Aloo gobi,,dish_sabzi,vegetarian,uk_cofid,15-679,,,close,Cauliflower and potato bhaji
+aloo_pyaz,Aloo pyaz sabzi,potato onion sabzi,dish_sabzi,vegetarian,uk_cofid,15-690,,,close,
+bhindi_sabzi,Bhindi sabzi,okra fry;bhindi masala,dish_sabzi,vegan,uk_cofid,15-685,,,close,CoFID recipe made with vegetable oil
+cabbage_aloo,Cabbage aloo sabzi,patta gobi,dish_sabzi,vegan,uk_cofid,15-675,,,close,CoFID recipe made with vegetable oil
+aloo_gobi_matar,Aloo gobi matar,,dish_sabzi,vegan,uk_cofid,15-022,,,close,CoFID recipe made with vegetable oil
+palak_sabzi,Palak sabzi,spinach bhaji,dish_sabzi,vegetarian,uk_cofid,15-694,,,close,
+baingan_aloo,Baingan aloo,brinjal potato sabzi,dish_sabzi,vegetarian,uk_cofid,15-669,,,close,
+methi_aloo,Methi aloo,,dish_sabzi,vegetarian,uk_cofid,15-628,,,close,
+saag,Saag,sarson ka saag,dish_sabzi,vegetarian,uk_cofid,15-629,,,close,
+bombay_potato,Dry aloo sabzi,bombay potato;aloo fry,dish_sabzi,vegetarian,uk_cofid,15-739,,,close,
+aloo_matar,Aloo matar,potato pea curry,dish_sabzi,vegetarian,uk_cofid,15-781,,,close,
+chicken_curry,Chicken curry,,dish_curry_meat,non_vegetarian,uk_cofid,19-322,,,close,UK takeaway average
+chicken_korma,Chicken korma,,dish_curry_meat,non_vegetarian,uk_cofid,19-565,,,close,
+mutton_curry,Mutton rogan josh,mutton curry,dish_curry_meat,non_vegetarian,uk_cofid,19-595,,,close,CoFID uses lamb; Indian mutton is often goat
+fish_curry,Fish curry,,dish_curry_meat,non_vegetarian,uk_cofid,16-364,,,close,
+egg_curry,Egg curry,anda curry,dish_curry_meat,eggetarian,uk_cofid,15-754,,,close,CoFID recipe made with rapeseed oil
+egg_aloo_curry,Egg and potato curry,anda aloo,dish_curry_meat,eggetarian,uk_cofid,15-750,,,close,
+raita,Raita,,dish_side,vegetarian,uk_cofid,17-832,,,close,Yogurt based
+boiled_egg,Boiled egg,anda,dish_side,eggetarian,uk_cofid,12-940,usda_sr_legacy,173424,exact,
+grilled_chicken,Grilled chicken breast (no skin),,dish_side,non_vegetarian,uk_cofid,18-323,usda_sr_legacy,171534,exact,
+boiled_potato,Boiled potato,ubla aloo,dish_side,vegan,uk_cofid,13-490,,,exact,
+chana_boiled,Boiled kabuli chana,boiled chickpeas,dish_side,vegan,uk_cofid,13-662,,,exact,
+moong_boiled,Boiled whole moong,,dish_side,vegan,uk_cofid,13-664,,,exact,Boiled whole beans (not sprouted)
+rajma_boiled,Boiled rajma,boiled kidney beans,dish_side,vegan,uk_cofid,13-659,,,exact,
+oats_water,Oats porridge (with water),,dish_breakfast,vegan,uk_cofid,11-1107,,,exact,
+oats_milk,Oats porridge (milk and water),,dish_breakfast,vegetarian,uk_cofid,11-1106,,,exact,
+omelette,Plain omelette,anda omelette,dish_breakfast,eggetarian,uk_cofid,12-946,,,close,Indian masala omelette adds onion and chilli
+samosa,Vegetable samosa,,dish_snack,vegetarian,uk_cofid,15-305,,,close,UK retail; labelled vegetarian until frying fat is confirmed
+pakora,Vegetable pakora,pakoda;bhajji,dish_snack,vegetarian,uk_cofid,11-1101,,,close,
+onion_pakora,Onion pakora,kanda bhaji;onion bhajia,dish_snack,vegetarian,uk_cofid,15-828,,,close,
+namkeen_mixture,Namkeen mixture,bombay mix;chiwda mixture,dish_snack,vegetarian,uk_cofid,17-764,,,close,
+gajar_halwa,Gajar halwa,carrot halwa,dish_sweet,vegetarian,uk_cofid,17-798,,,close,
+sooji_halwa,Sooji halwa,rava kesari;sheera,dish_sweet,vegetarian,uk_cofid,17-799,,,close,
+gulab_jamun,Gulab jamun,,dish_sweet,vegetarian,uk_cofid,11-1081,,,close,
+kulfi,Kulfi,,dish_sweet,vegetarian,uk_cofid,12-606,,,close,CoFID recipe is very rich (42 g fat); compare with IFCT later
+idli,Idli,,dish_breakfast,vegan,,,,,none,GAP: not in USDA or CoFID
+dosa,Plain dosa,dosai,dish_breakfast,vegan,,,,,none,GAP: CoFID only has the dosa filling (15-513)
+upma,Upma,uppittu,dish_breakfast,vegetarian,,,,,none,GAP: not in USDA or CoFID
+rasam,Rasam,saaru,dish_dal,vegan,,,,,none,GAP: not in USDA or CoFID
+kadhi,Kadhi,,dish_dal,vegetarian,,,,,none,GAP: not in USDA or CoFID
+keema,Keema,mutton keema,dish_curry_meat,non_vegetarian,,,,,none,GAP: not in USDA or CoFID
+kheer,Kheer,payasam,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
+rasgulla,Rasgulla,,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
+barfi,Barfi,burfi,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
+jalebi,Jalebi,,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
+ladoo,Ladoo,laddu,dish_sweet,vegetarian,,,,,none,GAP: not in USDA or CoFID
+papad,Papad,poppadum;appalam,dish_snack,vegan,,,,,none,GAP: not in USDA or CoFID
+chivda,Chivda,chevda;poha chivda,dish_snack,vegan,,,,,none,GAP: CoFID 17-782 has no carbohydrate breakdown so carbs cannot be computed

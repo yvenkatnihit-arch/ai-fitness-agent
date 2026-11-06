@@ -89,7 +89,11 @@ DAIRY = re.compile(r"\b(milk|cheese|butter|ghee|yogurt|yoghurt|curd|paneer|cream
 PLANT_MILK = re.compile(r"\b(soy|soya|almond|oat|coconut|rice|cashew)\s+(milk|cream|yogurt|yoghurt|butter|paneer)\b|"
                         r"\b(peanut|nut|cocoa|apple|shea)\s+butter\b", re.I)
 # Plant foods whose names contain an animal word ("coconut meat" is the white flesh of a coconut).
-PLANT_PHRASES = re.compile(r"\b(coconut|nut)\s+meat\b|\beggplant\b", re.I)
+PLANT_PHRASES = re.compile(r"\b(coconut|nut)\s+meat\b|\bexpressed from grated meat\b|\beggplant\b|"
+                           r"\bghee made from vegetable oil\b|"
+                           r"\bvegetable ghee\b|\bvanaspati\b|\bdalda\b", re.I)
+# CoFID names eggs by the bird that laid them: "Eggs, chicken, whole, boiled" is a hen's egg, not chicken meat.
+EGG_OF_BIRD = re.compile(r"\beggs?,?\s+(chicken|duck|hen|quail|turkey)\b", re.I)
 DIET_ORDER = ["vegan", "vegetarian", "eggetarian", "non_vegetarian"]  # each allows what's before it
 
 
@@ -101,7 +105,7 @@ def check_diet_class(name: str, category: str | None, diet_class: str) -> list[I
     Egg/dairy words are checked in the NAME only: USDA's category "Dairy and Egg Products"
     covers milk and eggs together, so it can't tell curd from egg.
     """
-    plain_name = PLANT_PHRASES.sub(" ", name)
+    plain_name = EGG_OF_BIRD.sub("egg", PLANT_PHRASES.sub(" ", name))
     needed = "vegan"
     if DAIRY.search(plain_name) and not PLANT_MILK.search(plain_name):
         needed = "vegetarian"
@@ -111,6 +115,31 @@ def check_diet_class(name: str, category: str | None, diet_class: str) -> list[I
         needed = "non_vegetarian"
     if DIET_ORDER.index(diet_class) < DIET_ORDER.index(needed):
         return [Issue("diet_class", "error", f"labelled {diet_class!r} but looks {needed!r}: {name}")]
+    return []
+
+
+# Expected energy per 100 g of a COOKED dish, by our dish category. A value outside the range
+# usually means the wrong item was mapped (e.g. raw dal flour instead of cooked dal).
+DISH_KCAL_RANGES: dict[str, tuple[int, int]] = {
+    "dish_rice": (90, 260),        # boiled rice ~130, pulao/biryani up to ~220
+    "dish_dal": (40, 220),         # sambar ~50, plain boiled dal ~100, rich dal ~200
+    "dish_sabzi": (40, 250),       # dry or gravy vegetable dishes
+    "dish_curry_meat": (90, 300),  # chicken/mutton/fish/egg curries
+    "dish_bread": (150, 420),      # stuffed paratha ~170, roti ~200-300, puri up to ~400
+    "dish_snack": (150, 520),      # samosa, pakora, namkeen
+    "dish_breakfast": (40, 300),   # porridge ~70, omelette ~190
+    "dish_side": (40, 220),        # raita, boiled potato, grilled chicken
+    "dish_sweet": (150, 480),      # halwa, gulab jamun, kulfi
+}
+
+
+def check_dish_plausibility(category: str, kcal: float | None) -> list[Issue]:
+    """Cooked dishes only: is the energy per 100 g in the usual range for this kind of dish?"""
+    if category not in DISH_KCAL_RANGES or kcal is None:
+        return []
+    low, high = DISH_KCAL_RANGES[category]
+    if not low <= kcal <= high:
+        return [Issue("dish_range", "warning", f"{kcal:.0f} kcal is outside the usual {low}-{high} kcal for {category}")]
     return []
 
 

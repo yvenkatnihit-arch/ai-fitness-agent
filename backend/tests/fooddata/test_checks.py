@@ -89,7 +89,14 @@ def test_alcohol_counts_in_expected_energy():
         ("Butter, Clarified butter (ghee)", "Dairy and Egg Products", "vegetarian", True),
         ("Nuts, coconut meat, raw", "Nut and Seed Products", "vegan", True),           # coconut flesh, not meat
         ("Tofu (firm) soya paneer", None, "vegan", True),                              # plant "paneer"
+        ("Nuts, coconut milk, raw (liquid expressed from grated meat and water)", "Nut and Seed Products", "vegan", True),
+        ("Ghee made from vegetable oil", None, "vegan", True),                         # vanaspati / dalda
+        ("Vanaspati (vegetable ghee) dalda", None, "vegan", True),
+        ("Ghee, butter", None, "vegan", False),                                        # real ghee is dairy
+        ("Eggs, chicken, whole, boiled", None, "eggetarian", True),                    # a hen's egg (Step 4.3d)
+        ("Eggs, chicken, whole, boiled", None, "vegetarian", False),                   # ...is still an egg
         # ...while the real problems are still caught:
+        ("Curry, chicken and egg", None, "eggetarian", False),                         # real chicken + egg
         ("Egg, whole, raw, fresh", "Dairy and Egg Products", "vegetarian", False),    # egg in the NAME
         ("Yogurt, plain, whole milk", "Dairy and Egg Products", "vegan", False),       # dairy is never vegan
         ("Chicken thigh, raw", "Poultry Products", "eggetarian", False),
@@ -98,6 +105,23 @@ def test_alcohol_counts_in_expected_energy():
 )
 def test_diet_class_rules(name, category, diet_class, ok):
     assert (c.check_diet_class(name, category, diet_class) == []) is ok
+
+
+@pytest.mark.parametrize(
+    ("category", "kcal", "ok"),
+    [
+        ("dish_rice", 130, True),       # boiled rice
+        ("dish_rice", 365, False),      # RAW rice mapped as a cooked dish
+        ("dish_dal", 102, True),        # boiled red lentils
+        ("dish_dal", 324, False),       # raw dal mapped as cooked dal
+        ("dish_bread", 202, True),      # chapati without fat
+        ("dish_bread", 90, False),
+        ("pulse", 324, True),           # raw ingredients have no dish range
+        ("dish_sweet", None, True),     # unknown energy is handled by check_required
+    ],
+)
+def test_dish_plausibility(category, kcal, ok):
+    assert (c.check_dish_plausibility(category, kcal) == []) is ok
 
 
 def test_duplicates_are_found_within_a_source():
