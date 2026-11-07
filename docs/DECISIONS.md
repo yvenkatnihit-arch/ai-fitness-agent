@@ -561,3 +561,29 @@ Tried in a throwaway environment outside the project (nothing was added to `pypr
 - **Notifications bell: yes**, but only once the reminders feature (D-047) exists.
 - **Every number on a redesigned screen must be real data.** Where data doesn't exist yet, the screen shows a designed empty state, never a fake chart.
 - **Effects are used sparingly** (glow, particles) and tested on a mid-range phone; reduced-motion is always respected.
+
+## D-060 — Focus areas: up to two muscles to bring up, extra volume inside a hard cap
+**Status:** Accepted (Step 6.6g, 2026-11-07)
+`app/calc/focus.py`, `profiles.focus_areas` (migration `20261107120000_focus_areas.sql`), `GET/PUT /training/focus-areas`, a chip picker on the Workout plan page.
+- **Choices:** chest, back, shoulders, biceps, triceps, quads, hamstrings, glutes, calves, abs; at most two. Checked in the API, in code (`check_focus`) and by a database check. Venkat's earlier muscle list (chest, back, shoulders, biceps, triceps, legs, abs, traps) maps onto these; "legs" is split into quads, hamstrings, glutes and calves because they are trained differently. Traps are left out of focus (they are trained by pulls already).
+- **What a focus muscle gets (code only):** (1) a day that trains it gets one more exercise (never above 8); (2) each exercise that trains it gets one more set, in week order, never above 5 sets, and only while every focus muscle that exercise trains stays within the weekly cap; (3) the picker is told the priority muscles and the code fallback prefers those exercises.
+- **Weekly cap:** `MAX_WEEKLY_SETS_PER_MUSCLE = 20` in `safety_config.py`. Focus can only add sets up to this; a compound lift counts for each focus muscle it trains. The cap limits what focus adds; it does not trim the base plan (a high-frequency split can already be near it).
+- **Users with a health flag get no extra volume** (conservative, like the one-set-fewer rule). Their plan records an empty focus.
+- **Where it is chosen:** on the Workout plan page right before generating, so accounts that finished onboarding earlier can use it. Saved immediately, used the next time a plan is made. Onboarding is not changed.
+- The plan payload records `focus_areas` and `focus_sets_added`; day length ("about N min") is worked out after the extra sets, so it stays honest.
+
+## D-061 — Engineering showcase: the backend should use real, advanced AI-engineering techniques
+**Status:** Accepted (Venkat, 2026-11-07, "go with your recommendation"). **Firm commitments: 1, 2, 3 and 6.** Stretch goals: 4 (hybrid retrieval) and 5 (adaptive estimation). 7 and 8 are picked up as their phases arrive.
+**Goal:** the main purpose of the project is a portfolio piece that looks like an AI engineer built it, not a normal CRUD app with a chatbot. **Rule that keeps it honest:** every technique must (1) solve a real problem in this app, (2) have a measurable benefit, (3) have tests or evals, and (4) be visible (a trace, a metric, a "how this was made" panel). No buzzword stacking. The non-negotiables stay (the LLM never does math or invents foods and exercises).
+
+Candidates, each mapped to a step where it fits naturally:
+1. **"LLM selects, solver computes" for meal plans (6.7).** The model chooses dishes from the food database; a constraint solver (linear programming) sets portions to hit calories and macros inside the safety limits, with household-unit rounding. A verify-and-repair loop retries with the solver's feedback. Replaces hand-tuned portion rules with an optimiser.
+2. **LangGraph with human-in-the-loop (Phase 7).** A supervisor/router and parallel specialists (Send API), proposals created inside the graph, and `interrupt()` pausing for the user's approval, resumed from the Postgres checkpointer (already set up). Approval becomes part of the graph, not an afterthought.
+3. **Evals with a regression gate (Phase 7).** Golden datasets and adversarial cases (injury violations must be 0, safety-limit breaches must be 0, constraint satisfaction rate, fallback rate, cost and latency per plan), programmatic checks plus an LLM judge where needed, run in CI so a prompt or model change that makes plans worse fails the build. Includes a red-team set for the NeMo Guardrails rails (D-043).
+4. **Hybrid retrieval (RAG) with citations.** Postgres full-text + pgvector embeddings + a reranker, used for (a) parsing "2 rotis and dal" into foods and (b) grounding the help bot in our own docs and a small curated nutrition/training knowledge base, with sources shown.
+5. **Adaptive estimation from logs (Phase 8).** Smooth the weight trend (exponentially weighted / Kalman-style) and estimate the user's real TDEE from logged intake vs weight change, so weekly adjustments use evidence instead of formulas alone. Pure code, unit-tested.
+6. **Observability that is visible.** LangSmith traces plus our `agent_runs`, a per-plan "How this plan was made" panel (which days the model chose vs code, checks passed, repairs, tokens, cost, latency), and a small admin view of cost per day and eval scores.
+7. **Reliability engineering.** Idempotent generation (already started), Gemini context caching where it saves money, a per-user token budget, a circuit breaker on the provider, and graceful fallbacks (already the pattern).
+8. **Layered safety.** NeMo input/output rails, prompt-injection defences on all user text that reaches a model, PII-free prompts (already true), and the code-owned limits.
+
+Later (Venkat said yes to A2A on 2026-11-07): **A2A (Agent2Agent protocol)** after Phase 7: publish an Agent Card and expose the coach as an A2A server (an adapter over the existing LangGraph graph), and optionally call outside agents. Check the current A2A spec before building. Also optional: expose the app's tools as an MCP server; offline replay of traces to compare model versions.

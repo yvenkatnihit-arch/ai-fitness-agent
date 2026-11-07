@@ -4,8 +4,10 @@ import { Link } from 'react-router'
 import { FormError, PageShell, PrimaryButton } from '../components/ui'
 import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
+import { FocusPicker } from './FocusPicker'
 import { PlanDays } from './PlanDays'
-import type { ActivePlan, Proposal } from './types'
+import type { ActivePlan, FocusState, Proposal } from './types'
+import { words } from '../lib/words'
 
 const asApiError = (e: unknown) => (e instanceof ApiError ? e : new ApiError(0, 'Something went wrong. Please try again.'))
 
@@ -15,6 +17,7 @@ export function WorkoutPlanPage() {
   const [loaded, setLoaded] = useState(false)
   const [active, setActive] = useState<ActivePlan | null>(null)
   const [proposal, setProposal] = useState<Proposal | null>(null)
+  const [focus, setFocus] = useState<FocusState | null>(null)
   const [busy, setBusy] = useState<'generating' | 'deciding' | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
 
@@ -28,10 +31,12 @@ export function WorkoutPlanPage() {
         throw e
       }),
       api.get<{ proposals: Proposal[] }>('/plans/proposals/pending'),
+      api.get<FocusState>('/training/focus-areas').catch(() => null), // a bonus: the page works without it
     ]).then(
-      ([plan, pending]) => {
+      ([plan, pending, chosen]) => {
         if (cancelled) return
         setActive(plan)
+        setFocus(chosen)
         setProposal(pending.proposals.find((p) => p.type === 'workout_change') ?? null)
         setLoaded(true)
       },
@@ -54,6 +59,9 @@ export function WorkoutPlanPage() {
     }
   }
 
+  const saveFocus = (areas: string[]) => run('deciding', async () => {
+    setFocus(await api.put<FocusState>('/training/focus-areas', { focus_areas: areas }))
+  })
   const generate = () => run('generating', async () => setProposal(await api.post<Proposal>('/plans/workout/generate')))
   const approve = (id: string) => run('deciding', async () => {
     await api.post<Proposal>(`/plans/proposals/${id}/approve`)
@@ -83,6 +91,9 @@ export function WorkoutPlanPage() {
         <section aria-label="Plan waiting for your approval" className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm ring-2 ring-brand">
           <h2 className="text-base font-bold text-ink">New plan: approve it to make it yours</h2>
           <p className="text-sm text-ink-soft">{proposal.summary}</p>
+          {proposal.payload.focus_areas && proposal.payload.focus_areas.length > 0 && (
+            <p className="text-xs font-semibold text-brand-strong">Extra focus: {proposal.payload.focus_areas.map(words).join(', ')}</p>
+          )}
           {proposal.payload.doctor_note && (
             <p className="rounded-lg bg-warn-soft p-3 text-xs text-warn">{proposal.payload.doctor_note}</p>
           )}
@@ -114,6 +125,7 @@ export function WorkoutPlanPage() {
               You will see it first and decide.
             </p>
           )}
+          {focus && <FocusPicker focus={focus} disabled={busy !== null} onChange={saveFocus} />}
           <PrimaryButton type="button" onClick={generate} disabled={busy !== null}>
             {busy === 'generating' ? 'Building your plan…' : active ? 'Make me a new plan' : 'Generate my plan'}
           </PrimaryButton>

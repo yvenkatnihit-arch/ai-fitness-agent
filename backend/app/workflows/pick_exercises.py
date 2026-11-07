@@ -12,8 +12,9 @@ from typing import Literal
 from uuid import UUID
 
 from app.calc.day_picks import (
-    MIN_DAY_EXERCISES, day_candidates, fallback_picks, order_picks, validate_picks, wanted_count,
+    EXERCISES_PER_DAY, MIN_DAY_EXERCISES, day_candidates, fallback_picks, order_picks, validate_picks, wanted_count,
 )
+from app.calc.focus import day_wanted
 from app.calc.exercise_filter import ExerciseOption
 from app.calc.splits import Split
 from app.llm.client import LLMResult, call_llm
@@ -43,13 +44,15 @@ def _default_ask(user_id: UUID | None) -> Ask:
 
 def pick_exercises(
     split: Split, allowed: Sequence[ExerciseOption], level: str, goal: str,
-    *, per_day: int | None = None, ask: Ask | None = None, user_id: UUID | None = None,
+    *, per_day: int | None = None, focus: Sequence[str] = (), ask: Ask | None = None, user_id: UUID | None = None,
 ) -> list[DayPicks]:
     """One DayPicks per training day, in the split's order. `allowed` must already be filtered for this user.
-    `per_day` is how many exercises a day should have (from the session length); default is by level."""
+    `per_day` is how many exercises a day should have (from the session length); default is by level.
+    `focus` muscles add one exercise to the days that train them and steer the choice (D-060)."""
     ask = ask or _default_ask(user_id)
     cands = [day_candidates(d, allowed) for d in split.days]
-    wanted = [wanted_count(level, c, per_day) for c in cands]
+    base = per_day if per_day is not None else EXERCISES_PER_DAY[level]
+    wanted = [wanted_count(level, c, day_wanted(base, d, focus)) for c, d in zip(cands, split.days, strict=True)]
     results: dict[int, DayPicks] = {}
     pending = [i for i, c in enumerate(cands) if len(c) >= MIN_DAY_EXERCISES]
     for i, c in enumerate(cands):
@@ -65,7 +68,7 @@ def pick_exercises(
             break
         requests = [DayRequest(i + 1, split.days[i].label, wanted[i], cands[i], problems.get(i, ())) for i in pending]
         try:
-            answer = parse_answer(ask(build_user_prompt(level, goal, requests)).text)
+            answer = parse_answer(ask(build_user_prompt(level, goal, requests, focus)).text)
         except Exception:  # noqa: BLE001 - LLMBusy/LLMFailed: the whole plan still works, via the fallback
             logger.warning("exercise picker call failed; using code picks for %d day(s)", len(pending))
             break
@@ -82,7 +85,7 @@ def pick_exercises(
 
     used: list[str] = [k for r in results.values() for k in r.keys]
     for i in pending:
-        keys = fallback_picks(cands[i], wanted[i], used)
+        keys = fallback_picks(cands[i], wanted[i], used, focus)
         used.extend(keys)
         results[i] = DayPicks(split.days[i].label, tuple(keys), "fallback", "; ".join(problems.get(i, ["model unavailable"])))
     return [results[i] for i in range(len(split.days))]

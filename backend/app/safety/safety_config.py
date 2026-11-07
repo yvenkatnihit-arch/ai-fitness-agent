@@ -60,6 +60,10 @@ MAX_PROTEIN_KCAL_FRACTION: Final = 0.35
 # Fat at least 25% of calories (hormones, absorbing vitamins A, D, E, K).
 MIN_FAT_KCAL_FRACTION: Final = 0.25
 
+# --- Training volume (D-060) ---
+# The most hard sets one muscle may get in a week. Focus areas can add sets only up to this; the model can't raise it.
+MAX_WEEKLY_SETS_PER_MUSCLE: Final = 20
+
 # --- Weekly check-in (brief section 4.4) ---
 # Fewer weigh-ins than this in a week -> ask the user to log more, don't adjust.
 MIN_WEIGH_INS_FOR_CHECKIN: Final = 4

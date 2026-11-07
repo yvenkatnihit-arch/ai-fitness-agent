@@ -20,6 +20,8 @@ export type PlanDay = {
   exercises: PlanExercise[]
 }
 
+export type FocusState = { focus_areas: string[]; options: string[]; max_areas: number }
+
 export type ActivePlan = { id: string; week_start: string; version: number; approved_at: string; days: PlanDay[] }
 
 export type Proposal = {
@@ -29,7 +31,7 @@ export type Proposal = {
   summary: string
   status: string
   created_at: string
-  payload: { split_name?: string; week_start?: string; doctor_note?: string | null; days?: PlanDay[] }
+  payload: { split_name?: string; focus_areas?: string[]; week_start?: string; doctor_note?: string | null; days?: PlanDay[] }
 }
 
 export const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']

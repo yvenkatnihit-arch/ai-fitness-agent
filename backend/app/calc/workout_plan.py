@@ -9,6 +9,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from app.calc.exercise_filter import ExerciseOption
+from app.calc.focus import add_focus_sets
 from app.calc.routine import MIN_SETS, prescribe
 from app.calc.session_time import estimate_day_minutes
 from app.calc.splits import Split
@@ -37,9 +38,10 @@ def next_monday(today: date) -> date:
 
 def build_payload(
     split: Split, day_picks: Sequence[DayPick], library: Mapping[str, ExerciseOption],
-    *, level: str, goal: str, pace: str, flagged: bool, week_start: date,
+    *, level: str, goal: str, pace: str, flagged: bool, week_start: date, focus: Sequence[str] = (),
 ) -> dict[str, Any]:
-    """The workout proposal payload. `pace` must be the effective pace (health flags already applied)."""
+    """The workout proposal payload. `pace` must be the effective pace (health flags already applied).
+    `focus` muscles get extra sets within the weekly cap, except for users with a health flag (D-060)."""
     if len(day_picks) != split.training_days:
         raise ValueError("need one set of picks per training day")
     if split.training_days not in WEEK_LAYOUT:
@@ -62,9 +64,13 @@ def build_payload(
                 "exercise_key": key, "name": ex.name, "position": len(exercises) + 1, "sets": sets,
                 "reps_min": rx.reps_min, "reps_max": rx.reps_max, "rest_sec": rx.rest_sec, "note": rx.note,
             })
-        minutes = estimate_day_minutes([(e["sets"], e["rest_sec"]) for e in exercises])   # about how long the day takes
-        days.append({"day_of_week": dow, "focus": pick.label, "is_rest": False, "minutes": minutes, "exercises": exercises})
+        days.append({"day_of_week": dow, "focus": pick.label, "is_rest": False, "minutes": 0, "exercises": exercises})
+    focus_sets = 0 if flagged else add_focus_sets(days, {k: o.muscle_groups for k, o in library.items()}, focus)
+    for day in days:   # the day length is worked out last, after any focus sets
+        if not day["is_rest"]:
+            day["minutes"] = estimate_day_minutes([(e["sets"], e["rest_sec"]) for e in day["exercises"]])
     return {
+        "focus_areas": [] if flagged else list(focus), "focus_sets_added": focus_sets,
         "kind": "workout_plan", "version": PAYLOAD_VERSION, "split_key": split.key, "split_name": split.name,
         "week_start": week_start.isoformat(), "level": level, "goal": goal, "doctor_note": DOCTOR_NOTE if flagged else None,
         "days": days,

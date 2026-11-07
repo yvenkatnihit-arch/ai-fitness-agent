@@ -45,7 +45,12 @@ MovementPattern = Literal[
     "pull_horizontal", "pull_vertical", "carry", "core", "cardio", "mobility",
 ]
 
+# Muscles a user can ask to bring up (max 2). Same list as the profiles.focus_areas check in the database.
+FocusArea = Literal["chest", "back", "shoulders", "biceps", "triceps", "quads", "hamstrings", "glutes", "calves", "abs"]
+MAX_FOCUS_AREAS = 2
+
 PACES = get_args(Pace)
+FOCUS_AREAS = get_args(FocusArea)
 MUSCLE_GROUPS = get_args(MuscleGroup)
 MOVEMENT_PATTERNS = get_args(MovementPattern)
 CUISINES = get_args(Cuisine)

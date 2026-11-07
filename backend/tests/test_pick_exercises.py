@@ -137,3 +137,18 @@ def test_a_day_with_only_two_possible_exercises_is_not_a_workout():
     two = [ex("a", "push_horizontal", ["chest"]), ex("b", "push_vertical", ["shoulders"])]
     result = pick_exercises(SPLIT, two, "beginner", "muscle_gain", ask=Script())    # never asks the model: nothing to choose
     assert [r.source for r in result] == ["none"] * 3 and "Only 2 exercise(s)" in result[0].note
+
+
+def test_focus_muscles_add_one_exercise_to_their_days_and_reach_the_prompt():
+    ask = Script(reply(good_for()))                       # day lists of 4 (beginner): the extra one is asked for, then rejected
+    result = pick_exercises(SPLIT, ALLOWED, "beginner", "muscle_gain", focus=["biceps"], ask=ask)
+    assert "Priority muscles to bring up: biceps" in ask.prompts[0]
+    assert "Day 2: Pull. Choose exactly 5 exercises" in ask.prompts[0]      # the pull day trains biceps: 4 + 1
+    assert "Day 1: Push. Choose exactly 4 exercises" in ask.prompts[0]      # the push day does not
+    assert [len(r.keys) for r in result][0] == 4
+
+
+def test_without_focus_nothing_extra_is_asked_for():
+    ask = Script(reply(good_for()))
+    pick_exercises(SPLIT, ALLOWED, "beginner", "muscle_gain", ask=ask)
+    assert "Priority muscles" not in ask.prompts[0]

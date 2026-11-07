@@ -5,7 +5,7 @@ gets wrong falls back to `fallback_picks`, so an invented or unsafe exercise can
 """
 
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 
 from app.calc.exercise_filter import ExerciseOption
 from app.calc.routine import exercise_kind
@@ -80,10 +80,12 @@ def order_picks(keys: Sequence[str], candidates: Sequence[ExerciseOption]) -> li
     return sorted(keys, key=rank)   # sorted() is stable
 
 
-def fallback_picks(candidates: Sequence[ExerciseOption], wanted: int, used: Sequence[str] = ()) -> list[str]:
+def fallback_picks(candidates: Sequence[ExerciseOption], wanted: int, used: Sequence[str] = (),
+                   focus: Collection[str] = ()) -> list[str]:
     """A safe, boring pick made by code: round-robin over the day's movements, big lifts first, easiest first.
 
     `used` are exercises already placed on other days; they are chosen last, so the week has variety.
+    Exercises that train a `focus` muscle come first within their movement.
     """
     def kind_rank(o: ExerciseOption) -> int:
         return KIND_ORDER.get(exercise_kind(o.movement_pattern, o.muscle_groups, o.name) or "core", 2)
@@ -91,7 +93,8 @@ def fallback_picks(candidates: Sequence[ExerciseOption], wanted: int, used: Sequ
     ordered_patterns = list(dict.fromkeys(o.movement_pattern for o in candidates))
     queues = {
         p: sorted((o for o in candidates if o.movement_pattern == p),
-                  key=lambda o: (o.key in used, kind_rank(o), LEVEL_ORDER[o.difficulty], o.name))
+                  key=lambda o: (o.key in used, not (set(focus) & set(o.muscle_groups)), kind_rank(o),
+                         LEVEL_ORDER[o.difficulty], o.name))
         for p in ordered_patterns
     }
     cap = pattern_cap(wanted, len(ordered_patterns))

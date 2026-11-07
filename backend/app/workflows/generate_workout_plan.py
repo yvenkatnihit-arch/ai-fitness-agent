@@ -56,7 +56,7 @@ def generate_workout_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated
     allowed = filter_exercises(library, needs)
     pace, _ = effective_pace(saved.pace, saved.goal_type, saved.flags)   # type: ignore[arg-type]
     per_day = exercises_for_session(training.level, split_inputs.goal, pace, training.session_minutes)
-    picks = pick_exercises(split, allowed, training.level, split_inputs.goal, per_day=per_day, ask=ask, user_id=user_id)
+    picks = pick_exercises(split, allowed, training.level, split_inputs.goal, per_day=per_day, focus=training.focus_areas, ask=ask, user_id=user_id)
 
     empty = [p.label for p in picks if p.source == "none"]
     if empty:
@@ -68,7 +68,7 @@ def generate_workout_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated
     by_key = {o.key: o for o in library}
     payload = build_payload(
         split, [DayPick(p.label, p.keys) for p in picks], by_key,
-        level=training.level, goal=split_inputs.goal, pace=pace, flagged=bool(saved.flags), week_start=next_monday(india_today()),
+        level=training.level, goal=split_inputs.goal, pace=pace, flagged=bool(saved.flags), week_start=next_monday(india_today()), focus=training.focus_areas,
     )
     problems = validate_payload(payload, set(by_key))
     if problems:   # a bug on our side, never the user's fault: refuse to save rather than save something unsafe

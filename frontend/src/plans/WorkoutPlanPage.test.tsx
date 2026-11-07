@@ -155,3 +155,61 @@ test('a busy coach (503) shows the friendly message and does not lose the page',
   fireEvent.click(await screen.findByRole('button', { name: 'Generate my plan' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('The coach is busy right now')
 })
+
+// --- Muscles to bring up ---
+
+const FOCUS = { focus_areas: [] as string[], options: ['chest', 'back', 'glutes', 'abs'], max_areas: 2 }
+const focusHandlers = (state = FOCUS) => ({
+  'GET /plans/workout/active': NO_PLAN,
+  'GET /plans/proposals/pending': { body: { proposals: [] } },
+  'GET /training/focus-areas': { body: state },
+})
+
+test('you can pick up to two muscles; the third is disabled; the choice is saved', async () => {
+  let saved: string[] = []
+  const calls = fakeFetch({
+    ...focusHandlers(),
+    'PUT /training/focus-areas': (body) => { saved = (body as { focus_areas: string[] }).focus_areas; return { body: { ...FOCUS, focus_areas: saved } } },
+  })
+  render()
+  fireEvent.click(await screen.findByRole('button', { name: 'chest' }))
+  await waitFor(() => expect(screen.getByRole('button', { name: 'chest' })).toHaveAttribute('aria-pressed', 'true'))
+  fireEvent.click(screen.getByRole('button', { name: 'glutes' }))
+  await waitFor(() => expect(screen.getByRole('button', { name: 'glutes' })).toHaveAttribute('aria-pressed', 'true'))
+  expect(screen.getByRole('button', { name: 'back' })).toBeDisabled()          // a third is not allowed
+  expect(screen.getByRole('button', { name: 'abs' })).toBeDisabled()
+  expect(saved).toEqual(['chest', 'glutes'])
+  expect(calls.filter((c) => c.method === 'PUT')).toHaveLength(2)
+})
+
+test('untapping a chosen muscle frees a slot', async () => {
+  fakeFetch({
+    ...focusHandlers({ ...FOCUS, focus_areas: ['chest', 'glutes'] }),
+    'PUT /training/focus-areas': (body) => ({ body: { ...FOCUS, ...(body as object) } }),
+  })
+  render()
+  expect(await screen.findByRole('button', { name: 'back' })).toBeDisabled()
+  fireEvent.click(screen.getByRole('button', { name: 'chest' }))
+  await waitFor(() => expect(screen.getByRole('button', { name: 'back' })).toBeEnabled())
+})
+
+test('the page still works if the focus options cannot be loaded', async () => {
+  fakeFetch({
+    'GET /plans/workout/active': NO_PLAN,
+    'GET /plans/proposals/pending': { body: { proposals: [] } },
+    'GET /training/focus-areas': { status: 500, body: { detail: 'nope' } },
+  })
+  render()
+  expect(await screen.findByRole('button', { name: 'Generate my plan' })).toBeEnabled()
+  expect(screen.queryByText('Muscles to bring up')).not.toBeInTheDocument()
+})
+
+test('a proposal that used a focus says so', async () => {
+  fakeFetch({
+    'GET /plans/workout/active': NO_PLAN,
+    'GET /plans/proposals/pending': { body: { proposals: [{ ...PROPOSAL, payload: { ...PROPOSAL.payload, focus_areas: ['glutes'] } }] } },
+    'GET /training/focus-areas': { body: FOCUS },
+  })
+  render()
+  expect(await screen.findByText('Extra focus: glutes')).toBeInTheDocument()
+})

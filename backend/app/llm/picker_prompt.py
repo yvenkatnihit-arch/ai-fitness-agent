@@ -27,8 +27,11 @@ class DayRequest:
     problems: Sequence[str] = ()             # what was wrong with the last answer for this day (retry only)
 
 
-def build_user_prompt(level: str, goal: str, days: Sequence[DayRequest]) -> str:
-    lines = [f"Experience level: {level}. Goal: {goal}.", ""]
+def build_user_prompt(level: str, goal: str, days: Sequence[DayRequest], focus: Sequence[str] = ()) -> str:
+    lines = [f"Experience level: {level}. Goal: {goal}."]
+    if focus:
+        lines.append(f"Priority muscles to bring up: {', '.join(focus)}. Prefer exercises that train them when a day allows.")
+    lines.append("")
     for d in days:
         lines.append(f"Day {d.number}: {d.label}. Choose exactly {d.wanted} exercises from this list:")
         for o in d.candidates:
