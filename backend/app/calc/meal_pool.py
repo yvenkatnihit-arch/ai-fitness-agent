@@ -11,10 +11,22 @@ sweeteners (not meals), and raw meat and fish (raw versus cooked weight is ambig
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass, field
 
-# DB slot names (meal_plan_items.slot). mid_morning exists in the table but is not used by generated plans yet.
+# DB slot names (meal_plan_items.slot). Normal days use four meals; big days (BIG_DAY_KCAL and up) add a mid-morning one,
+# because no one fits 3,000 kcal into four meals (found on real data, D-065).
 SLOTS = ("breakfast", "lunch", "evening_snack", "dinner")
+ALL_SLOTS = ("breakfast", "mid_morning", "lunch", "evening_snack", "dinner")
+BIG_DAY_KCAL = 2500
 # Share of the day's calories each slot should carry (the solver aims for these).
 SLOT_CALORIE_SHARE = {"breakfast": 0.25, "lunch": 0.35, "evening_snack": 0.10, "dinner": 0.30}
+BIG_DAY_CALORIE_SHARE = {"breakfast": 0.22, "mid_morning": 0.10, "lunch": 0.30, "evening_snack": 0.08, "dinner": 0.30}
+
+
+def slots_for(kcal: float) -> tuple[str, ...]:
+    return ALL_SLOTS if kcal >= BIG_DAY_KCAL else SLOTS
+
+
+def shares_for(slots: Sequence[str]) -> dict[str, float]:
+    return dict(BIG_DAY_CALORIE_SHARE if "mid_morning" in slots else SLOT_CALORIE_SHARE)
 
 # A diet type may eat these food diet classes (a food's class is the strictest diet that can eat it).
 ALLOWED_DIET_CLASSES: dict[str, frozenset[str]] = {
@@ -49,6 +61,7 @@ SNACK = Role("snack", frozenset({"fruit", "nut_seed"}), frozenset({"curd", "chaa
 
 SLOT_ROLES: dict[str, tuple[Role, ...]] = {
     "breakfast": (BREAKFAST_MAIN, BREAKFAST_EXTRA),
+    "mid_morning": (SNACK,),
     "lunch": (STAPLE, PROTEIN, VEGETABLE, SIDE),
     "evening_snack": (SNACK,),
     "dinner": (STAPLE, PROTEIN, VEGETABLE, SIDE),
@@ -97,11 +110,12 @@ def allowed_foods(foods: Sequence[PoolFood], diet_type: str, dislikes: Collectio
     return [f for f in foods if f.diet_class in ok and f.category not in EXCLUDED_CATEGORIES and not disliked(f, dislikes)]
 
 
-def build_pool(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str] = ()) -> dict[str, SlotPool]:
+def build_pool(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str] = (),
+               slots: Sequence[str] = SLOTS) -> dict[str, SlotPool]:
     """For each meal slot: the allowed foods per role. Stable order (verified first, then by name)."""
     usable = allowed_foods(foods, diet_type, dislikes)
     pools: dict[str, SlotPool] = {}
-    for slot in SLOTS:
+    for slot in slots:
         roles: dict[str, tuple[PoolFood, ...]] = {}
         for role in SLOT_ROLES[slot]:
             fits = [f for f in usable if role.fits(f)]

@@ -3,7 +3,8 @@
 import pytest
 
 from app.calc.meal_pool import (
-    ALLOWED_DIET_CLASSES, MIN_OPTIONS_PER_ROLE, SLOT_CALORIE_SHARE, SLOT_ROLES, SLOTS, PoolFood, allowed_foods, build_pool, disliked,
+    ALL_SLOTS, ALLOWED_DIET_CLASSES, BIG_DAY_CALORIE_SHARE, BIG_DAY_KCAL, MIN_OPTIONS_PER_ROLE, SLOT_CALORIE_SHARE, SLOT_ROLES,
+    SLOTS, PoolFood, allowed_foods, build_pool, disliked, shares_for, slots_for,
 )
 
 
@@ -33,8 +34,17 @@ def keys(pool, slot, role):
 
 
 def test_slots_roles_and_calorie_shares_are_consistent():
-    assert SLOTS == tuple(SLOT_ROLES) == tuple(SLOT_CALORIE_SHARE)
-    assert sum(SLOT_CALORIE_SHARE.values()) == pytest.approx(1.0)
+    assert ALL_SLOTS == tuple(SLOT_ROLES) and set(SLOTS) < set(ALL_SLOTS)
+    assert SLOTS == tuple(SLOT_CALORIE_SHARE) and set(BIG_DAY_CALORIE_SHARE) == set(ALL_SLOTS)
+    assert sum(SLOT_CALORIE_SHARE.values()) == pytest.approx(1.0) and sum(BIG_DAY_CALORIE_SHARE.values()) == pytest.approx(1.0)
+
+
+def test_big_days_get_a_mid_morning_meal():
+    assert slots_for(BIG_DAY_KCAL - 1) == SLOTS and slots_for(BIG_DAY_KCAL) == ALL_SLOTS and slots_for(3200) == ALL_SLOTS
+    assert shares_for(SLOTS) == SLOT_CALORIE_SHARE and shares_for(ALL_SLOTS) == BIG_DAY_CALORIE_SHARE
+    pool = build_pool(FOODS, "vegetarian", slots=ALL_SLOTS)
+    assert list(pool) == list(ALL_SLOTS) and keys(pool, "mid_morning", "snack") == keys(pool, "evening_snack", "snack")
+    assert list(build_pool(FOODS, "vegetarian")) == list(SLOTS)
 
 
 @pytest.mark.parametrize("diet,forbidden", [

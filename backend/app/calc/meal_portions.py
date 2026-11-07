@@ -10,6 +10,7 @@ solver cannot produce an absurd meal. This is separate from app/calc/portions.py
 into grams and nutrition.
 """
 
+import math
 from dataclasses import dataclass
 
 from app.calc.meal_pool import PoolFood
@@ -36,6 +37,14 @@ DEFAULT_GRAM_RULE = (10, 60, 300)
 
 # A side dish, a breakfast extra or a snack must not grow into a second meal: cap its weight by ROLE.
 ROLE_MAX_GRAMS = {"side": 260.0, "extra": 260.0, "snack": 300.0}
+# On big days the main dishes may be bigger (a 3,000 kcal day needs it); side dishes, extras and snacks never grow.
+SCALED_ROLES = frozenset({"staple", "protein", "vegetable", "main"})
+MAX_PORTION_SCALE = 1.6
+
+
+def portion_scale_for(kcal: float) -> float:
+    """1.0 up to a 2,200 kcal day, then growing with the target, never above 1.6."""
+    return round(min(MAX_PORTION_SCALE, max(1.0, kcal / 2200)), 2)
 
 
 @dataclass(frozen=True)
@@ -56,8 +65,11 @@ class Portion:
     text: str                      # "1.5 katori (225 g)"
 
 
-def portion_spec(food: PoolFood, role: str | None = None) -> PortionSpec:
+def portion_spec(food: PoolFood, role: str | None = None, scale: float = 1.0) -> PortionSpec:
     spec = _food_spec(food)
+    if role in SCALED_ROLES and scale > 1.0:
+        spec = PortionSpec(spec.step_g, spec.min_steps, math.ceil(spec.max_steps * scale), spec.unit, spec.unit_g,
+                           spec.steps_per_unit)
     cap = ROLE_MAX_GRAMS.get(role or "")
     if cap is None:
         return spec

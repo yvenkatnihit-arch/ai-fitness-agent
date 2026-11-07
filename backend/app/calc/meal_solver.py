@@ -109,24 +109,25 @@ def _infeasible(issues: list[str]) -> DaySolution:
     return DaySolution("infeasible", (), _EMPTY, {}, {}, tuple(issues))
 
 
-def solve_day(items: Sequence[MealItem], targets: DayTargets,
-              shares: Mapping[str, float] = SLOT_CALORIE_SHARE) -> DaySolution:
+def solve_day(items: Sequence[MealItem], targets: DayTargets, shares: Mapping[str, float] = SLOT_CALORIE_SHARE,
+              portion_scale: float = 1.0) -> DaySolution:
     """Portions for the chosen dishes, or an honest explanation of why they cannot work."""
-    result = _solve(items, targets, shares)
+    result = _solve(items, targets, shares, portion_scale)
     if result.status == "infeasible" and result.issues and result.issues[0].startswith(NO_COMBINATION):
         # Is the PROTEIN CAP the reason? Solve again without it: if that works, say how much protein these dishes need.
-        relaxed = _solve(items, dataclasses.replace(targets, protein_max_g=1e9), shares)
+        relaxed = _solve(items, dataclasses.replace(targets, protein_max_g=1e9), shares, portion_scale)
         if relaxed.status != "infeasible":
             return _infeasible([f"these dishes need about {relaxed.totals.protein_g:.0f} g of protein to reach the "
                                 f"calorie minimum, above the {targets.protein_max_g:.0f} g protein cap: choose lower-protein dishes"])
     return result
 
 
-def _solve(items: Sequence[MealItem], targets: DayTargets, shares: Mapping[str, float]) -> DaySolution:
+def _solve(items: Sequence[MealItem], targets: DayTargets, shares: Mapping[str, float],
+           portion_scale: float) -> DaySolution:
     if not items:
         raise ValueError("a day needs at least one item")
     n = len(items)
-    specs = [portion_spec(i.food, i.role) for i in items]
+    specs = [portion_spec(i.food, i.role, portion_scale) for i in items]
     foods = [Per100g(i.food.kcal, i.food.protein_g, i.food.carbs_g, i.food.fat_g) for i in items]
     # Nutrition in ONE step of each item.
     a_k = np.array([f.kcal * s.step_g / 100 for f, s in zip(foods, specs)])

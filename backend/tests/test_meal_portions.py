@@ -88,3 +88,19 @@ def test_a_role_cap_never_goes_below_the_minimum_portion():
     big_piece = food("paratha_big", "dish_bread", [("piece", 300.0)])      # one piece already exceeds the side cap
     s = portion_spec(big_piece, "side")
     assert s.min_steps == s.max_steps == 1
+
+
+def test_portion_scale_grows_with_the_target_and_is_capped():
+    from app.calc.meal_portions import portion_scale_for
+    assert portion_scale_for(1500) == 1.0 and portion_scale_for(2200) == 1.0
+    assert portion_scale_for(2750) == 1.25 and portion_scale_for(3000) == 1.36
+    assert portion_scale_for(9000) == 1.6
+
+
+def test_scaling_only_enlarges_main_roles():
+    rice = food("rice", "dish_rice", [("katori", 150.0)])
+    assert portion_spec(rice, "staple", 1.0).max_steps == 6 and portion_spec(rice, "staple", 1.5).max_steps == 9
+    assert portion_spec(rice, "staple", 1.0).min_steps == portion_spec(rice, "staple", 1.5).min_steps == 1
+    chaas = food("chaas", "dairy", [("glass", 250.0)])
+    assert portion_spec(chaas, "side", 1.6).max_steps == 2          # a side never grows, even on a big day
+    assert portion_spec(chaas, "snack", 1.6).max_steps == 2

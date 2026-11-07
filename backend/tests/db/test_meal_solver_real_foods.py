@@ -110,10 +110,9 @@ def test_a_flagged_user_stays_inside_the_milder_deficit_cap(foods):
 
 
 @pytest.mark.parametrize("diet", ["vegetarian", "non_vegetarian"])
-def test_known_limit_a_3000_kcal_day_does_not_fit_four_meals(foods, diet):
-    """PINNED FINDING (D-065): with one dish per role in 4 meals the largest portions give about 2,200-2,300 kcal, so a
-    muscle-gain day of about 3,000 kcal is infeasible. Step 6.7c adds a mid-morning meal and scales portions for big
-    targets; when that works, this test must be changed to expect a solution."""
+def test_a_3000_kcal_day_does_not_fit_the_bare_four_meal_skeleton(foods, diet):
+    """Still true of the bare four-meal skeleton (D-065). RESOLVED by step 6.7c, which adds a mid-morning meal and scales
+    portions for big targets: see test_meal_week_real_foods.py::test_a_3000_kcal_day_now_fits_..."""
     profile = PROFILES["muscle_m"]
     engine = calculate_targets(profile)
     t = day_targets(engine, weight_kg=profile.weight_kg, sex=profile.sex, flags=profile.screening_flags)

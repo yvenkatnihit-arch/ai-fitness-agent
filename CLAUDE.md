@@ -101,6 +101,8 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 
 - Try the portion solver on a real day (real foods and engine targets, no LLM, saves nothing): `PYTHONPATH=. uv run python scripts/solver_demo.py vegetarian fatloss_f protein` (diet, profile, pick)
 
+- Build a full 7-day meal plan on real foods with REAL Gemini (about $0.04, saves nothing; `fallback` switches Gemini off): `PYTHONPATH=. uv run python scripts/meal_week_demo.py vegetarian fatloss_f model`
+
 **Exercise data (`backend/`, D-041)**
 - The Free Exercise DB file is downloaded/verified by the same command as the food data: `uv run python -m fooddata.download`
 - Find an exercise's Free Exercise DB id (to cite in `data/exercises.csv`): `uv run python -m exercisedata.find "goblet squat" "pushups"`
