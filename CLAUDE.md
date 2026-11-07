@@ -99,6 +99,8 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 
 - See how many food choices each diet has per meal and role (real foods, saves nothing): `PYTHONPATH=. uv run python scripts/pool_report.py [dislike1,dislike2]`
 
+- Try the portion solver on a real day (real foods and engine targets, no LLM, saves nothing): `PYTHONPATH=. uv run python scripts/solver_demo.py vegetarian fatloss_f protein` (diet, profile, pick)
+
 **Exercise data (`backend/`, D-041)**
 - The Free Exercise DB file is downloaded/verified by the same command as the food data: `uv run python -m fooddata.download`
 - Find an exercise's Free Exercise DB id (to cite in `data/exercises.csv`): `uv run python -m exercisedata.find "goblet squat" "pushups"`

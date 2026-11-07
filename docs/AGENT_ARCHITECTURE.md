@@ -8,19 +8,21 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `972180b`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `1e870a3`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
-proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles).
+proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), and the meal-plan food pool (6.7a).
 
-**Built, NOT committed yet:** Step 6.7a, the meal-plan food pool (`app/calc/meal_pool.py`,
-`app/db/meal_foods.py`, `scripts/pool_report.py`, two test files) plus doc updates (DECISIONS D-062 to D-064,
-PROGRESS, CLAUDE.md, this file).
+**Built, NOT committed yet:** Step 6.7b, the portion solver (`app/calc/meal_solver.py`, `app/calc/meal_portions.py`,
+`scripts/solver_demo.py`, three test files, `scipy` dependency) plus doc updates (DECISIONS D-065, PROGRESS, CLAUDE.md,
+this file). Findings from the real data are in D-065 (3,000 kcal days need a mid-morning meal; vegetarian and vegan
+protein shortfall; kidney cap).
 
-**Next step: 6.7b, the portion solver** (linear programming, no LLM). Then 6.7c dish picker (Gemini, 7 days),
-6.7d save as pending proposal + approve, 6.7e meal plan screen. Then Profile and settings, then Phase 7 (agents).
+**Next step: 6.7c, the dish picker** (Gemini picks dishes per slot for 7 days from the pool; the solver sets the
+portions; its `issues` drive one repair round; adds a mid-morning meal for big targets). Then 6.7d save as pending
+proposal + approve, 6.7e meal plan screen. Then Profile and settings, then Phase 7 (agents).
 
-**To resume tomorrow, type:** `commit and go` (saves 6.7a, then starts 6.7b).
+**To resume, type:** `commit and go` (saves 6.7b, then starts 6.7c).
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`
@@ -383,9 +385,11 @@ INSIDE each instance. Ours adds an outer system:
 
 **Phase 6 (plan generation)**
 - Done: 6.0 to 6.6g (see section 0).
-- 6.7a food pool: built, not committed. Finding: the vegan pool is thin (4 protein and 3 vegetable dishes).
-- 6.7b portion solver (linear programming, safety limits, katori/piece rounding, no LLM). **NEXT.**
-- 6.7c dish picker (Gemini picks per slot per day for 7 days, verify-and-repair loop).
+- 6.7a food pool: done. Finding: the vegan pool is thin (4 protein and 3 vegetable dishes).
+- 6.7b portion solver (mixed-integer linear programming, safety limits from the engine, household steps, no LLM): built,
+  not committed.
+- 6.7c dish picker (Gemini picks per slot per day for 7 days, verify-and-repair loop using the solver's issues; add the
+  mid-morning meal and scale portions for big targets). **NEXT.**
 - 6.7d save as pending meal proposal; approve writes `meal_plans` and items.
 - 6.7e meal plan screen with the "How this plan was made" panel.
 
