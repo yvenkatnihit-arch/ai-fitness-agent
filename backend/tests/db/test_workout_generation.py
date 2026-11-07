@@ -113,3 +113,41 @@ def test_too_few_safe_exercises_means_a_polite_refusal_not_a_thin_plan(client):
     assert response.status_code == 409
     assert "not enough safe exercises for: Full body A, Full body B, Full body C" in response.json()["detail"]
     assert pending_count(client.session.user_id) == 0
+
+
+def onboard_training(client, **training):
+    """Onboard like the usual tests, but with different Training answers."""
+    forms = {**FORMS, "training": {**FORMS["training"], **training}}
+    for step in ("consent", "basics", "goal", "preferences", "training"):
+        assert client.put(f"/onboarding/{step}", json=forms[step]).status_code == 200
+    assert client.put("/onboarding/screening", json=forms["screening"]).status_code == 200
+    assert client.post("/onboarding/complete").status_code == 200
+
+
+def counts_and_minutes(client):
+    client.put("/splits/choice", json={"split_key": "full_body_3"})
+    days = client.post("/plans/workout/generate").json()["payload"]["days"]
+    trained = [d for d in days if not d["is_rest"]]
+    return [len(d["exercises"]) for d in trained], [d["minutes"] for d in trained]
+
+
+def test_a_short_session_gets_fewer_exercises_than_a_long_one(client):
+    onboard_training(client, experience_level="advanced", workout_location="gym", session_minutes=30)
+    short_counts, short_minutes = counts_and_minutes(client)
+    assert short_counts == [3, 3, 3]
+    assert all(m <= 40 for m in short_minutes)          # the minimum of 3 hard exercises can run a little over 30
+
+    with admin_transaction("test: change the session length") as conn:
+        conn.execute("update public.profiles set session_minutes = 90 where id = %s", (client.session.user_id,))
+        conn.execute("update public.plan_proposals set created_at = now() - interval '5 minutes' where user_id = %s",
+                     (client.session.user_id,))
+    long_counts, long_minutes = counts_and_minutes(client)
+    assert long_counts == [8, 8, 8] and all(m <= 90 for m in long_minutes)
+
+
+def test_an_account_with_no_answer_is_planned_for_60_minutes(client):
+    onboard_training(client, experience_level="intermediate", workout_location="gym", session_minutes=45)
+    with admin_transaction("test: pretend this account predates the question") as conn:
+        conn.execute("update public.profiles set session_minutes = null where id = %s", (client.session.user_id,))
+    counts, minutes = counts_and_minutes(client)
+    assert counts == [7, 7, 7] and all(40 <= m <= 60 for m in minutes)    # intermediate, 60 minutes -> 7

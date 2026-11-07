@@ -93,3 +93,11 @@ export const SCREENING_QUESTIONS = [
 ] as const
 
 export const MAX_DISLIKED_FOODS = 30
+
+// How long one workout can last. Same values as backend SessionMinutes; the plan fits its exercises to this (D-057).
+export const SESSION_MINUTES = [
+  [30, '30 min', 'Short and focused'],
+  [45, '45 min', 'A solid session'],
+  [60, '60 min', 'The usual gym hour'],
+  [90, '90 min', 'Plenty of time'],
+] as const

@@ -500,3 +500,64 @@ Tried in a throwaway environment outside the project (nothing was added to `pypr
 - **Double-tap protection:** a pending proposal for the same split made in the last 60 seconds is returned instead of calling the model again. A newer generation expires the older pending one (status `expired`), so there is at most one pending generated workout per user.
 - **Nothing sensitive in the model call** (D-052); no database transaction is open while the model thinks.
 - Real run: intermediate gym user, upper/lower 4 days: 20 exercises, all four days chosen by the model, rules applied by code, cost under a cent.
+
+## D-054 — Approving a proposal: one transaction, checked twice, only workouts for now
+**Status:** Accepted (Step 6.6d, 2026-11-06)
+`app/workflows/decide_proposal.py`, `app/db/workout_plans.py`, `POST /plans/proposals/{id}/approve` and `/reject`.
+- **Approve is one all-or-nothing transaction:** lock the proposal (`for update`, so two taps cannot both apply it) -> check it is this user's and still pending -> re-run `validate_payload` against the library -> archive the user's active plan -> write the new plan, its 7 days and its exercises as `active` -> mark the proposal approved. Any failure rolls everything back.
+- **Ownership is checked in code**, because the admin connection bypasses RLS: every query filters by `user_id`. Someone else's proposal gets 404, the same as one that doesn't exist (no hint it exists).
+- **The stored plan is not trusted:** it is validated again at approval. A tampered plan (invented exercise) gets 422 "did not pass our safety checks", nothing is written, and the proposal stays pending.
+- **Only `workout_change` can be applied.** Other types get 422 "cannot be approved yet" and stay pending; they are never silently marked approved. Each type gets its own apply code in its own step (meal plan, profile change, weekly adjustment).
+- **Stale start date:** if the planned Monday's week is over by the time the user approves, the plan starts on the coming Monday. Approving in the planned week keeps the planned Monday.
+- **Versions:** one active plan per user (database rule). A second approval for the same Monday archives the first and is version 2.
+- **Reject** marks the proposal rejected and changes nothing else; a decided proposal gives 409 if decided again.
+
+## D-055 — The workout plan screen: proposal first, plan second
+**Status:** Accepted (Step 6.6e, 2026-11-06)
+`/workout` (`frontend/src/plans/`), `GET /plans/workout/active` (reads under RLS, no LLM).
+- **A pending proposal is shown above everything else**, in a highlighted card with Approve and Reject, and is labelled as not yet your plan. Approving reloads the page and shows it as "Your plan". Rejecting keeps the current plan.
+- **Generating takes about 15 seconds**, so the button is disabled and says "Building your plan…" with a status line. Errors (not ready, coach busy) show the backend's message; "not ready" also links to choosing a split or to onboarding.
+- **Holds are shown as time** ("3 × Hold 30-45 seconds"), never "1 reps". Rest of 60 s or more in whole minutes shows as minutes (2 min).
+- **The reps-in-reserve reminder** ("Stop each set with 2 good reps left in the tank") is shown once above the week, not on every line. Form cues sit in a "How to do it" fold-out on the active plan only (a proposal does not carry them).
+- Home gets a "Workout plan" button. Replacing a plan means asking for a new one ("Make me a new plan"), which goes through the same approval.
+
+## D-056 — No exercise library screen; the split work gets three upgrades
+**Status:** Accepted (2026-11-06), Venkat's request
+- **The Exercise library screen (Step 5.5) is removed from the app.** Users get a split and a plan, they don't need to browse exercises. The exercise data, filter and `GET /exercises` stay in the backend: plans use them, and "swap this exercise" / weekday editing will need them. The "Exercise library screen" line in the brief (section 6) is no longer a user-facing page.
+- **Three upgrades chosen to make splits more effective** (each is its own small step, in this order):
+  1. **Time per session** (6.6f): a new Training question (30 / 45 / 60 / 90 minutes). Code turns minutes into the number of exercises per day (today fixed by level at 4/5/6) using set count and rest time, so a 30-minute user gets a short session that fits.
+  2. **Focus areas** (6.6g): the user names up to two muscle groups to bring up. Those get extra exercises and one more set; everything else stays at maintenance volume. Capped in code so total weekly volume stays safe.
+  3. **Auto-progression and deloads** (needs workout logs, so it lands with Phase 8 logging): the double-progression rules (D-049, already built) raise weights/reps from logged sessions, and an easier deload week is scheduled every 4 to 6 weeks.
+- Not chosen for now: goal-shaped cardio finishers and denser fat-loss sessions. Can be added later.
+
+## D-057 — Time per session decides how many exercises a day has
+**Status:** Accepted (Step 6.6f, 2026-11-06)
+`app/calc/session_time.py`, migration `20261106200000_session_minutes.sql`, a new question in the Training step.
+- **The question:** "How long can a workout last?" 30 / 45 / 60 / 90 minutes, required for new users. Stored as `profiles.session_minutes` (nullable; an account made before the question is planned as 60 minutes).
+- **The rule (code, from the routine rules in D-049):** minutes minus a 5-minute warm-up is the budget. Each exercise costs sets × (40 s of work + its rest) + 30 s setup. We add exercises in a typical order (two big lifts, then single-muscle work with a core exercise in the middle, then more) until the next one no longer fits. Sets and rest depend on level, goal and pace, so a hard-training advanced user fits fewer exercises in the same time than a beginner.
+- **Limits:** never fewer than 3 exercises, and never more than 5 for a beginner, 7 for intermediate, 8 for advanced (more time is not more exercises for a beginner). Results for muscle gain at normal pace, for 30 / 45 / 60 / 90 minutes: beginner 5, 5, 5, 5; intermediate 3, 6, 7, 7; advanced 3, 4, 6, 8.
+- **Each plan day shows "about N min"**, estimated from its real sets and rest and rounded to 5 minutes (a day with the minimum of 3 hard exercises can run a little over a 30-minute wish; the estimate shows that honestly).
+- This replaces the old fixed 4 / 5 / 6 per level as the normal path (the fixed numbers remain only as the fallback inside the picker when no count is given).
+- Health-flag plans still take one set off each exercise, so they come out slightly shorter than estimated, never longer.
+- Existing accounts can only change their answer once Profile & settings exists (roadmap); until then they get 60.
+
+## D-058 — The frontend design pass happens after the backend is finished
+**Status:** Accepted (2026-11-07), Venkat's request
+- Venkat will provide one large design prompt for making the frontend attractive. Only its frontend and visual-design content is used; any backend instructions in it are ignored.
+- The redesign starts only after the backend roadmap is complete (plan generation, chat and agents, check-ins, logging, stats data). Until then new screens stay simple and use the existing design tokens (D-044), so the later pass has a consistent base to restyle.
+- The prompt arrived 2026-11-07 and is saved word for word in `docs/DESIGN_BRIEF.md` (Part 2), with an analysis (Part 1): what we use as written, 7 clashes with fixed project rules for Venkat to decide (exercise/food images, the removed exercise library, a mic button, dark-only vs light + dark, LLM vs code for daily insights, fonts), and which widgets need backend data first. It becomes the F phase, in small steps.
+
+## D-059 — Answers to the design brief's seven clashes (Venkat agreed, 2026-11-07)
+**Status:** Accepted. These apply to the F phase (frontend redesign, D-058); see `docs/DESIGN_BRIEF.md` Part 1 B.
+1. **No exercise images or anatomy drawings.** Clean muscle-group icons and the text form cues (CLAUDE.md: no exercise videos or images).
+2. **No food photos.** Category icons and colour chips. One or two licensed or self-made hero visuals on the landing page only.
+3. **No exercise library screen** (D-056).
+4. **No microphone button** until voice is a real feature (no controls that do nothing).
+5. **Dark only** (black + neon lime). The earlier light + dark choice (D-044) is superseded when the redesign lands; until then the current tokens stay.
+6. **Daily insights are code rules** over today's real numbers, styled as "AI". No model call (cost rule: never call the LLM for what code can do).
+7. **One self-hosted font** (Manrope proposed) so visitors' IPs don't go to Google. Needs the D-030 age check on the `@fontsource` package.
+- **Water tracker: yes**, added to the backend roadmap after Phase 8 logging (a water log table, a daily target computed in code, quick-add buttons).
+- **Body composition: no for now** (body-fat is hard to measure reliably; a wrong number is worse than none).
+- **Notifications bell: yes**, but only once the reminders feature (D-047) exists.
+- **Every number on a redesigned screen must be real data.** Where data doesn't exist yet, the screen shows a designed empty state, never a fake chart.
+- **Effects are used sparingly** (glow, particles) and tested on a mid-range phone; reduced-motion is always respected.

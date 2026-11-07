@@ -1,4 +1,4 @@
-import { words } from '../exercises/types'
+import { words } from '../lib/words'
 import { FIT_LABEL, FIT_STYLE, type Recommendation } from './types'
 
 export function SplitCard({ rec, chosen, saving, onChoose }: {

@@ -137,16 +137,18 @@ def test_unknown_diet_is_refused():
 
 def test_training():
     t = TrainingIn(experience_level="beginner", workout_location="home",
-                   equipment=["dumbbells", "yoga_mat", "dumbbells"], days_per_week=3)
-    assert t.equipment == ["dumbbells", "yoga_mat"]
+                   equipment=["dumbbells", "yoga_mat", "dumbbells"], days_per_week=3, session_minutes=45)
+    assert t.equipment == ["dumbbells", "yoga_mat"] and t.session_minutes == 45
 
 
 @pytest.mark.parametrize(
     ("field", "value"),
-    [("equipment", ["rowing_machine"]), ("days_per_week", 0), ("days_per_week", 8), ("workout_location", "park")],
+    [("equipment", ["rowing_machine"]), ("days_per_week", 0), ("days_per_week", 8), ("workout_location", "park"),
+     ("session_minutes", 50), ("session_minutes", "45"), ("session_minutes", None), ("session_minutes", True)],
 )
 def test_bad_training_is_refused(field, value):
-    data = {"experience_level": "beginner", "workout_location": "gym", "equipment": [], "days_per_week": 4}
+    data = {"experience_level": "beginner", "workout_location": "gym", "equipment": [], "days_per_week": 4,
+            "session_minutes": 60}
     with pytest.raises(ValidationError):
         TrainingIn.model_validate({**data, field: value})
 

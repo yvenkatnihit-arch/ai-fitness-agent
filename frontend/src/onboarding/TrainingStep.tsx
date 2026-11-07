@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 
 import { Card, Choice, FieldError, FormError, Legend, PrimaryButton } from '../components/ui'
-import { EQUIPMENT, EXPERIENCE, LOCATIONS } from './options'
+import { EQUIPMENT, EXPERIENCE, LOCATIONS, SESSION_MINUTES } from './options'
 import type { StepProps } from './types'
 import { useSaveStep } from './useSaveStep'
 
@@ -13,13 +13,14 @@ export function TrainingStep({ onSaved }: StepProps) {
   const [location, setLocation] = useState('')
   const [equipment, setEquipment] = useState<string[]>([])
   const [days, setDays] = useState<number | null>(null)
+  const [minutes, setMinutes] = useState<number | null>(null)
 
   const toggle = (item: string) =>
     setEquipment(equipment.includes(item) ? equipment.filter((e) => e !== item) : [...equipment, item])
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    save({ experience_level: experience, workout_location: location, equipment, days_per_week: days })
+    save({ experience_level: experience, workout_location: location, equipment, days_per_week: days, session_minutes: minutes })
   }
 
   return (
@@ -69,8 +70,19 @@ export function TrainingStep({ onSaved }: StepProps) {
           <FieldError message={fieldError('days_per_week')} />
         </fieldset>
 
+        <fieldset>
+          <Legend>How long can a workout last?</Legend>
+          <div className="grid grid-cols-2 gap-2">
+            {SESSION_MINUTES.map(([value, label, hint]) => (
+              <Choice key={value} type="radio" name="session_minutes" checked={minutes === value}
+                      onChange={() => setMinutes(value)} label={label} hint={hint} />
+            ))}
+          </div>
+          <FieldError message={fieldError('session_minutes')} />
+        </fieldset>
+
         <FormError message={error?.message ?? null} requestId={error?.requestId} />
-        <PrimaryButton type="submit" disabled={!experience || !location || !days} busy={busy}>Continue</PrimaryButton>
+        <PrimaryButton type="submit" disabled={!experience || !location || !days || !minutes} busy={busy}>Continue</PrimaryButton>
       </form>
     </Card>
   )

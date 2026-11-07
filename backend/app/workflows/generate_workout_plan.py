@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.calc.exercise_filter import ExerciseNeeds, filter_exercises, setting_for
+from app.calc.session_time import exercises_for_session
 from app.calc.splits import fits_days, split_by_key
 from app.calc.targets import effective_pace
 from app.calc.workout_plan import DayPick, build_payload, next_monday, summarize, validate_payload
@@ -53,7 +54,9 @@ def generate_workout_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated
     split = split_by_key(split_inputs.chosen_key)
     needs = ExerciseNeeds(setting_for(training.workout_location), training.level, training.injuries, training.equipment)
     allowed = filter_exercises(library, needs)
-    picks = pick_exercises(split, allowed, training.level, split_inputs.goal, ask=ask, user_id=user_id)
+    pace, _ = effective_pace(saved.pace, saved.goal_type, saved.flags)   # type: ignore[arg-type]
+    per_day = exercises_for_session(training.level, split_inputs.goal, pace, training.session_minutes)
+    picks = pick_exercises(split, allowed, training.level, split_inputs.goal, per_day=per_day, ask=ask, user_id=user_id)
 
     empty = [p.label for p in picks if p.source == "none"]
     if empty:
@@ -62,7 +65,6 @@ def generate_workout_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated
             "Try a different split, or add equipment in your profile."
         )
 
-    pace, _ = effective_pace(saved.pace, saved.goal_type, saved.flags)   # type: ignore[arg-type]
     by_key = {o.key: o for o in library}
     payload = build_payload(
         split, [DayPick(p.label, p.keys) for p in picks], by_key,

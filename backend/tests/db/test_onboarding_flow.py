@@ -18,7 +18,7 @@ BASICS = {"date_of_birth": "1995-08-20", "sex": "female", "height_cm": 162.5, "w
 GOAL = {"goal_type": "fat_loss", "target_weight_kg": 54}
 PREFS = {"diet_type": "vegetarian", "disliked_foods": ["Karela"]}
 TRAINING = {"experience_level": "beginner", "workout_location": "home",
-            "equipment": ["dumbbells", "yoga_mat"], "days_per_week": 3}
+            "equipment": ["dumbbells", "yoga_mat"], "days_per_week": 3, "session_minutes": 45}
 SCREENING = {"pregnant_or_breastfeeding": False, "diabetes": False, "heart_or_bp": False, "kidney": False,
              "recent_surgery_or_injury": False, "eating_disorder_history": False, "injury_areas": ["knee"]}
 
@@ -75,7 +75,7 @@ def test_full_onboarding_in_order(client, user_id):
 
     with admin_transaction("test: check what was saved") as conn:
         profile = conn.execute(
-            "select display_name, sex, height_cm, diet_type, equipment, days_per_week, consent_version"
+            "select display_name, sex, height_cm, diet_type, equipment, days_per_week, session_minutes, consent_version"
             " from public.profiles where id = %s", (user_id,)
         ).fetchone()
         weight = conn.execute(
@@ -86,7 +86,7 @@ def test_full_onboarding_in_order(client, user_id):
             (user_id,),
         ).fetchone()
     assert profile[0] == "Test User" and profile[1] == "female" and float(profile[2]) == 162.5
-    assert profile[3:] == ("vegetarian", ["dumbbells", "yoga_mat"], 3, "2026-11")
+    assert profile[3:] == ("vegetarian", ["dumbbells", "yoga_mat"], 3, 45, "2026-11")
     assert weight[0] == india_today() and float(weight[1]) == 58.0  # today's weigh-in, India date
     assert goal[0] == "fat_loss" and float(goal[1]) == 58.0 and float(goal[2]) == 54.0
 

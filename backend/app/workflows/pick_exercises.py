@@ -43,12 +43,13 @@ def _default_ask(user_id: UUID | None) -> Ask:
 
 def pick_exercises(
     split: Split, allowed: Sequence[ExerciseOption], level: str, goal: str,
-    *, ask: Ask | None = None, user_id: UUID | None = None,
+    *, per_day: int | None = None, ask: Ask | None = None, user_id: UUID | None = None,
 ) -> list[DayPicks]:
-    """One DayPicks per training day, in the split's order. `allowed` must already be filtered for this user."""
+    """One DayPicks per training day, in the split's order. `allowed` must already be filtered for this user.
+    `per_day` is how many exercises a day should have (from the session length); default is by level."""
     ask = ask or _default_ask(user_id)
     cands = [day_candidates(d, allowed) for d in split.days]
-    wanted = [wanted_count(level, c) for c in cands]
+    wanted = [wanted_count(level, c, per_day) for c in cands]
     results: dict[int, DayPicks] = {}
     pending = [i for i, c in enumerate(cands) if len(c) >= MIN_DAY_EXERCISES]
     for i, c in enumerate(cands):

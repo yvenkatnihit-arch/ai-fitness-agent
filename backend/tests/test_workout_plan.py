@@ -124,3 +124,11 @@ def test_bad_payloads_are_caught(change, fragment):
 @pytest.mark.parametrize("junk", [None, [], "plan", 5, {"kind": "workout_plan"}, {"kind": "workout_plan", "days": "x"}])
 def test_junk_is_not_a_plan(junk):
     assert validate_payload(junk, set(LIB))
+
+
+def test_each_training_day_says_about_how_long_it_takes_and_rest_days_say_nothing():
+    days = build()["days"]
+    # Push by hand: bench 3x(40+120)+30 = 510 s, overhead press 510 s, lateral raise 3x(40+60)+30 = 330 s,
+    # plus a 300 s warm-up = 1650 s = 27.5 min, which rounds to 30. Legs: 510+510+330+285 (plank) +300 = 32.25 -> 30.
+    assert [d["minutes"] for d in days if not d["is_rest"]] == [30, 30, 30]
+    assert all(d["minutes"] is None for d in days if d["is_rest"])

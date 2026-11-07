@@ -66,7 +66,7 @@ export function HomePage() {
         <div className="flex flex-col gap-3">
           <ButtonLink to="/log">Log a meal</ButtonLink>
           <div className="grid grid-cols-2 gap-3">
-            <ButtonLink to="/exercises" variant="secondary">Exercise library</ButtonLink>
+            <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
             <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
           </div>
         </div>

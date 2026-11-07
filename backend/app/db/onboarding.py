@@ -136,9 +136,11 @@ def save_training(conn: Connection, training: TrainingIn) -> None:
     _require_open(conn)
     conn.execute(
         """update public.profiles
-           set experience_level = %s, workout_location = %s, equipment = %s, days_per_week = %s
+           set experience_level = %s, workout_location = %s, equipment = %s, days_per_week = %s,
+               session_minutes = %s
            where id = auth.uid()""",
-        (training.experience_level, training.workout_location, training.equipment, training.days_per_week),
+        (training.experience_level, training.workout_location, training.equipment, training.days_per_week,
+         training.session_minutes),
     )
 
 

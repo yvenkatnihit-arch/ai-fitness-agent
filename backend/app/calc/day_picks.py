@@ -32,9 +32,9 @@ def day_candidates(day: SplitDay, allowed: Sequence[ExerciseOption]) -> list[Exe
     return sorted(fits, key=lambda o: (LEVEL_ORDER[o.difficulty], o.name))
 
 
-def wanted_count(level: str, candidates: Sequence[ExerciseOption]) -> int:
-    """How many exercises the day should have: by level, or fewer when the library has fewer."""
-    return min(EXERCISES_PER_DAY[level], len(candidates))
+def wanted_count(level: str, candidates: Sequence[ExerciseOption], per_day: int | None = None) -> int:
+    """How many exercises the day should have: `per_day` (from the session length) or by level, and never more than exist."""
+    return min(per_day if per_day is not None else EXERCISES_PER_DAY[level], len(candidates))
 
 
 def pattern_cap(wanted: int, patterns_available: int) -> int:

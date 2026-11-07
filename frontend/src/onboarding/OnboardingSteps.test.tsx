@@ -103,11 +103,13 @@ test('training: experience, location, equipment and days', async () => {
   const continueButton = screen.getByRole('button', { name: 'Continue' })
   expect(continueButton).toBeDisabled() // days not chosen yet
   fireEvent.click(screen.getByRole('button', { name: '3' }))
+  expect(continueButton).toBeDisabled() // session length not chosen yet
+  fireEvent.click(screen.getByLabelText(/^45 min/))
   fireEvent.click(continueButton)
 
   await screen.findByRole('heading', { name: 'Health check' })
   expect(sent(calls, '/onboarding/training')).toEqual({
-    experience_level: 'beginner', workout_location: 'home', equipment: ['yoga_mat'], days_per_week: 3,
+    experience_level: 'beginner', workout_location: 'home', equipment: ['yoga_mat'], days_per_week: 3, session_minutes: 45,
   })
 })
 

@@ -10,6 +10,7 @@ from typing import Any
 
 from app.calc.exercise_filter import ExerciseOption
 from app.calc.routine import MIN_SETS, prescribe
+from app.calc.session_time import estimate_day_minutes
 from app.calc.splits import Split
 
 PAYLOAD_VERSION = 1
@@ -48,7 +49,7 @@ def build_payload(
     for dow in range(1, 8):
         pick = weekdays.get(dow)
         if pick is None:
-            days.append({"day_of_week": dow, "focus": "Rest", "is_rest": True, "exercises": []})
+            days.append({"day_of_week": dow, "focus": "Rest", "is_rest": True, "minutes": None, "exercises": []})
             continue
         exercises = []
         for key in pick.keys:
@@ -61,7 +62,8 @@ def build_payload(
                 "exercise_key": key, "name": ex.name, "position": len(exercises) + 1, "sets": sets,
                 "reps_min": rx.reps_min, "reps_max": rx.reps_max, "rest_sec": rx.rest_sec, "note": rx.note,
             })
-        days.append({"day_of_week": dow, "focus": pick.label, "is_rest": False, "exercises": exercises})
+        minutes = estimate_day_minutes([(e["sets"], e["rest_sec"]) for e in exercises])   # about how long the day takes
+        days.append({"day_of_week": dow, "focus": pick.label, "is_rest": False, "minutes": minutes, "exercises": exercises})
     return {
         "kind": "workout_plan", "version": PAYLOAD_VERSION, "split_key": split.key, "split_name": split.name,
         "week_start": week_start.isoformat(), "level": level, "goal": goal, "doctor_note": DOCTOR_NOTE if flagged else None,

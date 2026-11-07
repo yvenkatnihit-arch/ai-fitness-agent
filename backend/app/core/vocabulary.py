@@ -9,6 +9,7 @@ from typing import Literal, get_args
 DietType = Literal["vegetarian", "non_vegetarian", "eggetarian", "vegan"]
 ExperienceLevel = Literal["beginner", "intermediate", "advanced"]
 WorkoutLocation = Literal["gym", "home", "both"]
+SessionMinutes = Literal[30, 45, 60, 90]
 InjuryArea = Literal["shoulder", "knee", "lower_back", "neck", "wrist", "elbow", "hip", "ankle"]
 
 # Equipment a user can have. The exercise library (Phase 5) uses the same names.

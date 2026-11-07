@@ -16,7 +16,7 @@ from app.calc.targets import Goal
 from app.calc.tdee import ActivityLevel
 from app.core.time import india_today
 from app.core.vocabulary import (
-    EQUIPMENT, Cuisine, DietType, Equipment, ExperienceLevel, InjuryArea, Pace, WorkoutLocation,
+    EQUIPMENT, Cuisine, DietType, Equipment, ExperienceLevel, InjuryArea, Pace, SessionMinutes, WorkoutLocation,
 )
 from app.safety import safety_config as cfg
 from app.safety.safety_config import Sex
@@ -105,6 +105,7 @@ class TrainingIn(_Form):
     workout_location: WorkoutLocation
     equipment: list[Equipment] = Field(default_factory=list, max_length=len(EQUIPMENT))
     days_per_week: int = Field(ge=1, le=7, strict=True)
+    session_minutes: SessionMinutes   # how long one session can last: 30, 45, 60 or 90
 
     @field_validator("equipment")
     @classmethod

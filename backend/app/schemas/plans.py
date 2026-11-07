@@ -1,6 +1,6 @@
 """What the plan proposal endpoints return."""
 
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -23,3 +23,31 @@ def to_proposal_out(row: tuple) -> ProposalOut:
 
 class ProposalListOut(BaseModel):
     proposals: list[ProposalOut]
+
+
+class PlanExerciseOut(BaseModel):
+    position: int
+    exercise_key: str
+    name: str
+    sets: int
+    reps_min: int
+    reps_max: int
+    rest_sec: int
+    note: str | None
+    form_cues: list[str]
+
+
+class PlanDayOut(BaseModel):
+    day_of_week: int   # 1 = Monday
+    focus: str | None
+    is_rest: bool
+    minutes: int | None   # about how long the day takes (None on a rest day)
+    exercises: list[PlanExerciseOut]
+
+
+class ActivePlanOut(BaseModel):
+    id: str
+    week_start: date
+    version: int
+    approved_at: datetime
+    days: list[PlanDayOut]
