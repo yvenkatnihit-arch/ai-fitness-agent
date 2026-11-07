@@ -12,6 +12,8 @@ Key documents (keep them up to date):
 - `docs/PROJECT_BRIEF.md` — the full product and technical spec. Read it before starting any phase.
 - `docs/PROGRESS.md` — what's done, what's in progress, what's next. Update it at the end of every step.
 - `docs/DECISIONS.md` — every architecture decision, with the options considered and why we chose one.
+- `docs/AGENT_ARCHITECTURE.md` — **read first when resuming**: where we are, the agent/harness flowcharts (when agents are created and deleted, when ad-hoc agents are used), the roadmap and open items.
+- `docs/DESIGN_BRIEF.md` — Venkat's frontend design prompt plus the decisions on it (the redesign starts only after the backend is done).
 
 ## How we work (always follow this)
 
@@ -94,6 +96,8 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Validate our ingredient list (`data/ingredients.csv`) and recipes (`data/recipes.csv` + `data/recipe_items.csv`: raw grams + cooked weight; sign off a recipe by filling `reviewed_by`) → `data/foods_validated.csv` + `data/reports/ingredients_review.md`: `uv run python -m fooddata.build`
 - Household units (`data/food_units.csv`: usda portion / katori-glass volume / recipe piece, D-040) are checked by the same build → `data/food_units_validated.csv`
 - Load the validated foods into Supabase (`foods` + `food_synonyms` + `food_units`; upsert by key, safe to re-run, D-039): `uv run python -m fooddata.load --dry-run`, then `uv run python -m fooddata.load`
+
+- See how many food choices each diet has per meal and role (real foods, saves nothing): `PYTHONPATH=. uv run python scripts/pool_report.py [dislike1,dislike2]`
 
 **Exercise data (`backend/`, D-041)**
 - The Free Exercise DB file is downloaded/verified by the same command as the food data: `uv run python -m fooddata.download`
