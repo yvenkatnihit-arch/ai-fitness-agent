@@ -8,22 +8,22 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `7cdf8bb`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `1ecf7c1`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
 proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) the 7-day dish picker (6.7c) and meal plan proposals with approval (6.7d).
 
-**Built, NOT committed yet:** Step 7.1, the agent harness core (D-073): tool registry, specialist spec, factory and loop in
-`app/agents/`, tested with a fake model (allowlist, strict args, identity injected by the harness, step/token/time limits,
-nothing shared). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
+**Built, NOT committed yet:** Step 7.2, the first real specialist (D-074): a Gemini adapter, the `search_foods` tool and the
+nutrition specialist; and Step 7.3, the chat graph (D-075): menu, router and parallel spawn with LangGraph's Send API, all in
+`app/agents/` (agent harness core 7.1, D-073, is committed). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Next:** 7.2 the first real specialist (Gemini adapter + food lookup tool + agent_runs logging); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
+**Next:** 7.4 composer (one reply from several specialists); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
 Phase 6 check questions are still open.
 
 **Study guide:** `docs/FLOWS_GUIDE.pdf` explains the six flows to learn, in order, with worked examples.
 
-**To resume, type:** `commit and go` (saves 7.1, then starts 7.2); the Phase 6 questions are still open.
+**To resume, type:** `commit and go` (saves 7.2 and 7.3, then starts 7.4); the Phase 6 questions are still open.
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`
