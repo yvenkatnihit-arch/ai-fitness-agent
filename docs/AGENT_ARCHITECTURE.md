@@ -8,22 +8,21 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `3c7c856`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `a07ef67`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
-proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) and the 7-day dish picker (6.7c).
+proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) the 7-day dish picker (6.7c) and meal plan proposals with approval (6.7d).
 
-**Built, NOT committed yet:** Step 6.7d, the meal plan as a pending proposal with approval (`app/calc/meal_plan_payload.py`,
-`app/workflows/generate_meal_plan.py`, meal support in `decide_proposal.py`, `app/db/meal_plans.py`,
-`POST /plans/meal/generate`, tests) plus doc updates (DECISIONS D-067, PROGRESS, this file). Every number is re-verified from
-the foods table at approval, and the server hides all numbers for eating-disorder history.
+**Built, NOT committed yet:** Step 6.7e, the meal plan screen with the "How this plan was made" panel (`/meal-plan`,
+`GET /plans/meal/active`, real AI cost recorded in each plan) plus doc updates (DECISIONS D-068, PROGRESS, this file).
+**Phase 6 (plan generation) is now complete.**
 
-**Next step: 6.7e, the meal plan screen with the "How this plan was made" panel** (generate button with a long waiting
-state of about a minute, proposal card with Approve and Reject, the active plan, numbers hidden for eating-disorder history,
-notes about thin pools and protein shortfalls; needs a `GET /plans/meal/active`). Then Profile and settings, then Phase 7
-(agents).
+**Next:** the Phase 6 check questions, then Profile and settings (`PATCH /profile`) and weekday editing of workouts, then
+Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1).
 
-**To resume, type:** `commit and go` (saves 6.7d, then starts 6.7e).
+**Study guide:** `docs/FLOWS_GUIDE.pdf` explains the six flows to learn, in order, with worked examples.
+
+**To resume, type:** `commit and go` (saves 6.7e); then answer the Phase 6 questions.
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`
@@ -390,8 +389,8 @@ INSIDE each instance. Ours adds an outer system:
 - 6.7b portion solver (mixed-integer linear programming, safety limits from the engine, household steps, no LLM): done.
 - 6.7c dish picker + week builder (Gemini picks the week, code validates, solver portions, one repair round, week-aware
   fallback, mid-morning meal for big days): done.
-- 6.7d save as pending meal proposal + approve (re-verified from the foods table): built, not committed.
-- 6.7e meal plan screen with the "How this plan was made" panel. **NEXT.**
+- 6.7d save as pending meal proposal + approve (re-verified from the foods table): done.
+- 6.7e meal plan screen with the "How this plan was made" panel: built, not committed. **Phase 6 complete.**
 
 **Then:** Profile and settings (`PATCH /profile`; also lets existing users answer the session-length question), meal
 swap and other small features as scheduled in PROGRESS.

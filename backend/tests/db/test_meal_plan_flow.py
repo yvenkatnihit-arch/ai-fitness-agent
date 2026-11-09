@@ -200,3 +200,61 @@ def test_a_junk_meal_payload_is_refused_not_silently_approved(client, users):
     response = client.post(f"/plans/proposals/{junk}/approve")
     assert response.status_code == 422 and "safety checks" in response.json()["detail"]
     assert plans(users[0]) == [] and q("select status from public.plan_proposals where id = %s", junk)[0][0] == "pending"
+
+
+# --- the active plan (what the screen reads) ---
+
+def test_there_is_no_active_meal_plan_until_one_is_approved(client, proposal):
+    assert client.get("/plans/meal/active").status_code == 404           # a proposal is not a plan
+
+
+def test_the_active_plan_matches_what_was_approved(client, users, proposal):
+    client.post(f"/plans/proposals/{proposal['id']}/approve")
+    view = client.get("/plans/meal/active").json()
+    assert view["version"] == 1 and view["numbers_hidden"] is False and [d["day_of_week"] for d in view["days"]] == list(range(1, 8))
+    shown = [i["food_key"] for d in proposal["payload"]["days"] for i in d["items"]]
+    assert sum(len(m["items"]) for d in view["days"] for m in d["meals"]) == len(shown)
+    for day in view["days"]:
+        assert [m["slot"] for m in day["meals"]] == ["breakfast", "lunch", "evening_snack", "dinner"]
+        assert day["totals"]["kcal"] == pytest.approx(sum(i["kcal"] for m in day["meals"] for i in m["items"]), abs=0.2)
+    assert view["targets"] == proposal["payload"]["targets"]
+    assert all(i["text"] and i["grams"] > 0 for d in view["days"] for m in d["meals"] for i in m["items"])
+
+
+def test_the_active_plan_carries_the_how_this_was_made_summary(client, proposal):
+    client.post(f"/plans/proposals/{proposal['id']}/approve")
+    made = client.get("/plans/meal/active").json()["how_made"]
+    assert made["days_from_model"] + made["days_from_code"] == 7 and made["sources"] == ["fallback"] * 7     # the model is down here
+    assert made["generation"] is None and made["checks"] and made["meals_per_day"] == 4
+    assert "average_percent_of_target" in made and "days_ok" in made
+    assert made == proposal["payload"]["how_made"]                                                          # same summary the user saw
+
+
+def test_nobody_reads_someone_elses_meal_plan(client, users, proposal):
+    client.post(f"/plans/proposals/{proposal['id']}/approve")
+    client.session.user_id = users[1]
+    assert client.get("/plans/meal/active").status_code == 404
+
+
+def test_the_active_plan_follows_the_latest_approval(client, users, proposal):
+    client.post(f"/plans/proposals/{proposal['id']}/approve")
+    first = client.get("/plans/meal/active").json()["id"]
+    response = client.post("/plans/meal/generate")
+    assert response.status_code == 200, response.text
+    second = response.json()
+    client.post(f"/plans/proposals/{second['id']}/approve")
+    view = client.get("/plans/meal/active").json()
+    assert view["id"] != first and view["version"] == 2
+
+
+def test_eating_disorder_history_gets_no_numbers_from_the_active_plan_either(client, users):
+    onboard(client, eating_disorder_history=True)
+    proposal = client.post("/plans/meal/generate").json()
+    assert "how_made" in proposal["payload"] and "days_ok" not in proposal["payload"]["how_made"]
+    client.post(f"/plans/proposals/{proposal['id']}/approve")
+    text = json.dumps(client.get("/plans/meal/active").json())
+    assert '"numbers_hidden": true' in text and '"targets": null' in text and '"totals": null' in text
+    for key in ("days_ok", "days_with_issues", "average_percent_of_target", "emphasis", "portion_scale"):
+        assert f'"{key}"' not in text, key
+    assert '"kcal": null' in text and '"protein_g": null' in text and '"fat_g": null' in text
+    assert '"text": "' in text                                                    # portions are still shown

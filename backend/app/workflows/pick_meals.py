@@ -52,6 +52,7 @@ class WeekPlan:
     thin_roles: dict[str, tuple[str, ...]]    # meals whose choice is thin (the plan will repeat dishes)
     model_called: bool
     repair_asked: bool
+    usage: dict[str, float]                   # real model calls, tokens, cost and latency (the 'how this was made' panel)
 
 
 def _default_ask(user_id: UUID | None) -> Ask:
@@ -92,7 +93,18 @@ def pick_meals(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[s
     empty = [s.replace("_", " ") for s in slots if pool[s].missing]
     if empty:
         raise PoolTooSmall(f"Your diet and dislikes leave no choice for: {', '.join(empty)}. Try removing a dislike.")
-    ask = ask or _default_ask(user_id)
+    inner_ask = ask or _default_ask(user_id)
+    usage: dict[str, float] = {"model_calls": 0, "input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0, "latency_ms": 0}
+
+    def ask(prompt: str) -> LLMResult:
+        result = inner_ask(prompt)
+        usage["model_calls"] += 1
+        usage["input_tokens"] += result.input_tokens
+        usage["output_tokens"] += result.output_tokens
+        usage["cost_usd"] = round(usage["cost_usd"] + result.cost_usd, 6)
+        usage["latency_ms"] += result.latency_ms
+        return result
+
 
     accepted: dict[int, tuple[DayPicks, DaySolution]] = {}      # days the model got fully right
     candidates: dict[int, tuple[DayPicks, DaySolution]] = {}    # the model's best try for days with issues
@@ -139,22 +151,22 @@ def pick_meals(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[s
                     next_pending.append(i)
         pending = next_pending
 
-    usage = week_usage([picks for picks, _ in accepted.values()])    # dishes the model already used on its good days
+    dish_usage = week_usage([picks for picks, _ in accepted.values()])    # dishes the model already used on its good days
     plans: list[DayPlan] = []
     for i in range(DAYS):
         if i in accepted:
             picks, solution = accepted[i]
             plans.append(DayPlan(i + 1, picks, solution, "model"))
             continue
-        fb_picks, fb_solution = _best_fallback(pool, slots, i, targets, shares, scale, emphasis, usage)
+        fb_picks, fb_solution = _best_fallback(pool, slots, i, targets, shares, scale, emphasis, dish_usage)
         if i in candidates and _score(candidates[i][1]) <= _score(fb_solution):
             picks, solution = candidates[i]
             plans.append(DayPlan(i + 1, picks, solution, "model"))
         else:
             plans.append(DayPlan(i + 1, fb_picks, fb_solution, "fallback"))
-        usage.update(week_usage([plans[-1].picks]))
+        dish_usage.update(week_usage([plans[-1].picks]))
         if plans[-1].solution.status == "infeasible":
             raise MealPlanFailed(f"We could not build a safe meal day {i + 1} from the foods available to you. "
                                  "Try removing a dislike or changing your diet type.")
     thin = {s: pool[s].thin for s in slots if pool[s].thin}
-    return WeekPlan(tuple(plans), tuple(slots), emphasis, scale, thin, model_called, repair_asked)
+    return WeekPlan(tuple(plans), tuple(slots), emphasis, scale, thin, model_called, repair_asked, usage)

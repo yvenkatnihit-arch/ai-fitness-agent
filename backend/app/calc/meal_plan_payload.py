@@ -18,12 +18,52 @@ if TYPE_CHECKING:
     from app.workflows.pick_meals import WeekPlan
 
 PAYLOAD_VERSION = 1
+CHECKS = (
+    "Every dish comes from our food database and fits your diet and dislikes.",
+    "Portions are worked out by code, not by the AI, in measurable household steps.",
+    "Every day stays inside your safe calorie range and under your protein limit.",
+    "Everything is checked again from the food data when you approve.",
+)
+# For users who must not see numbers (eating-disorder history) the wording avoids calories and protein altogether.
+CHECKS_HIDDEN = (
+    CHECKS[0],
+    CHECKS[1],
+    "Every day is kept within safe limits for you.",
+    CHECKS[3],
+)
 HOUSEHOLD_UNITS = frozenset({"katori", "piece", "cup", "glass", "bowl", "plate", "slice", "tbsp", "tsp", "handful"})
 NUTRITION_KEYS = ("kcal", "protein_g", "carbs_g", "fat_g")
 MAX_ITEM_GRAMS = 2000          # meal_plan_items.grams check
 NUMBER_TOLERANCE = 0.15        # payload numbers must match our recomputation (both round to 0.1)
 TOTAL_TOLERANCE = 1.5          # kcal and grams of protein: per-item rounding
 UNIT_GRAMS_TOLERANCE = 0.2
+
+
+def portion_text(grams: float, unit: str | None, quantity: float | None) -> str:
+    """"1.5 katori (225 g)", "2 pieces (86 g)" or "150 g"."""
+    if unit is None or quantity is None:
+        return f"{grams:g} g"
+    name = "pieces" if unit == "piece" and quantity != 1 else unit
+    return f"{quantity:g} {name} ({grams:g} g)"
+
+
+def how_made(week: "WeekPlan", numbers_hidden: bool) -> dict[str, Any]:
+    """What the 'How this plan was made' panel shows. Safe by construction: no numbers when they must be hidden."""
+    sources = [d.source for d in week.days]
+    out: dict[str, Any] = {
+        "days_from_model": sources.count("model"), "days_from_code": sources.count("fallback"), "sources": sources,
+        "meals_per_day": len(week.slots), "repair_round": week.repair_asked, "thin_roles": {s: list(r) for s, r in week.thin_roles.items()},
+        "generation": dict(week.usage) if week.model_called else None, "checks": list(CHECKS_HIDDEN if numbers_hidden else CHECKS),
+    }
+    if not numbers_hidden:
+        n = len(week.days)
+        out["days_ok"] = sum(d.solution.status == "ok" for d in week.days)
+        out["days_with_issues"] = n - out["days_ok"]
+        out["average_percent_of_target"] = {k: round(sum(d.solution.percent_of_target[k] for d in week.days) / n, 1)
+                                            for k in ("kcal", "protein", "carbs", "fat")}
+        out["emphasis"] = week.emphasis
+        out["portion_scale"] = week.portion_scale
+    return out
 
 
 def build_payload(week: "WeekPlan", targets: DayTargets, *, diet_type: str, goal: str, week_start: date,
@@ -54,6 +94,7 @@ def build_payload(week: "WeekPlan", targets: DayTargets, *, diet_type: str, goal
         "targets": {"kcal": round(targets.kcal), "protein_g": round(targets.protein_g), "carbs_g": round(targets.carbs_g),
                     "fat_g": round(targets.fat_g)},
         "thin_roles": {s: list(r) for s, r in week.thin_roles.items()},
+        "how_made": how_made(week, numbers_hidden),
         "days": days,
     }
 
@@ -74,6 +115,8 @@ def hide_numbers(payload: Mapping[str, Any]) -> dict[str, Any]:
     out = copy.deepcopy(dict(payload))
     for key in ("targets", "emphasis", "portion_scale"):      # all derived from the calorie and protein numbers
         out.pop(key, None)
+    for key in ("days_ok", "days_with_issues", "average_percent_of_target", "emphasis", "portion_scale"):
+        (out.get("how_made") or {}).pop(key, None)
     for day in out.get("days", []):
         for key in ("totals", "percent_of_target", "issues", "status"):   # "status" says whether the numbers hit the targets
             day.pop(key, None)

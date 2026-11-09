@@ -13,6 +13,7 @@ Key documents (keep them up to date):
 - `docs/PROGRESS.md` — what's done, what's in progress, what's next. Update it at the end of every step.
 - `docs/DECISIONS.md` — every architecture decision, with the options considered and why we chose one.
 - `docs/AGENT_ARCHITECTURE.md` — **read first when resuming**: where we are, the agent/harness flowcharts (when agents are created and deleted, when ad-hoc agents are used), the roadmap and open items.
+- `docs/FLOWS_GUIDE.md` (+ PDF) — Venkat's study guide to the six flows to learn (request and identity, onboarding to targets, propose and approve, the meal plan solver, the chat flow, observability and evals), written as if the project were finished. Update flows 5 and 6 when Phase 7 is built.
 - `docs/DESIGN_BRIEF.md` — Venkat's frontend design prompt plus the decisions on it (the redesign starts only after the backend is done).
 
 ## How we work (always follow this)

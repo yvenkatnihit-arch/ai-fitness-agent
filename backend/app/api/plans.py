@@ -4,9 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.core.auth import CurrentUser, get_current_user
 from app.db import active_plan
+from app.db.active_meal_plan import read_active_meal_plan
 from app.db import proposals as repo
 from app.db import user_transaction
 from app.llm.client import LLMBusy, LLMFailed
+from app.schemas.meal_plans import ActiveMealPlanOut, to_active_meal_plan
 from app.schemas.plans import ActivePlanOut, ProposalListOut, ProposalOut, to_proposal_out
 from app.workflows import decide_proposal as decide
 from app.workflows.decide_proposal import ProposalCannotBeApplied, ProposalNotFound, ProposalNotPending
@@ -83,3 +85,13 @@ def active_workout(user: CurrentUser = Depends(get_current_user)) -> ActivePlanO
     if plan is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "You don't have a workout plan yet.")
     return ActivePlanOut(**plan)
+
+
+@router.get("/meal/active", response_model=ActiveMealPlanOut)
+def active_meal(user: CurrentUser = Depends(get_current_user)) -> ActiveMealPlanOut:
+    """The user's approved meal plan (no LLM: read from the database). Numbers are removed for eating-disorder history."""
+    with user_transaction(user.id) as conn:
+        raw = read_active_meal_plan(conn)
+    if raw is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "You don't have a meal plan yet.")
+    return to_active_meal_plan(raw)
