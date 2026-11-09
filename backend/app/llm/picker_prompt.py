@@ -25,6 +25,8 @@ class DayRequest:
     wanted: int
     candidates: Sequence[ExerciseOption]
     problems: Sequence[str] = ()             # what was wrong with the last answer for this day (retry only)
+    max_per_movement: int | None = None      # the validator's limits, stated up front (D-085): at most this many of one movement...
+    min_movements: int | None = None         # ...and at least this many different movements
 
 
 def build_user_prompt(level: str, goal: str, days: Sequence[DayRequest], focus: Sequence[str] = ()) -> str:
@@ -34,6 +36,9 @@ def build_user_prompt(level: str, goal: str, days: Sequence[DayRequest], focus: 
     lines.append("")
     for d in days:
         lines.append(f"Day {d.number}: {d.label}. Choose exactly {d.wanted} exercises from this list:")
+        if d.max_per_movement is not None and d.min_movements is not None:
+            lines.append(f"Rules for this day: at most {d.max_per_movement} exercises with the same movement (the last column), "
+                         f"and at least {d.min_movements} different movements. Count before you answer.")
         for o in d.candidates:
             lines.append(f"- {o.key} | {o.name} | {', '.join(o.muscle_groups)} | {o.movement_pattern}")
         if d.problems:

@@ -12,7 +12,7 @@ from typing import Literal
 from uuid import UUID
 
 from app.calc.day_picks import (
-    EXERCISES_PER_DAY, MIN_DAY_EXERCISES, day_candidates, fallback_picks, order_picks, validate_picks, wanted_count,
+    EXERCISES_PER_DAY, MIN_DAY_EXERCISES, day_candidates, fallback_picks, order_picks, pattern_cap, validate_picks, wanted_count,
 )
 from app.calc.focus import day_wanted
 from app.calc.exercise_filter import ExerciseOption
@@ -24,6 +24,10 @@ logger = logging.getLogger(__name__)
 
 MAX_TOKENS = 4000      # generous: Gemini's own reasoning tokens count toward this limit
 Ask = Callable[[str], LLMResult]   # user prompt -> model answer; tests pass a fake
+# The picker only chooses keys from lists. Gemini's hidden "thinking" tokens count against max_tokens and are billed: a 6-day split spent
+# about 3,860 of 3,984 output tokens thinking and the JSON was cut off, so the plan silently fell back to code (found by the plan eval,
+# D-085). The evals use exactly these settings.
+PICKER_CALL = {"node": "exercise_picker", "max_tokens": MAX_TOKENS, "temperature": 0.0, "json_mode": True, "thinking_budget": 0}
 
 
 @dataclass(frozen=True)
@@ -36,10 +40,15 @@ class DayPicks:
 
 def _default_ask(user_id: UUID | None) -> Ask:
     def ask(prompt: str) -> LLMResult:
-        return call_llm("mid", [("system", SYSTEM), ("human", prompt)], flow="plan_generation",
-                        node="exercise_picker", max_tokens=MAX_TOKENS, user_id=user_id,
-                        temperature=0.0, json_mode=True)   # temperature 0: the same inputs give the same plan (D-052)
+        return call_llm("mid", [("system", SYSTEM), ("human", prompt)], flow="plan_generation", user_id=user_id,
+                        **PICKER_CALL)   # temperature 0: the same inputs give the same plan (D-052)
     return ask
+
+
+def _day_limits(candidates: Sequence[ExerciseOption], wanted: int) -> tuple[int, int]:
+    """The variety limits the validator will enforce for this day, from the SAME functions (so the prompt and the check cannot disagree)."""
+    available = len({o.movement_pattern for o in candidates})
+    return pattern_cap(wanted, available), min(wanted, available)
 
 
 def pick_exercises(
@@ -66,7 +75,8 @@ def pick_exercises(
     for attempt in range(2):
         if not pending:
             break
-        requests = [DayRequest(i + 1, split.days[i].label, wanted[i], cands[i], problems.get(i, ())) for i in pending]
+        requests = [DayRequest(i + 1, split.days[i].label, wanted[i], cands[i], problems.get(i, ()), *_day_limits(cands[i], wanted[i]))
+                    for i in pending]
         try:
             answer = parse_answer(ask(build_user_prompt(level, goal, requests, focus)).text)
         except Exception:  # noqa: BLE001 - LLMBusy/LLMFailed: the whole plan still works, via the fallback

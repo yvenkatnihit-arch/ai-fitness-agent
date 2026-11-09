@@ -188,9 +188,9 @@ def test_nutrition_summary():
 
 def test_thresholds_exist_for_every_eval_and_use_known_metric_names():
     t = json.loads(run_llm.THRESHOLDS.read_text(encoding="utf-8"))
-    assert {"router", "composer", "nutrition"} <= set(t)
+    assert {"router", "composer", "nutrition", "workout"} <= set(t)
     known = set(run_llm.HIGHER_IS_BETTER + run_llm.LOWER_IS_BETTER)
-    assert all(set(t[name]) <= known for name in ("router", "composer", "nutrition"))
+    assert all(set(t[name]) <= known for name in ("router", "composer", "nutrition", "workout"))
 
 
 def test_the_gate_flags_both_directions_for_the_new_metrics():

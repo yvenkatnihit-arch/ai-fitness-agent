@@ -126,9 +126,9 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 
 **Evals (`backend/`, D-079)**
 - Guard evals and the regression gate (free, offline): `uv run python -m evals.run` (exit code 1 when the gate fails); lock in improvements with `--update-baseline`. The same gate runs inside `uv run pytest`.
-- Model-based evals with REAL Gemini calls (router about $0.003, composer about $0.003, nutrition specialist about $0.01; cached in `evals/cache/`, `--fresh` ignores the cache, `--show` prints every answer; use `--fresh` after changing a tool or the data, the cache cannot see that): `uv run python -m evals.run_llm router|composer|nutrition` (exit code 1 when below `evals/llm_thresholds.json`).
+- Model-based evals with REAL Gemini calls (router about $0.003, composer about $0.003, nutrition specialist about $0.01; cached in `evals/cache/`, `--fresh` ignores the cache, `--show` prints every answer; use `--fresh` after changing a tool or the data, the cache cannot see that): `uv run python -m evals.run_llm router|composer|nutrition|workout` (workout: 14 made-up users through the real exercise picker, about $0.02) (exit code 1 when below `evals/llm_thresholds.json`).
 
-**Not set up yet:** evals for plan generation (7.7d), CI, deployment (Phase 3).
+**Not set up yet:** the meal plan eval (7.7e), CI, deployment (Phase 3).
 
 **Windows notes**
 - If `npm` fails with "running scripts is disabled": `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`

@@ -23,5 +23,18 @@
   "honest_when_absent_rate": 0.9,
   "failed_run_rate": 0.05,
   "amount_used_tool_rate": 0.7
- }
+ },
+ "workout": {
+  "safety_violation_rate": 0.0,
+  "payload_problem_rate": 0.0,
+  "weekly_cap_breach_rate": 0.5,
+  "refused_rate": 0.2,
+  "scenario_pass_rate": 0.5,
+  "model_day_rate": 0.8,
+  "mean_pattern_coverage": 0.8,
+  "count_ok_rate": 0.9,
+  "focus_ok_rate": 0.9,
+  "mean_repeat_rate": 0.25
+ },
+ "_note_workout": "Safety and payload problems must be 0 (code guarantees them; any violation is a bug). weekly_cap_breach_rate 0.5 is LENIENT on purpose: today 41.7% of generated plans exceed 20 sets a week for a muscle (D-085); tighten to 0 when the generator enforces the cap. First measurement: 14 made-up users, 12 plans made, model chose 88.4% of days, pattern coverage 86.9%."
 }

@@ -56,7 +56,8 @@ def model_name(tier: Tier) -> str:
     return s.gemini_mid_model if tier == "mid" else s.gemini_small_model
 
 
-def build_chat_model(tier: Tier, max_tokens: int, temperature: float = 0.2, json_mode: bool = False) -> Any:
+def build_chat_model(tier: Tier, max_tokens: int, temperature: float = 0.2, json_mode: bool = False,
+                     thinking_budget: int | None = None) -> Any:
     """A LangChain chat model for this tier. Imported lazily so offline tests never need the network."""
     from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -65,6 +66,8 @@ def build_chat_model(tier: Tier, max_tokens: int, temperature: float = 0.2, json
         # Gemini 2.5 "thinks" before answering by default; those hidden tokens count against max_output_tokens (a composed reply
         # was cut off mid-sentence) and are billed as output. The small tier only routes, looks up and rewrites: no thinking.
         extra["thinking_budget"] = 0
+    if thinking_budget is not None:   # an explicit choice per call wins (D-085: the exercise picker does not need hidden reasoning)
+        extra["thinking_budget"] = thinking_budget
     return ChatGoogleGenerativeAI(
         model=model_name(tier),
         api_key=get_settings().gemini_api_key.get_secret_value(),
@@ -103,6 +106,7 @@ def call_llm(
     user_id: UUID | None = None,
     temperature: float = 0.2,
     json_mode: bool = False,
+    thinking_budget: int | None = None,
     model: Any | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> LLMResult:
@@ -110,7 +114,7 @@ def call_llm(
     if max_tokens <= 0:
         raise ValueError("max_tokens must be a positive number")
     name = model_name(tier)
-    chat = model if model is not None else build_chat_model(tier, max_tokens, temperature, json_mode)
+    chat = model if model is not None else build_chat_model(tier, max_tokens, temperature, json_mode, thinking_budget)
     started = time.monotonic()
 
     def log(status: str, tokens: tuple[int, int, int] = (0, 0, 0), code: str | None = None) -> int:
