@@ -8,22 +8,23 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `c2d9857`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `e4a5ebe`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
 proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) the 7-day dish picker (6.7c) and meal plan proposals with approval (6.7d).
 
-**Built, NOT committed yet:** Step 7.4, the composer (D-076): merges several specialist answers into one reply; code rejects any
-invented number; also switches off Gemini's hidden thinking for the small tier. Committed: harness core (7.1), nutrition
-specialist (7.2), router + parallel spawn (7.3). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
+**Built, NOT committed yet:** Step 7.5, approvals in the chat (D-077): propose tools report pending proposals, the graph pauses
+with `interrupt()` and resumes with the user's approve/reject (through the same workflow as the proposal cards); checked on the
+real Postgres checkpointer across a new connection. Committed: harness core (7.1), nutrition specialist (7.2), router + parallel
+spawn (7.3), composer with number check (7.4). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Next:** 7.5 human-in-the-loop approvals with LangGraph `interrupt()`; then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
+**Next:** 7.6 NeMo Guardrails (input and output checks around the chat graph); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
 Phase 6 check questions are still open.
 
 **Study guide:** `docs/FLOWS_GUIDE.pdf` explains the six flows to learn, in order, with worked examples.
 
-**To resume, type:** `commit and go` (saves 7.4, then starts 7.5); the Phase 6 questions are still open.
+**To resume, type:** `commit and go` (saves 7.5, then starts 7.6); the Phase 6 questions are still open.
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`

@@ -11,14 +11,15 @@ finish:      one result -> its answer is the reply (no extra LLM call: the compo
 import operator
 from collections.abc import Callable
 from typing import Annotated, Any, TypedDict
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import Send
+from langgraph.types import Command, Send, interrupt
 
+from app.agents.approvals import APPROVE, REJECT, Decide, decide_with_workflow
+from app.agents.composer import compose
 from app.agents.context import RunContext
 from app.agents.gemini_model import gemini_model
-from app.agents.composer import compose
 from app.agents.menu import Menu, default_menu
 from app.agents.router import Assignment, route_message
 from app.agents.runner import Model, ToolRecord, build_specialist
@@ -51,12 +52,16 @@ class ChatState(TypedDict, total=False):
     results: Annotated[list[SpecialistOutcome], operator.add]   # every parallel branch appends here
     reply: str
     composed: bool
+    to_decide: list[dict[str, str]]   # pending proposals this run created, still waiting for the user: {"id", "summary"}
+    decisions: Annotated[list[dict[str, str]], operator.add]
 
 
 def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, make_model: ModelFactory | None = None,
-                     composer: Composer | None = None) -> Any:
-    """Compile the graph. Tests pass a fake router and fake models; production uses the real ones."""
+                     composer: Composer | None = None, checkpointer: Any | None = None, decide: Decide | None = None) -> Any:
+    """Compile the graph. Tests pass a fake router and fake models; production uses the real ones.
+    `checkpointer` (needed to pause for approvals) saves the state between the question and the answer."""
     menu = menu if menu is not None else default_menu()
+    decide = decide or decide_with_workflow
 
     def route(state: ChatState) -> dict[str, Any]:
         uid = UUID(state["user_id"])
@@ -78,6 +83,12 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
                                               tokens=r.tokens, tools=r.tools)]}
 
     def finish(state: ChatState) -> dict[str, Any]:
+        out = _reply(state)
+        pending = [{"id": t.proposal_id, "summary": t.proposal_summary} for r in state.get("results", []) for t in r["tools"]
+                   if t.proposal_id]
+        return {**out, "to_decide": pending}
+
+    def _reply(state: ChatState) -> dict[str, Any]:
         order = {a.specialist: i for i, a in enumerate(state.get("assignments", []))}   # branches finish in any order
         done = sorted(state.get("results", []), key=lambda r: order.get(r["specialist"], 99))
         good = [(r["specialist"], r["answer"]) for r in done if r["status"] == "ok" and r["answer"]]
@@ -96,19 +107,55 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
             pass   # fall back to the joined answers
         return {"reply": merged or "\n\n".join(answers), "composed": merged is not None}
 
+    def after_finish(state: ChatState) -> str:
+        # With no checkpointer the graph cannot pause, so proposals simply stay pending for the plan screen.
+        return "approval" if checkpointer is not None and state.get("to_decide") else END
+
+    def approval(state: ChatState) -> dict[str, Any]:
+        """Ask the user about ONE proposal, then apply their answer. One per run of this node: LangGraph re-runs a node from the
+        top when it resumes, so deciding several here would apply the first one twice. The loop is the edge back to this node."""
+        item, rest = state["to_decide"][0], state["to_decide"][1:]
+        answer = interrupt({"kind": "approve_proposal", "proposal_id": item["id"], "summary": item["summary"]})
+        choice = answer if answer in (APPROVE, REJECT) else "leave"   # anything else changes nothing
+        message = decide(UUID(state["user_id"]), UUID(item["id"]), choice)   # the id comes from OUR state, never from the answer
+        return {"to_decide": rest, "decisions": [{"proposal_id": item["id"], "choice": choice, "message": message}]}
+
     graph = StateGraph(ChatState)
     graph.add_node("route", route)
     graph.add_node("specialist", specialist)
     graph.add_node("finish", finish)
+    graph.add_node("approval", approval)
     graph.add_edge(START, "route")
     graph.add_conditional_edges("route", spawn, ["specialist", "finish"])
     graph.add_edge("specialist", "finish")
-    graph.add_edge("finish", END)
-    return graph.compile()
+    graph.add_conditional_edges("finish", after_finish, ["approval", END])
+    graph.add_conditional_edges("approval", lambda s: "approval" if s.get("to_decide") else END, ["approval", END])
+    return graph.compile(checkpointer=checkpointer)
 
 
-def answer_message(message: str, user_id: UUID, **kwargs: Any) -> dict[str, Any]:
-    """Run the graph for one message. Returns the reply plus what ran (for the 'How this was made' panel)."""
-    final = build_chat_graph(**kwargs).invoke({"message": message, "user_id": str(user_id), "results": []})
-    return {"reply": final["reply"], "assignments": final.get("assignments", []), "results": final.get("results", []),
-            "composed": final.get("composed", False)}
+def _config(user_id: UUID, conversation_id: str) -> dict[str, Any]:
+    """The thread id contains the user's id, so one user can never resume another user's paused conversation."""
+    return {"configurable": {"thread_id": f"{user_id}:{conversation_id}"}}
+
+
+def _summary(final: dict[str, Any]) -> dict[str, Any]:
+    paused = [i.value for i in final.get("__interrupt__", [])]
+    return {"reply": final.get("reply", ""), "assignments": final.get("assignments", []), "results": final.get("results", []),
+            "composed": final.get("composed", False), "decisions": final.get("decisions", []),
+            "waiting_for": paused[0] if paused else None}   # the card to show the user, or None when nothing is waiting
+
+
+def answer_message(message: str, user_id: UUID, *, conversation_id: str | None = None, **kwargs: Any) -> dict[str, Any]:
+    """Run the graph for one message. Returns the reply, what ran (for the 'How this was made' panel) and, when a proposal is
+    waiting for the user, `waiting_for` (needs a `checkpointer` and a `conversation_id`; then call `resume_chat`)."""
+    graph = build_chat_graph(**kwargs)
+    state = {"message": message, "user_id": str(user_id), "results": [], "decisions": []}
+    config = _config(user_id, conversation_id or str(uuid4()))
+    return _summary(graph.invoke(state, config))
+
+
+def resume_chat(user_id: UUID, conversation_id: str, choice: str, **kwargs: Any) -> dict[str, Any]:
+    """Give the paused conversation the user's answer ("approve" or "reject"). Build the graph with the same options as before."""
+    graph = build_chat_graph(**kwargs)
+    # LangGraph itself crashes on Command(resume=None), so "no answer" is sent as an empty string (which changes nothing).
+    return _summary(graph.invoke(Command(resume="" if choice is None else choice), _config(user_id, conversation_id)))

@@ -10,6 +10,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Literal
+from uuid import UUID
 
 from pydantic import ValidationError
 
@@ -42,6 +43,8 @@ class ToolRecord:
     name: str
     outcome: Literal["ok", "refused", "bad_args", "error"]
     detail: str = ""
+    proposal_id: str | None = None        # set when a "propose" tool created a pending proposal (D-077)
+    proposal_summary: str = ""
 
 
 @dataclass
@@ -86,8 +89,9 @@ class Specialist:
         return result
 
     def _use_tool(self, call: ToolCall, ctx: RunContext, result: RunResult) -> dict[str, Any]:
-        def record(outcome: Literal["ok", "refused", "bad_args", "error"], detail: str = "") -> None:
-            result.tools.append(ToolRecord(call.name, outcome, detail))
+        def record(outcome: Literal["ok", "refused", "bad_args", "error"], detail: str = "",
+                   proposal: tuple[str, str] | None = None) -> None:
+            result.tools.append(ToolRecord(call.name, outcome, detail, *(proposal or (None, ""))))
 
         tool = self._registry.get(call.name)
         if call.name not in self._spec.tools or tool is None:     # allowlist first, whatever the registry holds
@@ -103,8 +107,17 @@ class Specialist:
         except Exception as e:  # noqa: BLE001 - a failing tool must not crash the run
             record("error", type(e).__name__)
             return {"error": "That tool failed."}
-        record("ok")
+        record("ok", proposal=_proposal_of(output) if tool.scope == "propose" else None)
         return output
+
+
+def _proposal_of(output: dict[str, Any]) -> tuple[str, str] | None:
+    """A propose tool reports the pending proposal it created as {"proposal_id": <uuid>, "summary": <text>}."""
+    try:
+        pid = str(UUID(str(output.get("proposal_id"))))
+    except ValueError:
+        return None
+    return pid, str(output.get("summary", ""))[:300]
 
 
 def build_specialist(spec: SpecialistSpec, registry: ToolRegistry, model: Model,
