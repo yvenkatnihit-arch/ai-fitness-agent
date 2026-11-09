@@ -8,21 +8,21 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `1ac1406`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `15fc010`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
 proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) the 7-day dish picker (6.7c) and meal plan proposals with approval (6.7d).
 
-**Built, NOT committed yet:** Step 6.9a, editing your workout by weekday on the backend (`POST /plans/workout/edit`,
-`GET /plans/workout/options`, D-071): move a day, swap, remove or add an exercise; immediate but checked by code; no AI.
-Profile editing and the settings screen are committed. **Phase 6 (plan generation) is complete.**
+**Built, NOT committed yet:** Step 6.9b, the edit-workout screen (D-072): an "Edit my plan" button on /workout to move days and
+swap/remove/add exercises from options the server offers. The backend for it (6.9a, D-071) is committed.
+**Phase 6 (plan generation) is complete.**
 
-**Next:** 6.9b the edit-workout screen, then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
+**Next:** Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
 Phase 6 check questions are still open.
 
 **Study guide:** `docs/FLOWS_GUIDE.pdf` explains the six flows to learn, in order, with worked examples.
 
-**To resume, type:** `commit and go` (saves 6.9a, then starts 6.9b); the Phase 6 questions are still open.
+**To resume, type:** `commit and go` (saves 6.9b, then the Phase 6 questions and Phase 7); the Phase 6 questions are still open.
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`

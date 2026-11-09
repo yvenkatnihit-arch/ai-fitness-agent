@@ -6,6 +6,7 @@ import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { FocusPicker } from './FocusPicker'
 import { PlanDays } from './PlanDays'
+import { WorkoutEditor } from './WorkoutEditor'
 import type { ActivePlan, FocusState, Proposal } from './types'
 import { words } from '../lib/words'
 
@@ -18,6 +19,7 @@ export function WorkoutPlanPage() {
   const [active, setActive] = useState<ActivePlan | null>(null)
   const [proposal, setProposal] = useState<Proposal | null>(null)
   const [focus, setFocus] = useState<FocusState | null>(null)
+  const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState<'generating' | 'deciding' | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
 
@@ -116,8 +118,16 @@ export function WorkoutPlanPage() {
         <>
           {active ? (
             <section aria-label="Your workout plan" className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm">
-              <h2 className="text-base font-bold text-ink">Your plan</h2>
-              <PlanDays days={active.days} />
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-base font-bold text-ink">Your plan</h2>
+                <button
+                  type="button" onClick={() => setEditing(!editing)} disabled={busy !== null}
+                  className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-brand-strong transition hover:bg-surface-2 disabled:opacity-50"
+                >
+                  {editing ? 'Done editing' : 'Edit my plan'}
+                </button>
+              </div>
+              {editing ? <WorkoutEditor plan={active} onPlan={setActive} /> : <PlanDays days={active.days} />}
             </section>
           ) : (
             <p className="text-sm text-ink-soft">
