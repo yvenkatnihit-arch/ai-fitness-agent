@@ -8,6 +8,7 @@ finish:      one result -> its answer is the reply (no extra LLM call: the compo
              None -> a friendly "what I can help with" message.
 """
 
+import logging
 import operator
 from collections.abc import Callable
 from typing import Annotated, Any, TypedDict
@@ -26,6 +27,9 @@ from app.agents.runner import Model, ToolRecord, build_specialist
 from app.agents.spec import SpecialistSpec
 from app.agents.tools import ToolRegistry
 from app.llm.client import LLMBusy, LLMFailed
+from app.safety.guards import check_input, check_output
+
+logger = logging.getLogger(__name__)
 
 NOTHING_FITS = ("I can help with questions about foods and dishes for now, such as calories, protein and portion sizes. "
                 "What would you like to know?")
@@ -52,6 +56,7 @@ class ChatState(TypedDict, total=False):
     results: Annotated[list[SpecialistOutcome], operator.add]   # every parallel branch appends here
     reply: str
     composed: bool
+    blocked: str   # set when a guard stopped the message or replaced the reply: the category (never the text)
     to_decide: list[dict[str, str]]   # pending proposals this run created, still waiting for the user: {"id", "summary"}
     decisions: Annotated[list[dict[str, str]], operator.add]
 
@@ -62,6 +67,14 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
     `checkpointer` (needed to pause for approvals) saves the state between the question and the answer."""
     menu = menu if menu is not None else default_menu()
     decide = decide or decide_with_workflow
+
+    def guard_in(state: ChatState) -> dict[str, Any]:
+        """The input guard (D-078): code only, before any model. A blocked message gets a fixed reply and nothing else runs."""
+        verdict = check_input(state["message"])
+        if verdict is None:
+            return {}
+        logger.warning("input guard blocked a message (category=%s)", verdict.category)   # the category only, never the text
+        return {"blocked": verdict.category, "reply": verdict.reply, "assignments": [], "to_decide": [], "composed": False}
 
     def route(state: ChatState) -> dict[str, Any]:
         uid = UUID(state["user_id"])
@@ -84,6 +97,10 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
 
     def finish(state: ChatState) -> dict[str, Any]:
         out = _reply(state)
+        unsafe = check_output(out["reply"])   # the output guard (D-078): a banned or unsafe reply is replaced, never shown
+        if unsafe:
+            logger.warning("output guard replaced a reply (category=%s)", unsafe.category)
+            out = {"reply": unsafe.reply, "composed": False, "blocked": unsafe.category}
         pending = [{"id": t.proposal_id, "summary": t.proposal_summary} for r in state.get("results", []) for t in r["tools"]
                    if t.proposal_id]
         return {**out, "to_decide": pending}
@@ -125,7 +142,9 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
     graph.add_node("specialist", specialist)
     graph.add_node("finish", finish)
     graph.add_node("approval", approval)
-    graph.add_edge(START, "route")
+    graph.add_node("guard_in", guard_in)
+    graph.add_edge(START, "guard_in")
+    graph.add_conditional_edges("guard_in", lambda s: END if s.get("blocked") else "route", ["route", END])
     graph.add_conditional_edges("route", spawn, ["specialist", "finish"])
     graph.add_edge("specialist", "finish")
     graph.add_conditional_edges("finish", after_finish, ["approval", END])
@@ -141,7 +160,7 @@ def _config(user_id: UUID, conversation_id: str) -> dict[str, Any]:
 def _summary(final: dict[str, Any]) -> dict[str, Any]:
     paused = [i.value for i in final.get("__interrupt__", [])]
     return {"reply": final.get("reply", ""), "assignments": final.get("assignments", []), "results": final.get("results", []),
-            "composed": final.get("composed", False), "decisions": final.get("decisions", []),
+            "composed": final.get("composed", False), "decisions": final.get("decisions", []), "blocked": final.get("blocked"),
             "waiting_for": paused[0] if paused else None}   # the card to show the user, or None when nothing is waiting
 
 

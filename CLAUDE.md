@@ -124,7 +124,10 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 **Git (project root)**
 - The remote is HTTPS: https://github.com/yvenkatnihit-arch/ai-fitness-agent (private). Branch: `main`.
 
-**Not set up yet:** evals (Phase 7), deployment (Phase 3).
+**Evals (`backend/`, D-079)**
+- Guard evals and the regression gate (free, offline): `uv run python -m evals.run` (exit code 1 when the gate fails); lock in improvements with `--update-baseline`. The same gate runs inside `uv run pytest`.
+
+**Not set up yet:** evals for the router, composer, specialists and plans (7.7b), CI, deployment (Phase 3).
 
 **Windows notes**
 - If `npm` fails with "running scripts is disabled": `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
