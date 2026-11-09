@@ -10,6 +10,7 @@ from app.llm.client import LLMBusy, LLMFailed
 from app.schemas.plans import ActivePlanOut, ProposalListOut, ProposalOut, to_proposal_out
 from app.workflows import decide_proposal as decide
 from app.workflows.decide_proposal import ProposalCannotBeApplied, ProposalNotFound, ProposalNotPending
+from app.workflows.generate_meal_plan import generate_meal_plan
 from app.workflows.generate_workout_plan import NotReady, generate_workout_plan
 
 router = APIRouter(prefix="/plans", tags=["plans"])
@@ -50,6 +51,20 @@ def approve_proposal(proposal_id: UUID, user: CurrentUser = Depends(get_current_
 def reject_proposal(proposal_id: UUID, user: CurrentUser = Depends(get_current_user)) -> ProposalOut:
     """The user says no: nothing else changes."""
     return _decide(decide.reject, user, proposal_id)
+
+
+@router.post("/meal/generate", response_model=ProposalOut)
+def generate_meal(user: CurrentUser = Depends(get_current_user)) -> ProposalOut:
+    """Make a 7-day meal plan for the user's diet and targets. It is saved as a PENDING proposal: they approve it first.
+    Takes about a minute (two mid-tier model calls plus the solver)."""
+    try:
+        return to_proposal_out(generate_meal_plan(user.id).row)
+    except NotReady as error:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(error)) from None
+    except LLMBusy as error:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(error)) from None
+    except LLMFailed as error:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(error)) from None
 
 
 @router.get("/proposals/pending", response_model=ProposalListOut)

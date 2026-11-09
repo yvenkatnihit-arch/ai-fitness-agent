@@ -114,10 +114,10 @@ def test_a_tampered_plan_is_refused_and_nothing_is_written(client, users, propos
 
 def test_other_kinds_of_proposal_are_refused_until_their_apply_code_exists(client, users):
     onboard(client)
-    with admin_transaction("test: insert a meal proposal") as conn:
+    with admin_transaction("test: insert a profile-change proposal") as conn:
         pid = conn.execute(
-            "insert into public.plan_proposals (user_id, type, source, summary, payload) values (%s, 'meal_change', 'chat', 'x', %s) returning id",
-            (users[0], Jsonb({"kind": "meal_change"}))).fetchone()[0]
+            "insert into public.plan_proposals (user_id, type, source, summary, payload) values (%s, 'profile_change', 'chat', 'x', %s) returning id",
+            (users[0], Jsonb({"kind": "profile_change"}))).fetchone()[0]
     response = client.post(f"/plans/proposals/{pid}/approve")
     assert response.status_code == 422 and "cannot be approved yet" in response.json()["detail"]
     [(status,)] = q("select status from public.plan_proposals where id = %s", pid)

@@ -1,5 +1,7 @@
 """Reading every food with its synonyms and household units, for meal planning (foods are read-only reference data)."""
 
+from dataclasses import dataclass
+
 from psycopg import Connection
 
 from app.calc.meal_pool import PoolFood
@@ -23,3 +25,17 @@ def list_pool_foods(conn: Connection) -> list[PoolFood]:
                               protein_g=float(r[6]), carbs_g=float(r[7]), fat_g=float(r[8]), review_status=r[9],
                               synonyms=tuple(r[10]), units=units))
     return foods
+
+
+@dataclass(frozen=True)
+class MealProfile:
+    diet_type: str
+    dislikes: tuple[str, ...]
+
+
+def read_meal_profile(conn: Connection) -> MealProfile | None:
+    """As the user (RLS): diet type and disliked foods from onboarding. None until the diet is saved."""
+    row = conn.execute("select diet_type, disliked_foods from public.profiles where id = auth.uid()").fetchone()
+    if row is None or row[0] is None:
+        return None
+    return MealProfile(row[0], tuple(row[1] or ()))

@@ -29,16 +29,31 @@ def recent_pending_workout(conn: Connection, split_key: str, within_seconds: int
     ).fetchone()
 
 
-def replace_pending_workout(admin_conn: Connection, user_id: UUID, summary: str, payload: dict) -> tuple:
-    """Admin: an older pending generated workout is no longer wanted (expired); save the new one as pending."""
+def recent_pending(conn: Connection, proposal_type: str, within_seconds: int) -> tuple | None:
+    """As the user: a pending generated proposal of this type made a moment ago (a double-tap must not call the LLM twice)."""
+    return conn.execute(
+        f"""select {PROPOSAL_COLUMNS} from public.plan_proposals
+            where status = 'pending' and type = %s and source = 'plan_generation'
+              and created_at > now() - make_interval(secs => %s)
+            order by created_at desc limit 1""",
+        (proposal_type, within_seconds),
+    ).fetchone()
+
+
+def replace_pending(admin_conn: Connection, user_id: UUID, proposal_type: str, summary: str, payload: dict) -> tuple:
+    """Admin: an older pending generated proposal of this type is no longer wanted (expired); save the new one as pending."""
     admin_conn.execute(
         """update public.plan_proposals set status = 'expired', decided_at = now()
-           where user_id = %s and status = 'pending' and type = 'workout_change' and source = 'plan_generation'""",
-        (user_id,),
+           where user_id = %s and status = 'pending' and type = %s and source = 'plan_generation'""",
+        (user_id, proposal_type),
     )
     return admin_conn.execute(
         f"""insert into public.plan_proposals (user_id, type, source, summary, payload)
-            values (%s, 'workout_change', 'plan_generation', %s, %s)
+            values (%s, %s, 'plan_generation', %s, %s)
             returning {PROPOSAL_COLUMNS}""",
-        (user_id, summary, Jsonb(payload)),
+        (user_id, proposal_type, summary, Jsonb(payload)),
     ).fetchone()
+
+
+def replace_pending_workout(admin_conn: Connection, user_id: UUID, summary: str, payload: dict) -> tuple:
+    return replace_pending(admin_conn, user_id, "workout_change", summary, payload)

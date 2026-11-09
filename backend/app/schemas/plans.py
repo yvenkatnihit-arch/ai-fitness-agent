@@ -4,6 +4,8 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
+from app.calc.meal_plan_payload import hide_numbers
+
 
 class ProposalOut(BaseModel):
     id: str
@@ -17,8 +19,11 @@ class ProposalOut(BaseModel):
 
 def to_proposal_out(row: tuple) -> ProposalOut:
     """Row order is app.db.proposals.PROPOSAL_COLUMNS."""
+    payload = row[5]
+    if isinstance(payload, dict) and payload.get("numbers_hidden"):
+        payload = hide_numbers(payload)      # the SERVER strips calories and macros for users who must not see them
     return ProposalOut(id=str(row[0]), type=row[1], source=row[2], summary=row[3], status=row[4],
-                       payload=row[5], created_at=row[6])
+                       payload=payload, created_at=row[6])
 
 
 class ProposalListOut(BaseModel):
