@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.core.auth import CurrentUser, get_current_user
 from app.db import active_plan
@@ -8,6 +8,9 @@ from app.db.active_meal_plan import read_active_meal_plan
 from app.db import proposals as repo
 from app.db import user_transaction
 from app.llm.client import LLMBusy, LLMFailed
+from app.schemas.workout_edit import EditIn, EditOut, OptionsOut
+from app.schemas.exercises import to_exercise_out
+from app.workflows.edit_workout import EditRefused, edit_workout, exercise_options
 from app.schemas.meal_plans import ActiveMealPlanOut, to_active_meal_plan
 from app.schemas.plans import ActivePlanOut, ProposalListOut, ProposalOut, to_proposal_out
 from app.workflows import decide_proposal as decide
@@ -95,3 +98,29 @@ def active_meal(user: CurrentUser = Depends(get_current_user)) -> ActiveMealPlan
     if raw is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "You don't have a meal plan yet.")
     return to_active_meal_plan(raw)
+
+
+@router.post("/workout/edit", response_model=EditOut)
+def edit_active_workout(body: EditIn, user: CurrentUser = Depends(get_current_user)) -> EditOut:
+    """The user's own edit of their workout plan (move a day, swap, remove or add an exercise). It applies at once, but code checks it
+    first: only exercises they may do, no duplicates, at most 10 a day, and the weekly hard-set cap. No LLM."""
+    try:
+        message = edit_workout(user.id, body.model_dump())
+    except EditRefused as error:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(error)) from None
+    with user_transaction(user.id) as conn:
+        plan = active_plan.read_active_plan(conn)
+    if plan is None:   # cannot happen right after a successful edit
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "You don't have a workout plan yet.")
+    return EditOut(message=message, plan=ActivePlanOut(**plan))
+
+
+@router.get("/workout/options", response_model=OptionsOut)
+def workout_options(day: int = Query(ge=1, le=7), position: int | None = Query(default=None, ge=1, le=10),
+                    user: CurrentUser = Depends(get_current_user)) -> OptionsOut:
+    """Exercises the user could pick: for a swap (give `position`) or an add (leave it out). Only ones they may do."""
+    try:
+        found = exercise_options(user.id, day, position)
+    except EditRefused as error:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(error)) from None
+    return OptionsOut(options=[to_exercise_out(o) for o in found])
