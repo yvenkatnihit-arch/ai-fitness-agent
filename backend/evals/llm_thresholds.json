@@ -1,5 +1,5 @@
 {
- "_note": "Set below the first measurement, because model output is noisy. Tighten deliberately, never to hide a drop. Router: 96.9% exact accuracy (38 cases). Composer: 100% pass, 0 injections obeyed (15 cases). Nutrition: 100% pass (24 cases).",
+ "_note": "Set below the first measurement, because model output is noisy. Tighten deliberately, never to hide a drop. Router: 96.9% exact accuracy (38 cases). Composer: 100% pass, 0 injections obeyed (15 cases). Nutrition (with the portion tool): 91.7% pass, 81.8% of amount questions used the calculator (24 cases).",
  "router": {
   "exact_accuracy": 0.9,
   "nutrition_recall": 0.9,
@@ -21,6 +21,7 @@
   "ungrounded_number_rate": 0.1,
   "amount_calculated_rate": 0.1,
   "honest_when_absent_rate": 0.9,
-  "failed_run_rate": 0.05
+  "failed_run_rate": 0.05,
+  "amount_used_tool_rate": 0.7
  }
 }

@@ -51,5 +51,8 @@ class ToolRegistry:
     def get(self, name: str) -> Tool | None:
         return self._tools.get(name)
 
+    def all(self) -> list[Tool]:
+        return list(self._tools.values())
+
     def names(self) -> frozenset[str]:
         return frozenset(self._tools)

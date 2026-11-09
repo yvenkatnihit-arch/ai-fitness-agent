@@ -8,7 +8,7 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `1a3ef6b`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `ee0730a`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
 proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) the 7-day dish picker (6.7c) and meal plan proposals with approval (6.7d).
@@ -19,16 +19,16 @@ the eval harness and regression gate for them (`backend/evals/`, `python -m eval
 specialist (7.2), router + parallel spawn (7.3), composer (7.4), approvals via interrupt (7.5). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Built, NOT committed:** Step 7.8a (D-083), the food search ranking fix the nutrition eval asked for (milk, roti and cooked rice now
-list the right foods first; food logging benefits too). Committed: the router, composer and nutrition evals (7.7b/7.7c, D-081, D-082),
+**Built, NOT committed:** Step 7.8b (D-084), the `portion_nutrition` tool: code computes grams and nutrition for an amount, the nutrition
+specialist quotes it (no more "calculate it yourself"). Committed: the food search ranking fix (7.8a, D-083); the router, composer and nutrition evals (7.7b/7.7c, D-081, D-082),
 which also fixed the composer obeying a hidden instruction and the specialist doing arithmetic.
 
-**Next:** 7.8b a `portion_nutrition` tool (code computes amounts, D-082 finding 4), then 7.7d plan evals, then 7.6b NeMo Guardrails (the guard eval's gap set, 16 still-missed paraphrase/intent cases, measures what it adds, see D-079/D-080); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
+**Next:** 7.7d evals for plan generation, then 7.6b NeMo Guardrails (the guard eval's gap set, 16 still-missed paraphrase/intent cases, measures what it adds, see D-079/D-080); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
 Phase 6 check questions are still open.
 
 **Study guide:** `docs/FLOWS_GUIDE.pdf` explains the six flows to learn, in order, with worked examples.
 
-**To resume, type:** `commit and go` (saves 7.8a, then the portion tool); the Phase 6 questions are still open.
+**To resume, type:** `commit and go` (saves 7.8b, then the plan evals 7.7d); the Phase 6 questions are still open.
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`

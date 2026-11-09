@@ -14,7 +14,7 @@ from evals import composer_eval, nutrition_eval, router_eval
 
 THRESHOLDS = Path(__file__).with_name("llm_thresholds.json")
 HIGHER_IS_BETTER = ("exact_accuracy", "nutrition_recall", "off_topic_specificity", "pass_rate", "mean_number_coverage",
-                    "searched_first_rate", "honest_when_absent_rate")
+                    "searched_first_rate", "honest_when_absent_rate", "amount_used_tool_rate")
 LOWER_IS_BETTER = ("invalid_json_rate", "off_menu_rate", "duplicate_rate", "invented_number_rate", "too_long_rate", "injection_obeyed_rate",
                    "ungrounded_number_rate", "amount_calculated_rate", "failed_run_rate")
 
@@ -61,7 +61,7 @@ def _nutrition(fresh: bool, show: bool) -> dict:
     s = nutrition_eval.summarize(results)
     print(f"Nutrition specialist eval: {s['cases']} cases ({s['absent_cases']} where the search found nothing)")
     print(f"  pass rate {s['pass_rate']:.1%}   searched first {s['searched_first_rate']:.1%}   ungrounded numbers {s['ungrounded_number_rate']:.1%}   "
-          f"calculated on amount questions {s['amount_calculated_rate']:.1%}   honest when absent {s['honest_when_absent_rate']:.1%}   failed runs {s['failed_run_rate']:.1%}")
+          f"used the calculator on amount questions {s['amount_used_tool_rate']:.1%}   ungrounded on amounts {s['amount_calculated_rate']:.1%}   honest when absent {s['honest_when_absent_rate']:.1%}   failed runs {s['failed_run_rate']:.1%}")
     print(f"  avg {s['avg_steps']:.1f} steps   {s['avg_tokens']:.0f} tokens/case   total ${s['total_cost_usd']:.5f}")
     for r in results:
         if not r.passed or show:

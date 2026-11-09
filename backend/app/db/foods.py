@@ -46,6 +46,14 @@ limit %(limit)s
 """
 
 
+def get_food_for_portion(conn: Connection, key: str):
+    """One food by its key with its values per 100 g and household units (None when the key is unknown)."""
+    from app.db.meals import foods_for_logging   # local import: meals imports this module's neighbours
+
+    row = conn.execute("select id from public.foods where key = %s", (key,)).fetchone()
+    return foods_for_logging(conn, [row[0]]).get(row[0]) if row else None
+
+
 def search_foods(conn: Connection, query: str, limit: int) -> list[dict]:
     """Foods whose name or local name contains the query (or looks similar), best first, with units."""
     rows = conn.execute(SEARCH_SQL, {"q": query, "like": _like_pattern(query),

@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from app.agents.food_tools import SearchFoodsArgs
 from app.agents.tools import Tool
 from app.llm.client import LLMResult
 from evals import cache as cache_mod
@@ -114,7 +115,21 @@ def test_a_calculated_number_is_ungrounded_and_fails():
 
 def test_numbers_from_the_question_are_allowed():
     r = nutrition_eval.score("calories in 150 g paneer?", "amount", rec("Paneer has 265 kcal per 100 g, so use that for your 150 g.", [PANEER]))
-    assert r.ungrounded == () and r.passed
+    assert r.ungrounded == ()                       # 150 comes from the question: allowed
+
+
+def test_an_amount_question_about_a_known_food_must_use_the_calculator():
+    portion = {"food": "Paneer", "grams": 150.0, "kcal": 397.5}
+    answered_alone = nutrition_eval.score("calories in 150 g paneer?", "amount", rec("Paneer has 265 kcal per 100 g.", [PANEER]))
+    calculated = nutrition_eval.score("calories in 150 g paneer?", "amount", rec(
+        "150 g of paneer has 397.5 kcal.", [PANEER, portion], tools=(("search_foods", "ok"), ("portion_nutrition", "ok"))))
+    refused = nutrition_eval.score("calories in 150 g paneer?", "amount", rec(
+        "150 g of paneer has 397.5 kcal.", [PANEER, {"error": "x"}], tools=(("search_foods", "ok"), ("portion_nutrition", "bad_args"))))
+    assert not answered_alone.passed and not answered_alone.used_portion_tool
+    assert calculated.passed and calculated.used_portion_tool
+    assert not refused.used_portion_tool                  # a failed calculator call does not count
+    plain = nutrition_eval.score("protein in paneer?", "lookup", rec("Paneer has 18.3 g protein per 100 g.", [PANEER]))
+    assert plain.passed                                   # a plain lookup needs no calculator
 
 
 def test_answering_without_searching_first_fails():
@@ -137,8 +152,8 @@ def test_a_run_that_hit_a_limit_fails():
 
 
 def test_nutrition_run_captures_tool_output_and_scores_it(monkeypatch):
-    fixed = Tool("search_foods", "x", nutrition_eval.SEARCH_FOODS.args_model, lambda ctx, args: PANEER, scope="read")
-    monkeypatch.setattr(nutrition_eval, "SEARCH_FOODS", fixed)
+    fixed = Tool("search_foods", "x", SearchFoodsArgs, lambda ctx, args: PANEER, scope="read")
+    monkeypatch.setattr("app.agents.nutrition.SEARCH_FOODS", fixed)
     turns = iter([reply('{"tool": "search_foods", "args": {"query": "paneer"}}'), reply('{"answer": "Paneer has 18.3 g protein per 100 g."}')])
     calls = []
 
@@ -153,8 +168,8 @@ def test_nutrition_run_captures_tool_output_and_scores_it(monkeypatch):
 
 
 def test_nutrition_budget_counts_model_calls(monkeypatch):
-    fixed = Tool("search_foods", "x", nutrition_eval.SEARCH_FOODS.args_model, lambda ctx, args: PANEER, scope="read")
-    monkeypatch.setattr(nutrition_eval, "SEARCH_FOODS", fixed)
+    fixed = Tool("search_foods", "x", SearchFoodsArgs, lambda ctx, args: PANEER, scope="read")
+    monkeypatch.setattr("app.agents.nutrition.SEARCH_FOODS", fixed)
     turns = iter([reply('{"tool": "search_foods", "args": {"query": "a"}}'), reply('{"answer": "ok"}')] * 3)
     with pytest.raises(RuntimeError, match="budget"):
         nutrition_eval.run_nutrition_eval(lambda *a, **k: next(turns), cases=[("a", "lookup"), ("b", "lookup"), ("c", "lookup")], max_calls=3)

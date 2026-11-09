@@ -13,9 +13,8 @@ from uuid import uuid4
 
 from app.agents.composer import numbers_in
 from app.agents.context import RunContext
-from app.agents.food_tools import SEARCH_FOODS
 from app.agents.gemini_model import gemini_model
-from app.agents.nutrition import NUTRITION_SPEC
+from app.agents.nutrition import NUTRITION_SPEC, nutrition_registry
 from app.agents.runner import build_specialist
 from app.agents.tools import Tool, ToolRegistry
 from app.llm.client import LLMResult, call_llm, model_name
@@ -34,6 +33,7 @@ class NutritionResult:
     answer: str
     status: str
     searched_first: bool
+    used_portion_tool: bool          # portion_nutrition ran successfully
     found_any: bool                  # did any search return foods
     ungrounded: tuple[str, ...]      # numbers in the answer that are in no tool output and not in the question
     admits_absence: bool
@@ -47,17 +47,20 @@ class NutritionResult:
 
     @property
     def passed(self) -> bool:
-        return self.status == "ok" and self.searched_first and not self.ungrounded and self.honest_when_absent
+        # An amount question about a food we have must be answered with the calculator's numbers, not by the model.
+        amount_ok = self.kind != "amount" or not self.found_any or self.used_portion_tool
+        return self.status == "ok" and self.searched_first and not self.ungrounded and self.honest_when_absent and amount_ok
 
 
 def _wrapped_registry(outputs: list[dict]) -> ToolRegistry:
-    """Same tool, but it records what it returned, so the answer can be checked against it."""
-    def run(ctx, args):
-        out = SEARCH_FOODS.run(ctx, args)
-        outputs.append(out)
-        return out
+    """The specialist's real tools, but each records what it returned, so the answer can be checked against it."""
     registry = ToolRegistry()
-    registry.register(Tool(SEARCH_FOODS.name, SEARCH_FOODS.description, SEARCH_FOODS.args_model, run, SEARCH_FOODS.scope))
+    for tool in nutrition_registry().all():
+        def run(ctx, args, _tool=tool):
+            out = _tool.run(ctx, args)
+            outputs.append(out)
+            return out
+        registry.register(Tool(tool.name, tool.description, tool.args_model, run, tool.scope))
     return registry
 
 
@@ -85,7 +88,7 @@ def score(question: str, kind: str, rec: dict) -> NutritionResult:
     answer = rec["answer"]
     return NutritionResult(
         question, kind, answer, rec["status"], bool(rec["tools"]) and rec["tools"][0] == ["search_foods", "ok"],
-        found, tuple(sorted(numbers_in(answer) - allowed)), any(w in answer.lower() for w in ABSENT_WORDS), rec["steps"], rec["tokens"], rec["cost"])
+        any(t == ["portion_nutrition", "ok"] for t in rec["tools"]), found, tuple(sorted(numbers_in(answer) - allowed)), any(w in answer.lower() for w in ABSENT_WORDS), rec["steps"], rec["tokens"], rec["cost"])
 
 
 def run_nutrition_eval(call: Callable[..., LLMResult] = call_llm, *, use_cache: bool = True, max_calls: int = MAX_CALLS, cases=CASES) -> list[NutritionResult]:
@@ -113,6 +116,7 @@ def summarize(results: list[NutritionResult]) -> dict:
         "pass_rate": sum(r.passed for r in results) / n,
         "searched_first_rate": sum(r.searched_first for r in results) / n,
         "ungrounded_number_rate": sum(bool(r.ungrounded) for r in results) / n,
+        "amount_used_tool_rate": sum(r.used_portion_tool for r in results if r.kind == "amount" and r.found_any) / max(1, sum(r.kind == "amount" and r.found_any for r in results)),
         "amount_calculated_rate": sum(bool(r.ungrounded) for r in results if r.kind == "amount") / max(1, sum(r.kind == "amount" for r in results)),
         "absent_cases": len(absent),
         "honest_when_absent_rate": sum(r.honest_when_absent for r in absent) / len(absent) if absent else 1.0,
