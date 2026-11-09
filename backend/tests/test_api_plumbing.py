@@ -44,6 +44,19 @@ def test_preflight_from_the_frontend_is_allowed():
     assert "authorization" in response.headers["access-control-allow-headers"].lower()
 
 
+def test_the_browser_may_use_every_method_that_any_endpoint_uses():
+    """A browser asks first (a 'preflight') before PUT, PATCH or DELETE. Every method any route uses must pass, or that
+    screen silently cannot save. (PATCH was once missing: the settings page could not save.)"""
+    methods = {(path, method.upper()) for path, ops in app.openapi()["paths"].items() for method in ops}
+    assert ("/profile", "PATCH") in methods and len(methods) > 20          # the check really looks at the whole API
+    for path, method in sorted(methods):
+        response = client.options(path, headers={
+            "Origin": ALLOWED, "Access-Control-Request-Method": method, "Access-Control-Request-Headers": "authorization,content-type",
+        })
+        assert response.status_code == 200, (path, method, response.text)
+        assert method in response.headers["access-control-allow-methods"], (path, method)
+
+
 def test_other_websites_get_no_cors_permission():
     response = client.get("/health", headers={"Origin": "https://evil.example"})
     assert "access-control-allow-origin" not in response.headers

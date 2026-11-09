@@ -72,6 +72,7 @@ export function HomePage() {
             <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
             <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
           </div>
+          <ButtonLink to="/settings" variant="secondary">Settings</ButtonLink>
         </div>
       )}
       {targets && <TargetsView targets={targets} />}

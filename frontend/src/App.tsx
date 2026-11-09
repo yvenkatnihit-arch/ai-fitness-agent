@@ -5,6 +5,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import { MealLogPage } from './meals/MealLogPage'
 import { MealPlanPage } from './plans/MealPlanPage'
 import { WorkoutPlanPage } from './plans/WorkoutPlanPage'
+import { SettingsPage } from './settings/SettingsPage'
 import { SplitsPage } from './splits/SplitsPage'
 import { OnboardingPage } from './onboarding/OnboardingPage'
 import { HomePage } from './pages/HomePage'
@@ -21,6 +22,7 @@ function App() {
       <Route path="/sources" element={<SourcesPage />} />
       <Route path="/onboarding" element={signedIn(<OnboardingPage />)} />
       <Route path="/log" element={signedIn(<MealLogPage />)} />
+      <Route path="/settings" element={signedIn(<SettingsPage />)} />
       <Route path="/meal-plan" element={signedIn(<MealPlanPage />)} />
       <Route path="/workout" element={signedIn(<WorkoutPlanPage />)} />
       <Route path="/splits" element={signedIn(<SplitsPage />)} />

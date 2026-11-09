@@ -30,7 +30,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=get_app_settings().cors_origins,  # exact frontend URLs only, from .env
     allow_credentials=False,                     # we use Bearer tokens, not cookies
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
     expose_headers=["X-Request-ID"],             # so the frontend can show it in error messages
     max_age=600,                                 # browsers may cache the preflight answer for 10 min
