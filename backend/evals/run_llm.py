@@ -1,7 +1,8 @@
 """Run the model-based evals with REAL Gemini calls.   From backend/:  uv run python -m evals.run_llm router|composer|nutrition [--fresh] [--show]
 
 A fraction of a cent to a few cents. Results are cached in evals/cache/ (git-ignored), so unchanged cases cost nothing; `--fresh` ignores
-the cache; `--show` prints every answer. The gate compares with evals/llm_thresholds.json (set below the measured value, because model
+the cache; `--show` prints every answer. The cache is keyed by model, prompt and input only: it does NOT notice a change to a tool or to the data
+(for example the food search), so use `--fresh` after such a change. The gate compares with evals/llm_thresholds.json (set below the measured value, because model
 output is noisy). Exit code 1 on failure.
 """
 

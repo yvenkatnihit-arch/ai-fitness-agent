@@ -1,4 +1,4 @@
-from app.db.food_ranking import CONTAINS, EXACT, PREFIX, SIMILAR, WHOLE_WORD, WORD, Candidate, match_tier, rank
+from app.db.food_ranking import CONTAINS, CORE_EXACT, EXACT, PREFIX, SIMILAR, WHOLE_WORD, WORD, Candidate, cores, match_tier, rank, words_score
 
 RAW_RICE = Candidate("rice_white", "Rice (white raw)", "cereal", "review", ("chawal", "arisi"))
 PARBOILED = Candidate("rice_parboiled", "Parboiled rice (raw)", "cereal", "ready", ("ukda chawal",))
@@ -15,7 +15,8 @@ def keys(query, candidates):
 
 def test_match_tiers():
     assert match_tier("dahi", ["Curd", "dahi"]) == EXACT
-    assert match_tier("Curd", ["Curd (plain whole milk)"]) == WHOLE_WORD
+    assert match_tier("Curd", ["Curd (plain whole milk)"]) == CORE_EXACT   # the name before its (...) note
+    assert match_tier("curd", ["Dahi curd rice"]) == WHOLE_WORD
     assert match_tier("rice", ["Steamed white rice"]) == WHOLE_WORD
     assert match_tier("dal", ["dalda"]) == PREFIX
     assert match_tier("bir", ["Chicken biryani"]) == WORD
@@ -60,3 +61,62 @@ def test_verified_values_come_before_ones_in_review():
     a = Candidate("a", "Rice dish", "dish_rice", "review", ())
     b = Candidate("b", "Rice dish", "dish_rice", "ready", ())
     assert keys("rice", [a, b]) == ["b", "a"]
+
+
+# ---------- Step 7.8a (D-083): found by the nutrition eval, with the real food names ----------
+
+def food(key, name, category="dish", status="ready", syn=()):
+    return Candidate(key, name, category, status, tuple(syn))
+
+
+MILKS = [food("coconut_milk", "Coconut milk", "fat_oil"), food("curd", "Curd (plain whole milk)", "dairy"), food("milk_barfi", "Milk barfi", "sweet"),
+         food("milk_whole", "Milk (whole)", "dairy"), food("milk_toned", "Milk (double toned / 1 %)", "dairy"), food("chaas", "Buttermilk (chaas)", "dairy"),
+         food("oats", "Oats porridge (milk and water)", "dish")]
+
+
+def test_cores_drop_the_note_and_split_on_slash():
+    assert cores("Roti / chapati (no fat)") == ["roti", "chapati"]
+    assert cores("Milk (double toned / 1 %)") == ["milk"]
+    assert cores("Tofu") == ["tofu"] and cores("(only a note)") == []
+
+
+def test_milk_lists_milk_before_coconut_milk_and_milk_sweets():
+    ranked = keys("milk", MILKS)
+    assert set(ranked[:2]) == {"milk_whole", "milk_toned"}
+    assert ranked.index("milk_whole") < ranked.index("coconut_milk") and ranked.index("milk_whole") < ranked.index("milk_barfi")
+
+
+def test_roti_lists_roti_before_white_bread():
+    bread = food("bread_white", "White bread", "bread_white", syn=("double roti", "sandwich bread"))
+    roti = food("roti", "Roti / chapati (no fat)", syn=("phulka",))
+    roti_ghee = food("roti_ghee", "Roti / chapati with ghee or oil")
+    assert keys("roti", [bread, roti_ghee, roti])[0] == "roti"
+
+
+RICE_AND_DALS = [food("masoor", "Masoor dal (cooked plain)", "dish_dal"), food("urad", "Urad dal (cooked)", "dish_dal"), food("chana", "Chana dal (cooked)", "dish_dal"),
+                 food("mixed", "Mixed dal (cooked)", "dish_dal"), food("brown", "Brown rice (cooked)", "dish_rice"), food("basmati", "Basmati rice (cooked)", "dish_rice"),
+                 food("steamed", "Steamed white rice", "dish_rice", syn=("chawal", "bhaat")), food("pulao", "Plain pulao", "dish_rice")]
+
+
+def test_cooked_rice_lists_rice_before_dals_that_only_say_cooked():
+    ranked = keys("cooked rice", RICE_AND_DALS)
+    assert set(ranked[:3]) == {"brown", "basmati", "steamed"}
+    assert set(ranked[:2]) == {"basmati", "brown"}      # both words in the name: before the one-word match (steamed rice)
+    assert ranked.index("steamed") < ranked.index("masoor")
+
+
+def test_words_score_counts_whole_words_and_the_head_noun_double():
+    assert words_score("cooked rice", ["Brown rice (cooked)"]) == 3
+    assert words_score("cooked rice", ["Steamed white rice"]) == 2
+    assert words_score("cooked rice", ["Masoor dal (cooked plain)"]) == 1
+    assert words_score("cooked rice", ["Rice", "cooked"]) == 3                 # local names count too
+    assert words_score("rice", ["Brown rice"]) == 0 and words_score("", ["x"]) == 0   # single-word queries are unchanged
+
+
+def test_a_two_word_name_still_ranks_its_exact_match_first():
+    assert keys("masoor dal", [food("t", "Toor dal (cooked)"), food("m", "Masoor dal (cooked plain)"), food("raw", "Masoor dal (raw)", "pulse")])[0] == "m"
+
+
+def test_single_word_ranking_is_unchanged_for_the_old_cases():
+    assert keys("chawal", [RAW_RICE, PARBOILED, STEAMED])[0] == "rice_cooked"
+    assert keys("tofu", [Candidate("tofu_curry", "Tofu curry", "dish_curry_veg", "ready", ()), TOFU])[0] == "tofu"

@@ -1,5 +1,7 @@
 """Reading foods for search (as the signed-in user, under RLS: foods are read-only)."""
 
+import re
+
 from psycopg import Connection
 
 from app.db.food_ranking import Candidate, rank
@@ -12,6 +14,13 @@ from app.db.food_ranking import Candidate, rank
 SIMILARITY_THRESHOLD = 0.3
 WORD_SIMILARITY_THRESHOLD = 0.5
 CANDIDATE_LIMIT = 60        # fetch a few more than we return, then rank in Python
+
+
+def _any_word_pattern(query: str) -> str | None:
+    """For a query of two or more words: a regex matching ANY of them as a whole word ("cooked rice" finds "Steamed white rice"
+    too; ranking then puts foods with more of the words first). None for a single word, which then matches nothing here."""
+    words = re.findall(r"[a-z0-9]{3,}", query.lower())
+    return r"\y(" + "|".join(re.escape(w) for w in dict.fromkeys(words)) + r")\y" if len(words) >= 2 else None
 
 
 def _like_pattern(query: str) -> str:
@@ -28,6 +37,7 @@ from public.foods f
 left join public.food_synonyms s on s.food_id = f.id
 group by f.id
 having bool_or(f.name ilike %(like)s or s.synonym ilike %(like)s)
+    or bool_or(f.name ~* %(any_word)s or s.synonym ~* %(any_word)s)
     or max(greatest(extensions.similarity(f.name, %(q)s),
                     coalesce(extensions.similarity(s.synonym, %(q)s), 0))) > %(threshold)s
     or max(greatest(extensions.word_similarity(%(q)s, f.name),
@@ -39,7 +49,7 @@ limit %(limit)s
 def search_foods(conn: Connection, query: str, limit: int) -> list[dict]:
     """Foods whose name or local name contains the query (or looks similar), best first, with units."""
     rows = conn.execute(SEARCH_SQL, {"q": query, "like": _like_pattern(query),
-                                     "threshold": SIMILARITY_THRESHOLD, "word_threshold": WORD_SIMILARITY_THRESHOLD,
+                                     "any_word": _any_word_pattern(query), "threshold": SIMILARITY_THRESHOLD, "word_threshold": WORD_SIMILARITY_THRESHOLD,
                                      "limit": CANDIDATE_LIMIT}).fetchall()
     columns = ["id", "key", "name", "category", "diet_class", "is_dish", "kcal", "protein_g", "carbs_g",
                "fat_g", "fiber_g", "review_status", "source", "synonyms"]
