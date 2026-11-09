@@ -8,7 +8,7 @@ Details and reasons live in `docs/DECISIONS.md` (D-numbers are given in brackets
 
 ## 0. READ ME FIRST (where we are, what to do next)
 
-**Built and committed (latest commit `c6ee298`):** onboarding, calorie/macro targets with safety limits, pace,
+**Built and committed (latest commit `1ae1a05`):** onboarding, calorie/macro targets with safety limits, pace,
 goal-date forecast, workout splits (recommend + choose), routine rules (sets/reps/rest), the LLM module (Gemini,
 retries, cost logging), exercise picker (model picks, code validates), workout plan generation as a PENDING
 proposal, approve/reject, the /workout screen, session length (30/45/60/90 min), focus areas (up to 2 muscles), the meal-plan food pool (6.7a), the portion solver (6.7b) the 7-day dish picker (6.7c) and meal plan proposals with approval (6.7d).
@@ -19,12 +19,15 @@ the eval harness and regression gate for them (`backend/evals/`, `python -m eval
 specialist (7.2), router + parallel spawn (7.3), composer (7.4), approvals via interrupt (7.5). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Next:** 7.7b evals for the router, composer and specialists (small real-call budget), then 7.6b NeMo Guardrails (the guard eval's gap set, 16 still-missed paraphrase/intent cases, measures what it adds, see D-079/D-080); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
+**Also built, NOT committed:** Step 7.7b (D-081), the router eval: 38 labelled messages, real Gemini, 96.9% exact accuracy, about
+$0.003 a run (`python -m evals.run_llm router`); `eval` added as an agent_runs flow (migration applied).
+
+**Next:** 7.7c evals for the composer, the nutrition specialist and plans, then 7.6b NeMo Guardrails (the guard eval's gap set, 16 still-missed paraphrase/intent cases, measures what it adds, see D-079/D-080); then Phase 7 (agents: tool registry and ephemeral specialist factory first, 7.1). The
 Phase 6 check questions are still open.
 
 **Study guide:** `docs/FLOWS_GUIDE.pdf` explains the six flows to learn, in order, with worked examples.
 
-**To resume, type:** `go` (starts 7.7b; 7.6a, 7.7a and the guard fixes are committed); the Phase 6 questions are still open.
+**To resume, type:** `commit and go` (saves 7.7b, then 7.7c); the Phase 6 questions are still open.
 
 **Run the app locally** (two terminals; if a command crashes with a segmentation fault, just run it again):
 - Backend, in `backend/`: `uv run uvicorn app.main:app --reload`

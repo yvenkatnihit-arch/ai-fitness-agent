@@ -1,0 +1,11 @@
+{
+ "_note": "Set about 7 points below the first measurement (router: 96.9% exact accuracy, 100% recall, 94.1% specificity on 38 cases), because model output is noisy. Tighten deliberately, never to hide a drop.",
+ "router": {
+  "exact_accuracy": 0.9,
+  "nutrition_recall": 0.9,
+  "off_topic_specificity": 0.85,
+  "invalid_json_rate": 0.05,
+  "off_menu_rate": 0.05,
+  "duplicate_rate": 0.05
+ }
+}

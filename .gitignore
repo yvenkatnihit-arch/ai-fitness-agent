@@ -21,3 +21,6 @@ dist/
 .DS_Store
 Thumbs.db
 .idea/
+
+# Eval caches (model replies for eval cases; re-creatable)
+backend/evals/cache/
