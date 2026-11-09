@@ -61,6 +61,10 @@ def build_chat_model(tier: Tier, max_tokens: int, temperature: float = 0.2, json
     from langchain_google_genai import ChatGoogleGenerativeAI
 
     extra: dict[str, Any] = {"response_mime_type": "application/json"} if json_mode else {}
+    if tier == "small":
+        # Gemini 2.5 "thinks" before answering by default; those hidden tokens count against max_output_tokens (a composed reply
+        # was cut off mid-sentence) and are billed as output. The small tier only routes, looks up and rewrites: no thinking.
+        extra["thinking_budget"] = 0
     return ChatGoogleGenerativeAI(
         model=model_name(tier),
         api_key=get_settings().gemini_api_key.get_secret_value(),

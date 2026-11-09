@@ -15,6 +15,12 @@ from app.agents.tools import ToolRegistry
 from app.llm.client import LLMResult
 
 
+@pytest.fixture(autouse=True)
+def no_real_composer(monkeypatch):
+    """These tests are about routing and parallelism: the composer is off (it returns None, so answers are joined)."""
+    monkeypatch.setattr("app.agents.chat_graph.compose", lambda *a, **k: None)
+
+
 def entry(name: str) -> MenuEntry:
     return MenuEntry(SpecialistSpec(name=name, system_prompt=f"You are {name}.", tools=frozenset()), ToolRegistry, f"{name} questions")
 
