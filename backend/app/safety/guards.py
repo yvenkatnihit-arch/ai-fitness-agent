@@ -116,6 +116,7 @@ THOUSAND = re.compile(r"\b(?:a|one) thousand\b")
 PER_DAY = r"(?:a|per|each|every) ?day|daily|/ ?day|everyday|for the day|in a day"   # not a bare "day": "on leg day" is fine
 CALORIES = re.compile(r"(\d[\d,]{1,5})\s*(?:k ?cals?|cal(?:orie)?s?)\b(?P<after>.{0,25})")
 CALORIE_PLAN = re.compile(r"(\d[\d,]{1,5})\s*[- ]?(?:k ?cals?|calories?|cal)\s+(?:diet|plan|target|goal|limit|meal plan)\b")
+TARGET_STATED = re.compile(r"\b(?:calorie|calories|kcal|energy) (?:target|goal|limit|budget|intake)\b.{0,15}?(\d[\d,]{2,5})")   # "calorie target is now 500"
 ONLY_EAT = re.compile(r"\bonly (?:eat|eating|have|having|consume|consuming)\s+(?:about |around |just )?(\d[\d,]{1,5})\s*(?:k ?cals?|cal(?:orie)?s?)\b")
 FAST_DAYS = [re.compile(r"\b(\d+)[- ]days? (?:water |dry )?fast"), re.compile(r"\bfast(?:ing)?\b.{0,20}?\b(\d+) days?\b"),
              re.compile(r"\b(?:without|no) (?:eating|food)\b.{0,15}?\b(\d+) days?\b"), re.compile(r"\bnot eat(?:ing)?\b.{0,15}?\b(\d+) days?\b")]
@@ -141,7 +142,7 @@ def extreme_diet(text: str) -> bool:
     for m in CALORIES.finditer(text):
         if 0 < _number(m.group(1)) < LOWEST_FLOOR_KCAL and re.search(PER_DAY, m.group("after")):
             return True
-    if any(0 < _number(m.group(1)) < LOWEST_FLOOR_KCAL for rx in (ONLY_EAT, CALORIE_PLAN) for m in rx.finditer(text)):
+    if any(0 < _number(m.group(1)) < LOWEST_FLOOR_KCAL for rx in (ONLY_EAT, CALORIE_PLAN, TARGET_STATED) for m in rx.finditer(text)):
         return True
     if any(int(m.group(1)) > MAX_FAST_DAYS for rx in FAST_DAYS for m in rx.finditer(text)):
         return True

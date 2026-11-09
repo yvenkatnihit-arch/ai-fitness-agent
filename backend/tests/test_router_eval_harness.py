@@ -128,4 +128,4 @@ def test_the_gate_compares_with_the_thresholds():
 def test_the_thresholds_sit_below_the_first_measurement_and_in_the_right_direction():
     t = json.loads(run_llm.THRESHOLDS.read_text(encoding="utf-8"))["router"]
     assert t["exact_accuracy"] <= 0.969 and t["nutrition_recall"] <= 1.0 and t["off_topic_specificity"] <= 0.941
-    assert all(t[k] <= 0.1 for k in run_llm.LOWER_IS_BETTER)
+    assert all(t[k] <= 0.1 for k in run_llm.LOWER_IS_BETTER if k in t) and set(t) <= set(run_llm.HIGHER_IS_BETTER + run_llm.LOWER_IS_BETTER)

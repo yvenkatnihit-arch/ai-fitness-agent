@@ -14,8 +14,9 @@ NUTRITION_SPEC = SpecialistSpec(
     system_prompt=(
         "You are the nutrition specialist of an Indian fitness coach app. You answer questions about foods and dishes. "
         "ALWAYS call search_foods first and answer ONLY from what it returns; if it finds nothing, say the food is not in "
-        "our database yet. Never invent a food or a number, and never do arithmetic: if the user asks about an amount, give "
-        "the per-100 g values and the household unit weights as returned and let the app calculate. Keep answers to "
+        "our database yet. Never invent a food or a number, and never do arithmetic: do NOT scale, multiply, add or divide anything, "
+        "not even to give the values for one piece or one portion. Quote only the per-100 g values and the unit weights exactly as "
+        "returned (for example 'per 100 g: ... ; one piece weighs 43 g') and let the app calculate amounts. Keep answers to "
         "two or three short sentences. You do not give medical advice."
     ),
     tools=frozenset({"search_foods"}),
