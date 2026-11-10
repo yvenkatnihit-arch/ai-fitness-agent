@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 from app.calc.meal_pool import ALL_SLOTS, ALLOWED_DIET_CLASSES, SLOTS, PoolFood, disliked
 from app.calc.meal_solver import DayTargets
 from app.calc.portions import Per100g, nutrition_for
+from app.calc.protein_note import protein_shortfall
 
 if TYPE_CHECKING:
     from app.workflows.pick_meals import WeekPlan
@@ -47,7 +48,7 @@ def portion_text(grams: float, unit: str | None, quantity: float | None) -> str:
     return f"{quantity:g} {name} ({grams:g} g)"
 
 
-def how_made(week: "WeekPlan", numbers_hidden: bool) -> dict[str, Any]:
+def how_made(week: "WeekPlan", numbers_hidden: bool, diet_type: str = "vegetarian") -> dict[str, Any]:
     """What the 'How this plan was made' panel shows. Safe by construction: no numbers when they must be hidden."""
     sources = [d.source for d in week.days]
     out: dict[str, Any] = {
@@ -63,6 +64,9 @@ def how_made(week: "WeekPlan", numbers_hidden: bool) -> dict[str, Any]:
                                             for k in ("kcal", "protein", "carbs", "fat")}
         out["emphasis"] = week.emphasis
         out["portion_scale"] = week.portion_scale
+        note = protein_shortfall(out["average_percent_of_target"]["protein"], diet_type, week.emphasis)
+        if note:
+            out["protein_shortfall"] = note
     return out
 
 
@@ -94,7 +98,7 @@ def build_payload(week: "WeekPlan", targets: DayTargets, *, diet_type: str, goal
         "targets": {"kcal": round(targets.kcal), "protein_g": round(targets.protein_g), "carbs_g": round(targets.carbs_g),
                     "fat_g": round(targets.fat_g)},
         "thin_roles": {s: list(r) for s, r in week.thin_roles.items()},
-        "how_made": how_made(week, numbers_hidden),
+        "how_made": how_made(week, numbers_hidden, diet_type),
         "days": days,
     }
 
@@ -115,7 +119,7 @@ def hide_numbers(payload: Mapping[str, Any]) -> dict[str, Any]:
     out = copy.deepcopy(dict(payload))
     for key in ("targets", "emphasis", "portion_scale"):      # all derived from the calorie and protein numbers
         out.pop(key, None)
-    for key in ("days_ok", "days_with_issues", "average_percent_of_target", "emphasis", "portion_scale"):
+    for key in ("days_ok", "days_with_issues", "average_percent_of_target", "emphasis", "portion_scale", "protein_shortfall"):
         (out.get("how_made") or {}).pop(key, None)
     for day in out.get("days", []):
         for key in ("totals", "percent_of_target", "issues", "status"):   # "status" says whether the numbers hit the targets

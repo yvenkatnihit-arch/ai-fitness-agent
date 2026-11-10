@@ -84,7 +84,8 @@ ROWS = [
     (2, "dinner", 1, "Khichdi", 150.0, None, None, 200.0, 7.0, 35.0, 4.0),
 ]
 MADE = {"days_from_model": 3, "days_from_code": 4, "days_ok": 2, "emphasis": "high_protein", "portion_scale": 1.0,
-        "average_percent_of_target": {"kcal": 100.0}, "days_with_issues": 5, "checks": ["x"]}
+        "average_percent_of_target": {"kcal": 100.0}, "days_with_issues": 5, "checks": ["x"],
+        "protein_shortfall": {"percent": 48, "suggestions": "tofu"}}
 
 
 def raw(hidden):
@@ -107,7 +108,7 @@ def test_the_view_removes_every_number_for_hidden_users():
     assert view.numbers_hidden is True and view.targets is None and all(d.totals is None for d in view.days)
     assert all(i.kcal is None and i.protein_g is None and i.carbs_g is None and i.fat_g is None
                for d in view.days for m in d.meals for i in m.items)
-    for key in ("days_ok", "average_percent_of_target", "emphasis", "portion_scale", "days_with_issues"):
+    for key in ("days_ok", "average_percent_of_target", "emphasis", "portion_scale", "days_with_issues", "protein_shortfall"):
         assert key not in view.how_made
     assert view.days[0].meals[0].items[0].text == "4 pieces (160 g)"                     # portions stay
 

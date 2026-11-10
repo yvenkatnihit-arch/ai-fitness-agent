@@ -34,6 +34,7 @@ export type HowMade = {
   average_percent_of_target?: { kcal: number; protein: number; carbs: number; fat: number }
   emphasis?: string | null
   portion_scale?: number
+  protein_shortfall?: { percent: number; suggestions: string }
 }
 
 type PayloadItem = MealItemView & { slot: string }

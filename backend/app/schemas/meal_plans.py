@@ -71,7 +71,7 @@ def to_active_meal_plan(raw: dict) -> ActiveMealPlanOut:
                                               "carbs_g": round(float(t[2])), "fat_g": round(float(t[3]))}
     made = raw["how_made"]
     if hidden and made:
-        for key in ("days_ok", "days_with_issues", "average_percent_of_target", "emphasis", "portion_scale"):
+        for key in ("days_ok", "days_with_issues", "average_percent_of_target", "emphasis", "portion_scale", "protein_shortfall"):
             made.pop(key, None)
     return ActiveMealPlanOut(id=str(plan_id), week_start=week_start, version=version, approved_at=approved_at,
                              numbers_hidden=hidden, targets=targets, days=days, how_made=made)

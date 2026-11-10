@@ -8,6 +8,13 @@ export function HowMadePanel({ made }: { made: HowMade }) {
   const { generation, average_percent_of_target: average } = made
   const thin = Object.keys(made.thin_roles).map((slot) => SLOT_LABEL[slot] ?? slot)
   return (
+    <>
+    {made.protein_shortfall && (
+      <p role="note" className="rounded-lg bg-warn-soft p-3 text-sm text-warn">
+        With your diet and food choices, this plan reaches about {made.protein_shortfall.percent}% of your protein target.
+        To close the gap you could add {made.protein_shortfall.suggestions}. If you are unsure, ask a doctor or dietitian.
+      </p>
+    )}
     <details className="rounded-xl bg-surface-2 p-3 text-sm text-ink-soft">
       <summary className="cursor-pointer font-semibold text-brand-strong">How this plan was made</summary>
       <div className="mt-2 flex flex-col gap-2">
@@ -40,5 +47,6 @@ export function HowMadePanel({ made }: { made: HowMade }) {
         )}
       </div>
     </details>
+    </>
   )
 }

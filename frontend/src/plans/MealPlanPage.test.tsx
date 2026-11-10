@@ -136,6 +136,21 @@ test('a user with a plan can ask for a new one', async () => {
   expect(await screen.findByRole('button', { name: 'Make me a new plan' })).toBeEnabled()
 })
 
+test('a protein shortfall is shown as a visible note, and no note appears when the plan is on target', async () => {
+  const short: MealProposal = { ...PROPOSAL, payload: { ...PROPOSAL.payload, how_made: { ...MADE, protein_shortfall: { percent: 48, suggestions: 'tofu or tempeh' } } } }
+  fakeFetch({ 'GET /plans/meal/active': NO_PLAN, 'GET /plans/proposals/pending': { body: { proposals: [short] } } })
+  const view = render()
+  const note = await screen.findByRole('note')
+  expect(note).toHaveTextContent('about 48% of your protein target')
+  expect(note).toHaveTextContent('tofu or tempeh')
+  expect(note).toBeVisible()                                                              // not hidden inside the collapsed panel
+  view.unmount()
+  fakeFetch({ 'GET /plans/meal/active': NO_PLAN, 'GET /plans/proposals/pending': { body: { proposals: [PROPOSAL] } } })
+  render()
+  await screen.findByText(/How this plan was made/)
+  expect(screen.queryByRole('note')).not.toBeInTheDocument()
+})
+
 test('for a user who must not see numbers the page shows portions and no calories or macros at all', async () => {
   const hiddenMade: HowMade = { ...MADE, days_ok: undefined, days_with_issues: undefined, average_percent_of_target: undefined }
   const hidden: MealProposal = {
