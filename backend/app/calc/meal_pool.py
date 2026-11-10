@@ -2,7 +2,7 @@
 
 The model will only ever CHOOSE from these lists (it never invents a food), and the solver then sets the grams.
 A meal is built from roles: lunch = a staple + a protein + a vegetable dish + a side; breakfast = a main
-(+ an optional extra); snacks = one item. The roles keep a plan looking like real Indian meals.
+(+ an optional extra); snacks = one item. The roles keep a plan looking like real meals of the chosen cuisines.
 
 Left out on purpose (for now): sweets and fried snacks (a "treat" rule can add them later), spices, oils and
 sweeteners (not meals), and raw meat and fish (raw versus cooked weight is ambiguous; cooked dishes cover them).
@@ -51,10 +51,13 @@ class Role:
     def fits(self, food: "PoolFood") -> bool:
         return food.key in self.keys or food.category in self.categories
 
-STAPLE = Role("staple", frozenset({"dish_rice", "dish_bread"}))
-PROTEIN = Role("protein", frozenset({"dish_dal", "dish_curry_meat"}), PROTEIN_SIDE_KEYS | {"paneer", "egg"})
-VEGETABLE = Role("vegetable", frozenset({"dish_sabzi"}))
-SIDE = Role("side", frozenset(), PLAIN_SIDE_KEYS | {"curd", "chaas"}, required=False)
+# Cuisine-neutral categories (D-089) sit next to the Indian ones: grain dishes (pilaf, couscous, bulgur) are staples; legume dishes (hummus
+# bowls, lentil soup, falafel, chickpea stew) and meat or fish dishes (grilled chicken, kebabs, baked fish) are proteins; salads and
+# roasted or stewed vegetables are vegetables; dips (hummus, tzatziki, labneh, baba ganoush) are sides.
+STAPLE = Role("staple", frozenset({"dish_rice", "dish_bread", "dish_grain"}))
+PROTEIN = Role("protein", frozenset({"dish_dal", "dish_curry_meat", "dish_legume", "dish_meat_fish"}), PROTEIN_SIDE_KEYS | {"paneer", "egg"})
+VEGETABLE = Role("vegetable", frozenset({"dish_sabzi", "dish_vegetable"}))
+SIDE = Role("side", frozenset({"dish_dip"}), PLAIN_SIDE_KEYS | {"curd", "chaas"}, required=False)
 BREAKFAST_MAIN = Role("main", frozenset({"dish_breakfast", "dish_bread"}), frozenset({"egg"}))
 BREAKFAST_EXTRA = Role("extra", frozenset({"fruit"}), frozenset({"curd", "milk_whole", "milk_toned_low", "boiled_egg"}), required=False)
 SNACK = Role("snack", frozenset({"fruit", "nut_seed"}), frozenset({"curd", "chaas", "chana_boiled", "moong_boiled", "boiled_egg"}))

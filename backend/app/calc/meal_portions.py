@@ -2,7 +2,7 @@
 
 A portion is a whole number of STEPS, so a plan only ever shows amounts a person can measure:
   - count foods (roti, idli, egg, fruit): whole pieces            "2 pieces (86 g)"
-  - cooked dishes measured in katori (dal, rice, sabzi): halves    "1.5 katori (225 g)"
+  - cooked dishes measured in katori, bowl or cup (dal, rice, soup, couscous): halves    "1.5 katori (225 g)"
   - drinks measured in glasses: halves                             "1 glass (250 g)"
   - everything else: grams in 10 g steps (5 g for nuts)            "150 g"
 Each food also has a minimum and a maximum number of steps (nobody eats 7 rotis or a thimble of rice), so the
@@ -23,14 +23,20 @@ MIN_PIECE_GRAMS = 15.0     # a smaller piece (an almond is 1.2 g) is not a meal 
 PIECE_BOUNDS = {"dish_bread": (1, 4), "egg": (1, 4), "dish_breakfast": (1, 5), "fruit": (1, 2)}   # (min, max) pieces
 PIECE_BOUNDS_BY_KEY = {"egg": (1, 4), "boiled_egg": (1, 4)}   # a food's own key wins over its category
 DEFAULT_PIECE_BOUNDS = (1, 3)
-KATORI_BOUNDS = {                                   # (min, max) HALF-katori steps: (1, 6) = 0.5 to 3 katori
+# Cooked dishes measured in a volume unit are counted in HALVES of it, whichever unit the food has (a katori of dal, a bowl of lentil
+# soup, a cup of couscous), in this order of preference.
+HALF_UNITS = ("katori", "bowl", "cup")
+HALF_UNIT_BOUNDS = {                                # (min, max) half-unit steps: (1, 6) = 0.5 to 3 units
     "dish_rice": (1, 6), "dish_dal": (1, 4), "dish_sabzi": (1, 4), "dish_curry_meat": (1, 4),
     "dish_side": (1, 3), "dairy": (1, 4), "dish_breakfast": (1, 5),
+    "dish_grain": (1, 6), "dish_legume": (1, 4), "dish_meat_fish": (1, 4), "dish_vegetable": (1, 4), "dish_dip": (1, 3),
 }
+KATORI_BOUNDS = HALF_UNIT_BOUNDS                    # the old name
 DEFAULT_KATORI_BOUNDS = (1, 4)
 GLASS_BOUNDS = (1, 4)                               # half-glass steps: 0.5 to 2 glasses
 GRAM_RULES = {                                      # category -> (step g, min g, max g)
     "nut_seed": (5, 10, 40), "fruit": (10, 80, 250), "dairy": (10, 50, 250), "dish_side": (10, 50, 200),
+    "dish_dip": (10, 30, 120),                      # hummus and the like are eaten by the spoonful, not by the bowl
 }
 DEFAULT_GRAM_RULE = (10, 60, 300)
 
@@ -80,12 +86,13 @@ def portion_spec(food: PoolFood, role: str | None = None, scale: float = 1.0) ->
 def _food_spec(food: PoolFood) -> PortionSpec:
     units = {u: g for u, g in food.units if u != "piece" or g >= MIN_PIECE_GRAMS}
     piece_first = food.category in PIECE_FIRST_CATEGORIES or food.key in PIECE_FIRST_KEYS
-    if "piece" in units and (piece_first or "katori" not in units):
+    half = next((u for u in HALF_UNITS if u in units), None)
+    if "piece" in units and (piece_first or half is None):
         lo, hi = PIECE_BOUNDS_BY_KEY.get(food.key) or PIECE_BOUNDS.get(food.category, DEFAULT_PIECE_BOUNDS)
         return PortionSpec(units["piece"], lo, hi, "piece", units["piece"], 1)
-    if "katori" in units:
-        lo, hi = KATORI_BOUNDS.get(food.category, DEFAULT_KATORI_BOUNDS)
-        return PortionSpec(units["katori"] / 2, lo, hi, "katori", units["katori"], 2)
+    if half is not None:
+        lo, hi = HALF_UNIT_BOUNDS.get(food.category, DEFAULT_KATORI_BOUNDS)
+        return PortionSpec(units[half] / 2, lo, hi, half, units[half], 2)
     if "glass" in units:
         lo, hi = GLASS_BOUNDS
         return PortionSpec(units["glass"] / 2, lo, hi, "glass", units["glass"], 2)

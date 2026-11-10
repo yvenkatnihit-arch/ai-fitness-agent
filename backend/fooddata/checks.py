@@ -131,6 +131,12 @@ DISH_KCAL_RANGES: dict[str, tuple[int, int]] = {
     "dish_side": (40, 220),        # raita, boiled potato, grilled chicken
     "dish_sweet": (150, 560),      # kheer ~170, halwa ~350, ghee-rich ladoo ~520
     "dish_soup": (10, 120),        # rasam ~30, thicker soups up to ~100
+    # Cuisine-neutral categories (D-089)
+    "dish_grain": (90, 260),       # cooked couscous ~110, bulgur ~85, pilaf up to ~220, pasta ~160
+    "dish_legume": (40, 350),      # lentil soup ~60, hummus bowl ~180, chickpea stew ~120, fried falafel ~330
+    "dish_meat_fish": (90, 330),   # baked fish ~130, grilled chicken ~165, kebabs and shawarma up to ~300
+    "dish_vegetable": (15, 260),   # raw salads ~20-80, roasted or stewed vegetables ~60-180, oily ones up to ~250
+    "dish_dip": (40, 400),         # tzatziki ~70, baba ganoush ~130, hummus ~240, labneh ~200
 }
 
 

@@ -19,7 +19,8 @@ the eval harness and regression gate for them (`backend/evals/`, `python -m eval
 specialist (7.2), router + parallel spawn (7.3), composer (7.4), approvals via interrupt (7.5). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Built, NOT committed:** Step 7.10a (D-088), plumbing for MORE CUISINES (Venkat's request: Mediterranean + Middle Eastern first, several cuisines per
+**Built, NOT committed:** Step 7.10b (D-089): five cuisine-neutral dish categories mapped to the meal roles and bowl/cup portions, so non-Indian dishes
+can be planned (no data loaded yet). Committed: Step 7.10a (D-088), plumbing for MORE CUISINES (Venkat's request: Mediterranean + Middle Eastern first, several cuisines per
 user): foods and profiles carry a list of cuisines, the meal pool and the plan verifier respect it; the data steps 7.10b to 7.10e follow. Also Step 7.9a (D-087): generated workout plans are now trimmed to the weekly set cap in code (0 breaches, was 41.7%). Also Step 7.7e (D-086), the meal plan eval: 0 safety violations in 7 of 7 plans; it found and fixed hidden thinking in
 the meal picker (about 4 times cheaper and faster, same plan quality) and measured the open protein question (vegan 55%,
 vegetarian 62-73% of the target; a decision for Venkat). Committed: the workout plan eval (7.7d, D-085: 0 safety violations, fixed

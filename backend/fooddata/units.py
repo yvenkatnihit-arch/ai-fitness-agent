@@ -26,7 +26,7 @@ UNITS_VALIDATED = DATA_DIR / "food_units_validated.csv"
 COLUMNS = ["key", "unit", "method", "ref", "ref_portion", "ref_grams", "note"]
 
 # Standard volumes (D-040). Home katoris and glasses vary; change these in one place if needed.
-VOLUME_ML = {"katori": 150, "glass": 250}
+VOLUME_ML = {"katori": 150, "glass": 250, "bowl": 300, "cup": 240}   # bowl (a soup or salad bowl) and cup: defaults for Venkat to confirm (D-089)
 US_CUP_ML = 236.6  # USDA "cup" portions are US cups
 # Must match the check constraint on public.food_units.unit
 DB_UNITS = {"katori", "piece", "cup", "glass", "bowl", "plate", "slice", "tbsp", "tsp", "handful"}
