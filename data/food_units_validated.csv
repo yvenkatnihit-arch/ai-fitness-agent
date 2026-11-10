@@ -131,3 +131,14 @@ green_beans_olive_oil,cup,126.8,cup 240 ml x density from USDA SR Legacy 169141:
 curd,cup,248.5,cup 240 ml x density from USDA SR Legacy 171284: 1 cup (8 fl oz) = 245 g
 oats_water,cup,237.4,cup 240 ml x density from USDA SR Legacy 173905: 1 cup = 234 g
 oats_milk,cup,237.4,cup 240 ml x density from USDA SR Legacy 173905: 1 cup = 234 g
+tofu_bhurji,katori,115.4,katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g
+paneer_bhurji,katori,115.4,katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g
+egg_bhurji,katori,115.4,katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g
+sprouts_chaat,katori,115.4,katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g
+chana_chaat,katori,115.4,katori 150 ml x density from USDA SR Legacy 170472: 0.5 cup = 91 g
+chana_chaat,cup,181.6,cup 240 ml x density from USDA SR Legacy 175203: 1 cup = 179 g
+paneer_tikka,piece,32.0,our recipe 'paneer_tikka': 1 cube = 32 g
+chicken_tikka,piece,50.0,our recipe 'chicken_tikka': 1 piece = 50 g
+moong_chilla,piece,50.0,our recipe 'moong_chilla': 1 chilla = 50 g
+besan_chilla,piece,55.0,our recipe 'besan_chilla': 1 chilla = 55 g
+protein_chilla,piece,55.0,our recipe 'protein_chilla': 1 chilla = 55 g

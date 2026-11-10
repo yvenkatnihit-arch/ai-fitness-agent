@@ -19,8 +19,10 @@ the eval harness and regression gate for them (`backend/evals/`, `python -m eval
 specialist (7.2), router + parallel spawn (7.3), composer (7.4), approvals via interrupt (7.5). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Built, NOT committed:** Step 7.10d batches 1 and 2 (D-091, D-092): 40 Mediterranean and Middle Eastern dishes drafted for Venkat's sign-off; a
-full Mediterranean week now builds from the real data for all four diets (vegetarian and vegan protein is still low, a batch 3 job). Also Step 7.10c (D-090): a `cuisines` column through the food data pipeline, a loader gate, and 31 validated Mediterranean and
+**Built, NOT committed:** Step 7.10d-3 (D-093): protein-dense foods in the meal roles and 12 high-protein dishes; measured on the real data, the
+Indian vegan and vegetarian fat-loss plans went from 55 and 69 to 75 and 82 percent of the protein target (a regression gate keeps it
+there); the vegan Mediterranean case stays at 48 percent (a decision for Venkat). Committed: 40 Mediterranean dishes (7.10d-1/2,
+D-091, D-092), a full Mediterranean week builds from the real data. Also Step 7.10c (D-090): a `cuisines` column through the food data pipeline, a loader gate, and 31 validated Mediterranean and
 Middle Eastern ingredients (nothing loaded yet). Committed: Step 7.10b (D-089): five cuisine-neutral dish categories mapped to the meal roles and bowl/cup portions, so non-Indian dishes
 can be planned (no data loaded yet). Committed: Step 7.10a (D-088), plumbing for MORE CUISINES (Venkat's request: Mediterranean + Middle Eastern first, several cuisines per
 user): foods and profiles carry a list of cuisines, the meal pool and the plan verifier respect it; the data steps 7.10b to 7.10e follow. Also Step 7.9a (D-087): generated workout plans are now trimmed to the weekly set cap in code (0 breaches, was 41.7%). Also Step 7.7e (D-086), the meal plan eval: 0 safety violations in 7 of 7 plans; it found and fixed hidden thinking in

@@ -50,3 +50,15 @@ baba_ganoush,Baba ganoush (smoked aubergine dip),baba ghanouj,dish_dip,450,,"Aub
 tzatziki,"Tzatziki (yogurt, cucumber and garlic)",,dish_dip,380,,Cucumber lightly drained,mediterranean
 labneh,Labneh (strained yogurt) with olive oil,,dish_dip,260,,400 g yogurt strained down to about 250 g; the whey is not counted,mediterranean
 muhammara,Muhammara (roasted red pepper and walnut dip),,dish_dip,380,,"Peppers roasted, skinned and blended",mediterranean
+tofu_bhurji,Tofu bhurji (spiced scrambled tofu),tofu scramble,dish_protein,450,,Serves 2; crumbled firm tofu cooked with onion and tomato,indian
+paneer_bhurji,Paneer bhurji (spiced scrambled paneer),,dish_protein,400,,Serves 2,indian
+paneer_tikka,Paneer tikka (grilled marinated paneer),,dish_protein,380,,"About 12 cubes of 32 g; curd marinade, grilled",indian
+egg_bhurji,Egg bhurji (Indian spiced scrambled eggs),anda bhurji,dish_protein,360,,Serves 2 (5 eggs),indian
+egg_white_omelette,Egg white omelette with spinach,,dish_breakfast,330,,About 9 egg whites; serves 2; very high in protein for its calories,indian;mediterranean
+moong_chilla,Moong dal chilla (savoury lentil pancakes),pesarattu;cheela,dish_breakfast,350,,7 pancakes of 50 g; soaked split moong ground to a batter,indian
+besan_chilla,Besan chilla (chickpea flour pancakes),pudla;cheela,dish_breakfast,330,,6 pancakes of 55 g,indian
+protein_chilla,Soy and besan chilla (high-protein pancakes),,dish_breakfast,330,,6 pancakes of 55 g; half the besan replaced with defatted soy flour,indian
+sprouts_chaat,Moong sprouts chaat,sprouts salad,dish_vegetable,375,,"Raw sprouts are mostly water (low in protein): a salad, not a protein dish. Not cooked: the cooked weight is the sum",indian
+chana_chaat,Chickpea chaat,chana salad,dish_legume,365,,"Cooked chickpeas, not cooked again",indian;mediterranean
+chicken_tikka,Chicken tikka (grilled marinated chicken),,dish_curry_meat,300,,"6 pieces of 50 g; curd marinade, grilled; about 15% of the raw weight is lost",indian
+greek_yogurt_fruit_bowl,Greek yogurt bowl with apple and almonds,high-protein yogurt bowl,dish_breakfast,370,,Not cooked: the cooked weight is the sum,indian;mediterranean

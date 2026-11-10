@@ -137,6 +137,7 @@ DISH_KCAL_RANGES: dict[str, tuple[int, int]] = {
     "dish_meat_fish": (90, 330),   # baked fish ~130, grilled chicken ~165, kebabs and shawarma up to ~300
     "dish_vegetable": (15, 260),   # raw salads ~20-80, roasted or stewed vegetables ~60-180, oily ones up to ~250
     "dish_dip": (40, 400),         # tzatziki ~70, baba ganoush ~130, hummus ~240, labneh ~200
+    "dish_protein": (60, 320),     # egg white omelette ~80, tofu or egg bhurji ~130, paneer bhurji and tikka up to ~280
 }
 
 

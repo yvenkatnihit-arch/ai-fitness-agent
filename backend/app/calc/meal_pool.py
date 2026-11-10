@@ -54,13 +54,18 @@ class Role:
 # Cuisine-neutral categories (D-089) sit next to the Indian ones: grain dishes (pilaf, couscous, bulgur) are staples; legume dishes (hummus
 # bowls, lentil soup, falafel, chickpea stew) and meat or fish dishes (grilled chicken, kebabs, baked fish) are proteins; salads and
 # roasted or stewed vegetables are vegetables; dips (hummus, tzatziki, labneh, baba ganoush) are sides.
+# Protein-dense foods (D-093): `dish_protein` is for dishes built on tofu, paneer or egg (bhurji, tikka, scrambles). Plain tofu, halloumi and egg
+# are protein options on their own, and Greek yogurt is a snack and a breakfast extra: these are the foods that can lift a vegetarian or
+# vegan plan towards its protein target (D-086, D-092).
+HIGH_PROTEIN_YOGURTS = frozenset({"greek_yogurt_lowfat", "greek_yogurt"})
 STAPLE = Role("staple", frozenset({"dish_rice", "dish_bread", "dish_grain"}))
-PROTEIN = Role("protein", frozenset({"dish_dal", "dish_curry_meat", "dish_legume", "dish_meat_fish"}), PROTEIN_SIDE_KEYS | {"paneer", "egg"})
+PROTEIN = Role("protein", frozenset({"dish_dal", "dish_curry_meat", "dish_legume", "dish_meat_fish", "dish_protein"}),
+               PROTEIN_SIDE_KEYS | {"paneer", "egg", "tofu", "halloumi"})
 VEGETABLE = Role("vegetable", frozenset({"dish_sabzi", "dish_vegetable"}))
 SIDE = Role("side", frozenset({"dish_dip"}), PLAIN_SIDE_KEYS | {"curd", "chaas"}, required=False)
 BREAKFAST_MAIN = Role("main", frozenset({"dish_breakfast", "dish_bread"}), frozenset({"egg"}))
-BREAKFAST_EXTRA = Role("extra", frozenset({"fruit"}), frozenset({"curd", "milk_whole", "milk_toned_low", "boiled_egg"}), required=False)
-SNACK = Role("snack", frozenset({"fruit", "nut_seed"}), frozenset({"curd", "chaas", "chana_boiled", "moong_boiled", "boiled_egg"}))
+BREAKFAST_EXTRA = Role("extra", frozenset({"fruit"}), frozenset({"curd", "milk_whole", "milk_toned_low", "boiled_egg"}) | HIGH_PROTEIN_YOGURTS, required=False)
+SNACK = Role("snack", frozenset({"fruit", "nut_seed"}), frozenset({"curd", "chaas", "chana_boiled", "moong_boiled", "boiled_egg"}) | HIGH_PROTEIN_YOGURTS)
 
 SLOT_ROLES: dict[str, tuple[Role, ...]] = {
     "breakfast": (BREAKFAST_MAIN, BREAKFAST_EXTRA),

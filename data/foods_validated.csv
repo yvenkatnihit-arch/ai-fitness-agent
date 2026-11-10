@@ -176,12 +176,12 @@ quinoa_dry,Quinoa (dry),,cereal,vegan,usda_sr_legacy,168874,"Quinoa, uncooked",3
 pasta_dry,Pasta (dry),spaghetti;macaroni;orzo,cereal,vegan,usda_sr_legacy,169736,"Pasta, dry, enriched",371.0,13.04,71.47,1.51,3.2,exact,exact,ready,mediterranean
 pita_white,Pita bread (white),pitta;khubz,dish_bread,vegan,usda_sr_legacy,174915,"Bread, pita, white, enriched",275.0,9.1,53.5,1.2,2.2,exact,exact,ready,mediterranean
 pita_whole_wheat,Pita bread (whole wheat),pitta,dish_bread,vegan,usda_sr_legacy,174916,"Bread, pita, whole-wheat",262.0,9.8,49.79,1.71,6.1,exact,exact,ready,mediterranean
-chickpeas_cooked,Chickpeas (cooked),garbanzo beans;canned chickpeas,pulse,vegan,usda_sr_legacy,173757,"Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt",164.0,8.86,19.82,2.59,7.6,exact,exact,ready,mediterranean
+chickpeas_cooked,Chickpeas (cooked),garbanzo beans;canned chickpeas,pulse,vegan,usda_sr_legacy,173757,"Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt",164.0,8.86,19.82,2.59,7.6,exact,exact,ready,indian;mediterranean
 fava_beans_cooked,Fava beans (cooked),broad beans;ful;foul,pulse,vegan,uk_cofid,13-648,"Beans, broad, whole, boiled in unsalted water",91.0,9.0,11.23,1.0,9.0,exact,close,review,mediterranean
 white_beans_cooked,White beans (cooked),cannellini;haricot beans;navy beans,pulse,vegan,usda_sr_legacy,175203,"Beans, white, mature seeds, cooked, boiled, without salt",139.0,9.73,18.79,0.35,6.3,exact,close,review,mediterranean
 feta,Feta cheese,,dairy,vegetarian,usda_sr_legacy,173420,"Cheese, feta",265.0,14.21,3.88,21.49,0.0,exact,exact,ready,mediterranean
 greek_yogurt,Greek yogurt (full fat),strained yogurt;thick yogurt,dairy,vegetarian,uk_cofid,12-555,"Yogurt, Greek style, plain",133.0,5.7,4.61,10.2,0.0,exact,exact,ready,mediterranean
-greek_yogurt_lowfat,Greek yogurt (low fat),high protein yogurt,dairy,vegetarian,usda_sr_legacy,170903,"Yogurt, Greek, plain, lowfat",73.0,9.95,3.94,1.92,0.0,exact,exact,ready,mediterranean
+greek_yogurt_lowfat,Greek yogurt (low fat),high protein yogurt,dairy,vegetarian,usda_sr_legacy,170903,"Yogurt, Greek, plain, lowfat",73.0,9.95,3.94,1.92,0.0,exact,exact,ready,indian;mediterranean
 halloumi,Halloumi,,dairy,vegetarian,uk_cofid,12-496,"Cheese, Halloumi",313.0,23.9,1.63,23.5,0.0,exact,exact,ready,mediterranean
 lamb_ground,Lamb mince (raw),minced lamb;kofta meat,meat,non_vegetarian,usda_sr_legacy,174370,"Lamb, ground, raw",282.0,16.56,0.0,23.41,0.0,exact,exact,ready,mediterranean
 beef_ground,"Lean beef mince (raw, 7% fat)",minced beef,meat,non_vegetarian,usda_sr_legacy,173110,"Beef, ground, 93% lean meat / 7% fat, raw",152.0,20.85,0.0,7.0,0.0,exact,exact,ready,mediterranean
@@ -198,6 +198,9 @@ artichoke,"Artichoke (globe, raw)",globe artichoke,vegetable,vegan,usda_sr_legac
 leek,Leek (raw),,vegetable,vegan,uk_cofid,13-624,"Leeks, raw",23.0,1.5,4.06,0.2,2.8,exact,close,review,mediterranean
 figs_dried,Dried figs,anjeer,fruit,vegan,usda_sr_legacy,174665,"Figs, dried, uncooked",249.0,3.3,54.07,0.93,9.8,exact,exact,ready,indian;mediterranean
 apricots_dried,Dried apricots,khubani,fruit,vegan,uk_cofid,14-031,"Apricots, dried",188.0,4.8,41.33,0.7,7.7,approximate,exact,review,indian;mediterranean
+egg_white,Egg white (raw),egg whites;anda safed,egg,eggetarian,usda_sr_legacy,172183,"Egg, white, raw, fresh",52.0,10.9,0.73,0.17,0.0,exact,exact,ready,indian;mediterranean
+moong_sprouts,Moong sprouts (raw),sprouted green gram;mung sprouts,vegetable,vegan,usda_sr_legacy,169957,"Mung beans, mature seeds, sprouted, raw",30.0,3.04,4.14,0.18,1.8,exact,exact,ready,indian
+soy_flour,Soy flour (defatted),soya flour;soya atta,pulse,vegan,usda_sr_legacy,174275,"Soy flour, defatted",327.0,51.46,16.42,1.22,17.5,exact,close,review,indian
 idli,Idli,,dish_breakfast,vegan,computed,idli,Recipe: Idli,145.28,5.86,27.29,0.48,,exact,recipe,review,indian
 dosa,Plain dosa,dosai,dish_breakfast,vegan,computed,dosa,Recipe: Plain dosa,223.98,5.8,35.63,5.46,,exact,recipe,review,indian
 upma,Upma,uppittu;rava upma,dish_breakfast,vegan,computed,upma,Recipe: Upma,137.48,3.74,19.2,4.29,1.44,exact,recipe,review,indian
@@ -249,3 +252,15 @@ baba_ganoush,Baba ganoush (smoked aubergine dip),baba ghanouj,dish_dip,vegan,com
 tzatziki,"Tzatziki (yogurt, cucumber and garlic)",,dish_dip,vegetarian,computed,tzatziki,"Recipe: Tzatziki (yogurt, cucumber and garlic)",118.23,4.07,4.54,9.4,0.28,exact,recipe,review,mediterranean
 labneh,Labneh (strained yogurt) with olive oil,,dish_dip,vegetarian,computed,labneh,Recipe: Labneh (strained yogurt) with olive oil,238.62,8.77,7.09,19.54,0.0,exact,recipe,review,mediterranean
 muhammara,Muhammara (roasted red pepper and walnut dip),,dish_dip,vegan,computed,muhammara,Recipe: Muhammara (roasted red pepper and walnut dip),205.16,4.13,8.32,17.31,3.25,exact,recipe,review,mediterranean
+tofu_bhurji,Tofu bhurji (spiced scrambled tofu),tofu scramble,dish_protein,vegan,computed,tofu_bhurji,Recipe: Tofu bhurji (spiced scrambled tofu),142.0,12.11,3.04,9.25,2.41,exact,recipe,review,indian
+paneer_bhurji,Paneer bhurji (spiced scrambled paneer),,dish_protein,vegetarian,computed,paneer_bhurji,Recipe: Paneer bhurji (spiced scrambled paneer),255.27,16.82,3.44,19.15,0.86,exact,recipe,review,indian
+paneer_tikka,Paneer tikka (grilled marinated paneer),,dish_protein,vegetarian,computed,paneer_tikka,Recipe: Paneer tikka (grilled marinated paneer),267.43,18.11,3.53,19.98,0.85,exact,recipe,review,indian
+egg_bhurji,Egg bhurji (Indian spiced scrambled eggs),anda bhurji,dish_protein,eggetarian,computed,egg_bhurji,Recipe: Egg bhurji (Indian spiced scrambled eggs),151.07,9.22,3.03,10.85,0.73,exact,recipe,review,indian
+egg_white_omelette,Egg white omelette with spinach,,dish_breakfast,eggetarian,computed,egg_white_omelette,Recipe: Egg white omelette with spinach,78.1,10.56,1.85,2.66,0.61,exact,recipe,review,indian;mediterranean
+moong_chilla,Moong dal chilla (savoury lentil pancakes),pesarattu;cheela,dish_breakfast,vegan,computed,moong_chilla,Recipe: Moong dal chilla (savoury lentil pancakes),165.13,8.48,17.15,4.73,6.01,exact,recipe,review,indian
+besan_chilla,Besan chilla (chickpea flour pancakes),pudla;cheela,dish_breakfast,vegan,computed,besan_chilla,Recipe: Besan chilla (chickpea flour pancakes),190.89,8.5,18.68,7.03,4.43,exact,recipe,review,indian
+protein_chilla,Soy and besan chilla (high-protein pancakes),,dish_breakfast,vegan,computed,protein_chilla,Recipe: Soy and besan chilla (high-protein pancakes),179.98,13.78,13.12,6.04,5.65,exact,recipe,review,indian
+sprouts_chaat,Moong sprouts chaat,sprouts salad,dish_vegetable,vegan,computed,sprouts_chaat,Recipe: Moong sprouts chaat,26.64,2.04,4.16,0.18,1.49,exact,recipe,review,indian
+chana_chaat,Chickpea chaat,chana salad,dish_legume,vegan,computed,chana_chaat,Recipe: Chickpea chaat,100.38,5.26,12.78,1.5,4.69,exact,recipe,review,indian;mediterranean
+chicken_tikka,Chicken tikka (grilled marinated chicken),,dish_curry_meat,non_vegetarian,computed,chicken_tikka,Recipe: Chicken tikka (grilled marinated chicken),188.61,24.99,3.11,8.58,0.4,exact,recipe,review,indian
+greek_yogurt_fruit_bowl,Greek yogurt bowl with apple and almonds,high-protein yogurt bowl,dish_breakfast,vegetarian,computed,greek_yogurt_fruit_bowl,Recipe: Greek yogurt bowl with apple and almonds,92.31,7.66,7.17,3.36,1.16,exact,recipe,review,indian;mediterranean

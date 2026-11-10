@@ -23,7 +23,8 @@ MIN_PIECE_GRAMS = 15.0     # a smaller piece (an almond is 1.2 g) is not a meal 
 PIECE_BOUNDS = {"dish_bread": (1, 4), "egg": (1, 4), "dish_breakfast": (1, 5), "fruit": (1, 2)}   # (min, max) pieces
 PIECE_BOUNDS_BY_KEY = {"egg": (1, 4), "boiled_egg": (1, 4),   # a food's own key wins over its category
                        "falafel": (2, 10),                          # 27 g each: a portion is about 5, never 1 to 3 (Step 7.10d)
-                       "lamb_kofta": (2, 8), "stuffed_vine_leaves": (3, 10), "chicken_souvlaki": (1, 4)}   # 45 g, 24 g and 80 g pieces
+                       "lamb_kofta": (2, 8), "stuffed_vine_leaves": (3, 10), "chicken_souvlaki": (1, 4),   # 45 g, 24 g and 80 g pieces
+                       "paneer_tikka": (3, 10), "chicken_tikka": (2, 8)}                       # 32 g and 50 g pieces (Step 7.10d-3)
 DEFAULT_PIECE_BOUNDS = (1, 3)
 # Cooked dishes measured in a volume unit are counted in HALVES of it, whichever unit the food has (a katori of dal, a bowl of lentil
 # soup, a cup of couscous), in this order of preference.
@@ -31,7 +32,7 @@ HALF_UNITS = ("katori", "bowl", "cup")
 HALF_UNIT_BOUNDS = {                                # (min, max) half-unit steps: (1, 6) = 0.5 to 3 units
     "dish_rice": (1, 6), "dish_dal": (1, 4), "dish_sabzi": (1, 4), "dish_curry_meat": (1, 4),
     "dish_side": (1, 3), "dairy": (1, 4), "dish_breakfast": (1, 5),
-    "dish_grain": (1, 6), "dish_legume": (1, 4), "dish_meat_fish": (1, 4), "dish_vegetable": (1, 4), "dish_dip": (1, 3),
+    "dish_grain": (1, 6), "dish_legume": (1, 4), "dish_meat_fish": (1, 4), "dish_vegetable": (1, 4), "dish_dip": (1, 3), "dish_protein": (1, 4),
 }
 KATORI_BOUNDS = HALF_UNIT_BOUNDS                    # the old name
 DEFAULT_KATORI_BOUNDS = (1, 4)

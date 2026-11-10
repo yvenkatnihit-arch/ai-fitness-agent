@@ -190,12 +190,12 @@ quinoa_dry,Quinoa (dry),,cereal,vegan,usda_sr_legacy,168874,uk_cofid,14-843,exac
 pasta_dry,Pasta (dry),spaghetti;macaroni;orzo,cereal,vegan,usda_sr_legacy,169736,,,exact,"Plain durum pasta (no egg), raw weight for recipes",mediterranean
 pita_white,Pita bread (white),pitta;khubz,dish_bread,vegan,usda_sr_legacy,174915,,,exact,,mediterranean
 pita_whole_wheat,Pita bread (whole wheat),pitta,dish_bread,vegan,usda_sr_legacy,174916,,,exact,,mediterranean
-chickpeas_cooked,Chickpeas (cooked),garbanzo beans;canned chickpeas,pulse,vegan,usda_sr_legacy,173757,,,exact,Boiled without salt; for hummus and stews,mediterranean
+chickpeas_cooked,Chickpeas (cooked),garbanzo beans;canned chickpeas,pulse,vegan,usda_sr_legacy,173757,,,exact,Boiled without salt; for hummus and stews,indian;mediterranean
 fava_beans_cooked,Fava beans (cooked),broad beans;ful;foul,pulse,vegan,uk_cofid,13-648,usda_sr_legacy,173754,close,"CoFID is boiled whole broad beans; the USDA cross-check is canned, so a close match only",mediterranean
 white_beans_cooked,White beans (cooked),cannellini;haricot beans;navy beans,pulse,vegan,usda_sr_legacy,175203,uk_cofid,13-666,close,"USDA is boiled; the CoFID cross-check is canned cannellini, so a close match only",mediterranean
 feta,Feta cheese,,dairy,vegetarian,usda_sr_legacy,173420,uk_cofid,12-525,exact,Treated as vegetarian; some vegetarians avoid cheese made with animal rennet,mediterranean
 greek_yogurt,Greek yogurt (full fat),strained yogurt;thick yogurt,dairy,vegetarian,uk_cofid,12-555,,,exact,,mediterranean
-greek_yogurt_lowfat,Greek yogurt (low fat),high protein yogurt,dairy,vegetarian,usda_sr_legacy,170903,,,exact,About 10 g protein per 100 g,mediterranean
+greek_yogurt_lowfat,Greek yogurt (low fat),high protein yogurt,dairy,vegetarian,usda_sr_legacy,170903,,,exact,About 10 g protein per 100 g,indian;mediterranean
 halloumi,Halloumi,,dairy,vegetarian,uk_cofid,12-496,,,exact,,mediterranean
 lamb_ground,Lamb mince (raw),minced lamb;kofta meat,meat,non_vegetarian,usda_sr_legacy,174370,,,exact,,mediterranean
 beef_ground,"Lean beef mince (raw, 7% fat)",minced beef,meat,non_vegetarian,usda_sr_legacy,173110,,,exact,,mediterranean
@@ -213,3 +213,7 @@ leek,Leek (raw),,vegetable,vegan,uk_cofid,13-624,usda_sr_legacy,169246,close,,me
 figs_dried,Dried figs,anjeer,fruit,vegan,usda_sr_legacy,174665,uk_cofid,14-092,exact,,indian;mediterranean
 apricots_dried,Dried apricots,khubani,fruit,vegan,uk_cofid,14-031,usda_sr_legacy,173941,exact,USDA cross-check is sulfured,indian;mediterranean
 freekeh,Freekeh (smoked green wheat),farik,cereal,vegan,,,,,none,GAP: not in USDA or CoFID. Nothing substituted; bulgur is similar but not the same food,mediterranean
+egg_white,Egg white (raw),egg whites;anda safed,egg,eggetarian,usda_sr_legacy,172183,uk_cofid,12-938,exact,About 11 g protein and 52 kcal per 100 g,indian;mediterranean
+moong_sprouts,Moong sprouts (raw),sprouted green gram;mung sprouts,vegetable,vegan,usda_sr_legacy,169957,,,exact,"Raw sprouts: mostly water, so low in protein per 100 g",indian
+soy_flour,Soy flour (defatted),soya flour;soya atta,pulse,vegan,usda_sr_legacy,174275,uk_cofid,11-898,close,"USDA is defatted (51.5 g protein); the CoFID cross-check is full-fat soya flour, so a close match only",indian
+soya_chunks,Soya chunks (textured soy protein),nutrela;meal maker;soya nuggets,pulse,vegan,,,,,none,GAP: textured soy protein is not in USDA or CoFID (soy flour and protein isolate are different foods). Nothing substituted; needs IFCT or a package label,indian

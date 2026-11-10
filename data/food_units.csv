@@ -131,3 +131,14 @@ green_beans_olive_oil,cup,volume,169141,1 cup,125,density of cooked green beans
 curd,cup,volume,171284,1 cup (8 fl oz),245,density of plain whole-milk yogurt; so a non-Indian plan can say cup instead of katori
 oats_water,cup,volume,173905,1 cup,234,density of cooked oats
 oats_milk,cup,volume,173905,1 cup,234,density of cooked oats
+tofu_bhurji,katori,volume,170472,0.5 cup,91,dry dish
+paneer_bhurji,katori,volume,170472,0.5 cup,91,dry dish
+egg_bhurji,katori,volume,170472,0.5 cup,91,dry dish
+sprouts_chaat,katori,volume,170472,0.5 cup,91,dry dish
+chana_chaat,katori,volume,170472,0.5 cup,91,dry dish
+chana_chaat,cup,volume,175203,1 cup,179,density of cooked beans: so a non-Indian plan can say cup
+paneer_tikka,piece,recipe,paneer_tikka,1 cube,32,380 g cooked / about 12 cubes
+chicken_tikka,piece,recipe,chicken_tikka,1 piece,50,300 g cooked / 6 pieces
+moong_chilla,piece,recipe,moong_chilla,1 chilla,50,350 g cooked / 7 pancakes
+besan_chilla,piece,recipe,besan_chilla,1 chilla,55,330 g cooked / 6 pancakes
+protein_chilla,piece,recipe,protein_chilla,1 chilla,55,330 g cooked / 6 pancakes
