@@ -52,6 +52,8 @@ class SpecialistOutcome(TypedDict):
 class ChatState(TypedDict, total=False):
     message: str
     user_id: str
+    history: list[tuple[str, str]]   # the last few messages before this one (role, text): context for the router only
+    summary: str                     # the rolling summary of older messages
     assignments: list[Assignment]
     results: Annotated[list[SpecialistOutcome], operator.add]   # every parallel branch appends here
     reply: str
@@ -78,7 +80,8 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
 
     def route(state: ChatState) -> dict[str, Any]:
         uid = UUID(state["user_id"])
-        picked = router(state["message"]) if router else route_message(state["message"], menu, user_id=uid)
+        picked = (router(state["message"]) if router
+                  else route_message(state["message"], menu, user_id=uid, history=state.get("history", ()), summary=state.get("summary", "")))
         return {"assignments": [a for a in picked if a.specialist in menu]}   # the menu is the only authority
 
     def spawn(state: ChatState) -> list[Send] | str:
@@ -164,11 +167,12 @@ def _summary(final: dict[str, Any]) -> dict[str, Any]:
             "waiting_for": paused[0] if paused else None}   # the card to show the user, or None when nothing is waiting
 
 
-def answer_message(message: str, user_id: UUID, *, conversation_id: str | None = None, **kwargs: Any) -> dict[str, Any]:
+def answer_message(message: str, user_id: UUID, *, conversation_id: str | None = None, history: list[tuple[str, str]] | None = None,
+                   summary: str = "", **kwargs: Any) -> dict[str, Any]:
     """Run the graph for one message. Returns the reply, what ran (for the 'How this was made' panel) and, when a proposal is
     waiting for the user, `waiting_for` (needs a `checkpointer` and a `conversation_id`; then call `resume_chat`)."""
     graph = build_chat_graph(**kwargs)
-    state = {"message": message, "user_id": str(user_id), "results": [], "decisions": []}
+    state = {"message": message, "user_id": str(user_id), "results": [], "decisions": [], "history": history or [], "summary": summary}
     config = _config(user_id, conversation_id or str(uuid4()))
     return _summary(graph.invoke(state, config))
 
@@ -178,3 +182,10 @@ def resume_chat(user_id: UUID, conversation_id: str, choice: str, **kwargs: Any)
     graph = build_chat_graph(**kwargs)
     # LangGraph itself crashes on Command(resume=None), so "no answer" is sent as an empty string (which changes nothing).
     return _summary(graph.invoke(Command(resume="" if choice is None else choice), _config(user_id, conversation_id)))
+
+
+def waiting_card(user_id: UUID, conversation_id: str, **kwargs: Any) -> dict[str, Any] | None:
+    """The proposal card this conversation is paused on, or None. Lets an endpoint refuse an answer when nothing is waiting."""
+    state = build_chat_graph(**kwargs).get_state(_config(user_id, conversation_id))
+    cards = [i.value for task in state.tasks for i in task.interrupts]
+    return cards[0] if cards else None

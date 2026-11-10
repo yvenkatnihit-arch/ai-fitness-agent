@@ -14,9 +14,10 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from app.agents.menu import default_menu
-from app.agents.router import parse_assignments, router_prompt
+from app.agents.router import parse_assignments, router_messages, router_prompt
 from app.llm.client import LLMResult, call_llm, model_name
 from evals.router_cases import CASES
+from evals.router_followups import FOLLOWUPS
 
 CACHE = Path(__file__).with_name("cache") / "router.json"
 MAX_CALLS = 80   # a hard cap on real calls in one run
@@ -108,4 +109,59 @@ def summarize(results: list[RouterResult]) -> dict:
         "avg_tokens": statistics.mean(r.tokens for r in results) if results else 0,
         "total_cost_usd": sum(r.cost_usd for r in results),
         "median_latency_ms": statistics.median(r.latency_ms for r in results) if results else 0,
+    }
+
+
+@dataclass(frozen=True)
+class FollowupResult:
+    message: str
+    expected: tuple[str, ...]
+    got: tuple[str, ...]
+    tags: tuple[str, ...]
+    task: str                  # the task the router wrote for the first assignment ("" when none)
+    resolved: bool             # the task names what the follow-up referred to (borderline cases: always True)
+    tokens: int
+    cost_usd: float
+    latency_ms: int
+
+    @property
+    def route_ok(self) -> bool:
+        return self.got in (self.expected, ()) if "borderline" in self.tags else self.got == self.expected
+
+
+def run_followup_eval(call: Callable[..., LLMResult] = call_llm, *, use_cache: bool = True, max_calls: int = MAX_CALLS,
+                      cases=FOLLOWUPS) -> list[FollowupResult]:
+    menu = default_menu()
+    cache = _load_cache() if use_cache else {}
+    calls, out = 0, []
+    for summary, history, message, expected, tags, mentions in cases:
+        messages = router_messages(menu, message, history, summary)      # exactly what the app sends
+        key = hashlib.sha256(f"{model_name('small')}|{json.dumps(messages)}".encode()).hexdigest()
+        hit = cache.get(key)
+        if hit is None:
+            if calls >= max_calls:
+                raise RuntimeError(f"eval budget reached: {max_calls} real calls in one run")
+            r = call("small", messages, flow="eval", node="router", max_tokens=200, user_id=None, temperature=0.0, json_mode=True)
+            calls += 1
+            hit = {"text": r.text, "tokens": r.input_tokens + r.output_tokens, "cost": r.cost_usd, "ms": r.latency_ms}
+            cache[key] = hit
+        assignments = parse_assignments(hit["text"], menu)
+        task = assignments[0].task if assignments else ""
+        resolved = "borderline" in tags or not mentions or any(w in task.lower() for w in mentions)
+        out.append(FollowupResult(message, expected, tuple(a.specialist for a in assignments), tags, task, resolved,
+                                  hit["tokens"], hit["cost"], hit["ms"]))
+    if use_cache:
+        _save_cache(cache)
+    return out
+
+
+def summarize_followups(results: list[FollowupResult]) -> dict:
+    scored = [r for r in results if "borderline" not in r.tags]
+    rate = lambda rs, f: sum(f(r) for r in rs) / len(rs) if rs else 1.0   # noqa: E731
+    return {
+        "followup_cases": len(results),
+        "followup_route_accuracy": rate(scored, lambda r: r.route_ok),
+        "followup_resolved_rate": rate([r for r in scored if r.expected], lambda r: r.resolved),
+        "followup_borderline_ok": rate([r for r in results if "borderline" in r.tags], lambda r: r.route_ok),
+        "followup_cost_usd": sum(r.cost_usd for r in results),
     }

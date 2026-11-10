@@ -129,3 +129,43 @@ def test_the_thresholds_sit_below_the_first_measurement_and_in_the_right_directi
     t = json.loads(run_llm.THRESHOLDS.read_text(encoding="utf-8"))["router"]
     assert t["exact_accuracy"] <= 0.969 and t["nutrition_recall"] <= 1.0 and t["off_topic_specificity"] <= 0.941
     assert all(t[k] <= 0.1 for k in run_llm.LOWER_IS_BETTER if k in t) and set(t) <= set(run_llm.HIGHER_IS_BETTER + run_llm.LOWER_IS_BETTER)
+
+
+# ---------- follow-up cases (Step 7.11c, D-098) ----------
+
+def test_the_followup_cases_are_well_formed():
+    from evals.router_followups import FOLLOWUPS
+    names = set(default_menu())
+    assert len(FOLLOWUPS) >= 10 and len({(str(h), m) for _, h, m, _, _, _ in FOLLOWUPS}) == len(FOLLOWUPS)
+    for summary, history, message, expected, tags, mentions in FOLLOWUPS:
+        assert set(expected) <= names and message.strip() and all(role in ("user", "assistant") for role, _ in history)
+        assert (history or summary) and (mentions or not expected or "borderline" in tags)       # a follow-up has context; an answer names its subject
+    assert any("SYSTEM" in text for _, h, *_ in FOLLOWUPS for _, text in h)                      # one case plants an instruction in the history
+
+
+def test_the_followup_eval_sends_the_history_scores_the_task_and_uses_the_cache(tmp_path, monkeypatch):
+    from evals.router_followups import FOLLOWUPS
+    monkeypatch.setattr(router_eval, "CACHE", tmp_path / "router.json")
+    sent = []
+
+    def good(tier, messages, **kw):
+        sent.append(messages)
+        task = "protein in paneer" if "paneer" in messages[1][1] else "calories in roti"
+        return LLMResult(text=json.dumps({"assignments": [{"specialist": "nutrition", "task": task}]}), model="m", input_tokens=10,
+                         output_tokens=5, cached_tokens=0, cost_usd=0.001, latency_ms=5)
+
+    case = [FOLLOWUPS[0]]                                                                          # "and how much fat?" after paneer
+    r = router_eval.run_followup_eval(good, cases=case)[0]
+    assert r.route_ok and r.resolved and "NEW message: and how much fat?" in sent[0][1][1] and "paneer" in sent[0][1][1]
+    router_eval.run_followup_eval(good, cases=case)
+    assert len(sent) == 1                                                                          # the second run came from the cache
+    vague = lambda *a, **k: LLMResult(text='{"assignments": [{"specialist": "nutrition", "task": "and how much fat?"}]}', model="m",
+                                      input_tokens=1, output_tokens=1, cached_tokens=0, cost_usd=0.0, latency_ms=1)
+    s = router_eval.summarize_followups(router_eval.run_followup_eval(vague, cases=case, use_cache=False))
+    assert s["followup_route_accuracy"] == 1.0 and s["followup_resolved_rate"] == 0.0              # right specialist, task NOT rewritten
+
+
+def test_a_borderline_followup_accepts_nothing_or_the_specialist_and_is_not_task_checked():
+    from evals.router_eval import FollowupResult
+    ok = lambda got: FollowupResult("m", ("nutrition",), got, ("borderline",), "", True, 1, 0.0, 1)
+    assert ok(()).route_ok and ok(("nutrition",)).route_ok and not ok(("other",)).route_ok

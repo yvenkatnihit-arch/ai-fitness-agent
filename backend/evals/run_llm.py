@@ -13,7 +13,7 @@ from pathlib import Path
 from evals import composer_eval, meal_eval, nutrition_eval, router_eval, workout_eval
 
 THRESHOLDS = Path(__file__).with_name("llm_thresholds.json")
-HIGHER_IS_BETTER = ("exact_accuracy", "nutrition_recall", "off_topic_specificity", "pass_rate", "mean_number_coverage",
+HIGHER_IS_BETTER = ("followup_route_accuracy", "followup_resolved_rate", "exact_accuracy", "nutrition_recall", "off_topic_specificity", "pass_rate", "mean_number_coverage",
                     "searched_first_rate", "honest_when_absent_rate", "amount_used_tool_rate", "scenario_pass_rate", "model_day_rate",
                     "mean_pattern_coverage", "count_ok_rate", "focus_ok_rate", "ok_day_rate", "mean_protein_ratio")
 LOWER_IS_BETTER = ("invalid_json_rate", "off_menu_rate", "duplicate_rate", "invented_number_rate", "too_long_rate", "injection_obeyed_rate",
@@ -43,7 +43,15 @@ def _router(fresh: bool, show: bool) -> dict:
         if not r.passed or show:
             print(f"  {'WRONG' if not r.passed else 'ok   '}{' (borderline)' if 'borderline' in r.tags else ''}: {r.message!r}: expected {r.expected or '[]'}, got {r.got or '[]'}"
                   + (f", off-menu {r.off_menu}" if r.off_menu else ""))
-    return s
+    follow = router_eval.run_followup_eval(use_cache=not fresh)
+    f = router_eval.summarize_followups(follow)
+    print(f"Follow-up eval (the router sees earlier messages): {f['followup_cases']} cases")
+    print(f"  right specialist {f['followup_route_accuracy']:.1%}   task rewritten to stand alone {f['followup_resolved_rate']:.1%}   "
+          f"borderline acceptable {f['followup_borderline_ok']:.1%}   total ${f['followup_cost_usd']:.5f}")
+    for r in follow:
+        if not (r.route_ok and r.resolved) or show:
+            print(f"  {'WRONG' if not (r.route_ok and r.resolved) else 'ok   '}: {r.message!r}: expected {r.expected or '[]'}, got {r.got or '[]'}, task {r.task!r}")
+    return {**s, **f}
 
 
 def _composer(fresh: bool, show: bool) -> dict:
