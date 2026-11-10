@@ -56,7 +56,7 @@ def test_all_the_unknown_fields_are_reported_together():
     (["pace"], True, True, True),
     (["diet_type"], False, False, True),
     (["disliked_foods"], False, False, True),
-    (["cuisine"], False, False, True),
+    (["cuisines"], False, False, True),
     (["experience_level"], False, True, False),
     (["workout_location"], False, True, False),
     (["equipment"], False, True, False),

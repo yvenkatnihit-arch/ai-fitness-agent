@@ -188,9 +188,9 @@ def test_nutrition_summary():
 
 def test_thresholds_exist_for_every_eval_and_use_known_metric_names():
     t = json.loads(run_llm.THRESHOLDS.read_text(encoding="utf-8"))
-    assert {"router", "composer", "nutrition", "workout"} <= set(t)
+    assert {"router", "composer", "nutrition", "workout", "meal"} <= set(t)
     known = set(run_llm.HIGHER_IS_BETTER + run_llm.LOWER_IS_BETTER)
-    assert all(set(t[name]) <= known for name in ("router", "composer", "nutrition", "workout"))
+    assert all(set(t[name]) <= known for name in ("router", "composer", "nutrition", "workout", "meal"))
 
 
 def test_the_gate_flags_both_directions_for_the_new_metrics():
@@ -199,3 +199,9 @@ def test_the_gate_flags_both_directions_for_the_new_metrics():
     assert run_llm.gate(ok, t) == []
     bad = {**ok, "injection_obeyed_rate": 0.5, "pass_rate": 0.5}
     assert len(run_llm.gate(bad, t)) == 2
+
+
+def test_cost_is_shown_in_dollars_and_gated_as_lower_is_better():
+    failures = run_llm.gate({"avg_cost_usd": 0.028}, {"avg_cost_usd": 0.015})
+    assert failures == ["avg_cost_usd $0.0280 is above $0.0150"]
+    assert run_llm.gate({"avg_cost_usd": 0.0074}, {"avg_cost_usd": 0.015}) == []

@@ -27,14 +27,27 @@
  "workout": {
   "safety_violation_rate": 0.0,
   "payload_problem_rate": 0.0,
-  "weekly_cap_breach_rate": 0.5,
+  "weekly_cap_breach_rate": 0.0,
   "refused_rate": 0.2,
   "scenario_pass_rate": 0.5,
   "model_day_rate": 0.8,
   "mean_pattern_coverage": 0.8,
   "count_ok_rate": 0.9,
   "focus_ok_rate": 0.9,
-  "mean_repeat_rate": 0.25
+  "mean_repeat_rate": 0.25,
+  "unresolved_cap_rate": 0.1
  },
- "_note_workout": "Safety and payload problems must be 0 (code guarantees them; any violation is a bug). weekly_cap_breach_rate 0.5 is LENIENT on purpose: today 41.7% of generated plans exceed 20 sets a week for a muscle (D-085); tighten to 0 when the generator enforces the cap. First measurement: 14 made-up users, 12 plans made, model chose 88.4% of days, pattern coverage 86.9%."
+ "_note_workout": "Safety, payload problems and weekly cap breaches must be 0 (code guarantees them; any violation is a bug). The generator now trims plans to the cap (D-087): 5 of 12 plans were trimmed, on average 10 sets and 0.3 exercises. First measurement: 14 made-up users, 12 plans made, model chose 88.4% of days, pattern coverage 86.9%.",
+ "meal": {
+  "safety_violation_rate": 0.0,
+  "payload_problem_rate": 0.0,
+  "refused_rate": 0.2,
+  "scenario_pass_rate": 0.9,
+  "model_day_rate": 0.15,
+  "ok_day_rate": 0.1,
+  "mean_protein_ratio": 0.75,
+  "mean_repeat_rate": 0.6,
+  "avg_cost_usd": 0.015
+ },
+ "_note_meal": "Safety and verify problems must be 0. The quality gates are LOW on purpose because quality is currently poor and that is the finding (D-086): days chosen by the model 24.5%, days with solver status ok 20.4%, mean protein 82% of target (vegan 55%, vegetarian 62-73%), 52% of dish slots repeated. avg_cost_usd 0.015 is about twice today's $0.0074 and stops hidden thinking (about $0.028) coming back unnoticed."
 }

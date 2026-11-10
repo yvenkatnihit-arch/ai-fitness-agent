@@ -296,7 +296,7 @@ Added after Phase 4. The roadmap in section 14 stays; these items slot into it a
 |---|---|---|
 | 1 | **Pace** question in onboarding: fast & intense / normal / slow. Sets the weekly rate inside the safety limits. | Phase 6.0 (onboarding step + migration) |
 | 2 | **Location / equipment** question: gym, home, or both; what equipment they can use. (Partly built: onboarding already asks for equipment and days.) | Phase 6.0, reused by 5.4 filter |
-| 3 | **Cuisine** choice; diet assigned from that cuisine. Indian first, more later. | Column + preference in 6.0; new cuisine data = a later phase (⚠ ask first) |
+| 3 | **Cuisine** choice; a user can pick SEVERAL cuisines. Indian first; Mediterranean + Middle Eastern next (Venkat, 2026-11-10); more later. | Lists on foods and profiles (7.10a, D-088); each new cuisine needs licence-checked data and recipes Venkat signs off |
 | 4 | **Workout split recommendation**: push/pull/legs, Arnold, upper/lower, full body, bro split and more, picked by days/week + experience + location. | Phase 6 (rules in code, user chooses) |
 | 5 | **Routine by experience level** (sets, reps, rest, exercise difficulty). | Phase 6 (already planned: code rules by level) |
 | 6 | **Edit workout per weekday** (swap/add/remove exercises, move days). Only library exercises. | Phase 6 (API) + Phase 9 (screen) |

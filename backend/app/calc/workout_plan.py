@@ -13,6 +13,8 @@ from app.calc.focus import add_focus_sets
 from app.calc.routine import MIN_SETS, prescribe
 from app.calc.session_time import estimate_day_minutes
 from app.calc.splits import Split
+from app.calc.weekly_cap import enforce_weekly_cap
+from app.safety.safety_config import MAX_WEEKLY_SETS_PER_MUSCLE
 
 PAYLOAD_VERSION = 1
 WEEKDAY_NAMES = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -66,6 +68,9 @@ def build_payload(
             })
         days.append({"day_of_week": dow, "focus": pick.label, "is_rest": False, "minutes": 0, "exercises": exercises})
     focus_sets = 0 if flagged else add_focus_sets(days, {k: o.muscle_groups for k, o in library.items()}, focus)
+    # The weekly cap is a safety limit (D-087): trim in code, last, so nothing above can push a muscle over it.
+    trim = enforce_weekly_cap(days, {k: o.muscle_groups[0] for k, o in library.items()})
+    focus_sets = max(0, focus_sets - sum(trim.by_muscle.get(m, 0) for m in focus))
     for day in days:   # the day length is worked out last, after any focus sets
         if not day["is_rest"]:
             day["minutes"] = estimate_day_minutes([(e["sets"], e["rest_sec"]) for e in day["exercises"]])
@@ -73,6 +78,8 @@ def build_payload(
         "focus_areas": [] if flagged else list(focus), "focus_sets_added": focus_sets,
         "kind": "workout_plan", "version": PAYLOAD_VERSION, "split_key": split.key, "split_name": split.name,
         "week_start": week_start.isoformat(), "level": level, "goal": goal, "doctor_note": DOCTOR_NOTE if flagged else None,
+        "volume_trimmed": ({"cap": MAX_WEEKLY_SETS_PER_MUSCLE, "sets_removed": trim.sets_removed, "exercises_removed": trim.exercises_removed,
+                            "unresolved": trim.unresolved} if trim.changed or trim.unresolved else None),
         "days": days,
     }
 

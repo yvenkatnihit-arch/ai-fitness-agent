@@ -22,7 +22,7 @@ class ProfileOut(BaseModel):
     pace: str
     # preferences
     diet_type: str
-    cuisine: str | None
+    cuisines: list[str]
     disliked_foods: list[str]
     # training
     experience_level: str

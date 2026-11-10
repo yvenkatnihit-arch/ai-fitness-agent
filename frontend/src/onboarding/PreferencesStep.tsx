@@ -8,7 +8,7 @@ import { useSaveStep } from './useSaveStep'
 export function PreferencesStep({ onSaved }: StepProps) {
   const { save, busy, error, fieldError } = useSaveStep('/onboarding/preferences', onSaved)
   const [diet, setDiet] = useState('')
-  const [cuisine, setCuisine] = useState('indian')
+  const [cuisines, setCuisines] = useState<string[]>(['indian'])   // one or more; the server needs at least one
   const [foods, setFoods] = useState<string[]>([])
   const [draft, setDraft] = useState('')
 
@@ -19,22 +19,26 @@ export function PreferencesStep({ onSaved }: StepProps) {
     setDraft('')
   }
 
+  function toggleCuisine(value: string) {
+    setCuisines(cuisines.includes(value) ? cuisines.filter((c) => c !== value) : [...cuisines, value])
+  }
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    save({ diet_type: diet, cuisine, disliked_foods: foods })
+    save({ diet_type: diet, cuisines, disliked_foods: foods })
   }
 
   return (
     <Card title="Food preferences" subtitle="Your meal plans will only use foods that fit.">
       <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
         <fieldset className="flex flex-col gap-2">
-          <Legend>Which cuisine should your meals come from?</Legend>
+          <Legend>Which cuisines should your meals come from? (pick one or more)</Legend>
           {CUISINES.map(([value, label, hint]) => (
-            <Choice key={value} type="radio" name="cuisine" checked={cuisine === value}
-                    onChange={() => setCuisine(value)} label={label} hint={hint} />
+            <Choice key={value} type="checkbox" name="cuisines" checked={cuisines.includes(value)}
+                    onChange={() => toggleCuisine(value)} label={label} hint={hint} />
           ))}
           <p className="text-xs text-muted">More cuisines are coming. We add each one only after its food data is checked.</p>
-          <FieldError message={fieldError('cuisine')} />
+          <FieldError message={fieldError('cuisines')} />
         </fieldset>
 
         <fieldset className="flex flex-col gap-2">
@@ -87,7 +91,7 @@ export function PreferencesStep({ onSaved }: StepProps) {
         </div>
 
         <FormError message={error?.message ?? null} requestId={error?.requestId} />
-        <PrimaryButton type="submit" disabled={!diet} busy={busy}>Continue</PrimaryButton>
+        <PrimaryButton type="submit" disabled={!diet || cuisines.length === 0} busy={busy}>Continue</PrimaryButton>
       </form>
     </Card>
   )

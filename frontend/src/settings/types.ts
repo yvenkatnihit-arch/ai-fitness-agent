@@ -12,7 +12,7 @@ export type Profile = {
   target_weight_kg: number | null
   pace: string
   diet_type: string
-  cuisine: string | null
+  cuisines: string[]
   disliked_foods: string[]
   experience_level: string
   workout_location: string

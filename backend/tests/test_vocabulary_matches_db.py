@@ -42,7 +42,6 @@ def sql_array(column: str) -> set[str]:
         ("workout_location", v.WORKOUT_LOCATIONS),
         ("movement_pattern", v.MOVEMENT_PATTERNS),
         ("pace", v.PACES),
-        ("cuisine", v.CUISINES),
     ],
 )
 def test_check_lists_match(column, python_values):
@@ -51,3 +50,9 @@ def test_check_lists_match(column, python_values):
 
 def test_injury_areas_match():
     assert sql_array("injury_areas") == set(v.INJURY_AREAS)
+
+
+def test_the_cuisine_lists_in_both_tables_match_the_vocabulary():
+    """foods.cuisines and profiles.cuisines each have a check list; both must equal Cuisine (a new cuisine is added to all three together)."""
+    lists = [set(re.findall(r"'(\w+)'", m)) for m in re.findall(r"cuisines\s+<@\s+array\[([^\]]*)\]", SQL)]
+    assert len(lists) == 2 and all(values == set(v.CUISINES) for values in lists)

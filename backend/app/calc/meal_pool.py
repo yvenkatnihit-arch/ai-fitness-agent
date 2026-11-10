@@ -85,6 +85,7 @@ class PoolFood:
     review_status: str                   # "ready" or "review" (numbers not yet fully verified)
     synonyms: tuple[str, ...] = ()
     units: tuple[tuple[str, float], ...] = ()   # (household unit, grams), e.g. ("katori", 150.0)
+    cuisines: tuple[str, ...] = ("indian",)     # the cuisines this food belongs to (D-088)
 
 
 @dataclass(frozen=True)
@@ -103,17 +104,21 @@ def disliked(food: PoolFood, dislikes: Collection[str]) -> bool:
     return any(w in n for w in wanted for n in names)
 
 
-def allowed_foods(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str]) -> list[PoolFood]:
+def allowed_foods(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str],
+                  cuisines: Collection[str] | None = None) -> list[PoolFood]:
+    """`cuisines` None means every cuisine; otherwise a food must belong to at least one of the user's cuisines."""
     if diet_type not in ALLOWED_DIET_CLASSES:
         raise ValueError(f"diet_type must be one of {list(ALLOWED_DIET_CLASSES)}, got {diet_type!r}")
     ok = ALLOWED_DIET_CLASSES[diet_type]
-    return [f for f in foods if f.diet_class in ok and f.category not in EXCLUDED_CATEGORIES and not disliked(f, dislikes)]
+    wanted = None if cuisines is None else set(cuisines)
+    return [f for f in foods if f.diet_class in ok and f.category not in EXCLUDED_CATEGORIES and not disliked(f, dislikes)
+            and (wanted is None or wanted & set(f.cuisines))]
 
 
 def build_pool(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str] = (),
-               slots: Sequence[str] = SLOTS) -> dict[str, SlotPool]:
+               slots: Sequence[str] = SLOTS, cuisines: Collection[str] | None = None) -> dict[str, SlotPool]:
     """For each meal slot: the allowed foods per role. Stable order (verified first, then by name)."""
-    usable = allowed_foods(foods, diet_type, dislikes)
+    usable = allowed_foods(foods, diet_type, dislikes, cuisines)
     pools: dict[str, SlotPool] = {}
     for slot in slots:
         roles: dict[str, tuple[PoolFood, ...]] = {}

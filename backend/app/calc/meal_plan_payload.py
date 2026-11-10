@@ -127,7 +127,7 @@ def hide_numbers(payload: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def verify_payload(payload: object, foods: Mapping[str, PoolFood], *, diet_type: str, dislikes: Collection[str],
-                   targets: DayTargets) -> list[str]:
+                   targets: DayTargets, cuisines: Collection[str] | None = None) -> list[str]:
     """Everything wrong with a meal plan, in plain words; empty means it is safe to save and to apply."""
     if not isinstance(payload, dict) or payload.get("kind") != "meal_plan":
         return ["not a meal plan"]
@@ -165,6 +165,8 @@ def verify_payload(payload: object, foods: Mapping[str, PoolFood], *, diet_type:
                 problems.append(f"{where}: {food.name} is not allowed for a {diet_type.replace('_', ' ')} diet")
             if disliked(food, dislikes):
                 problems.append(f"{where}: {food.name} is on the disliked list")
+            if cuisines is not None and not set(cuisines) & set(food.cuisines):
+                problems.append(f"{where}: {food.name} is not from your chosen cuisines")
             grams = item.get("grams")
             if not isinstance(grams, (int, float)) or isinstance(grams, bool) or not 0 < grams <= MAX_ITEM_GRAMS:
                 problems.append(f"{where}: grams must be above 0 and at most {MAX_ITEM_GRAMS}")

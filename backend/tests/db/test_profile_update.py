@@ -46,7 +46,7 @@ def test_get_returns_the_answers_given_in_onboarding(client):
     p = client.get("/profile").json()
     assert (p["sex"], p["height_cm"], p["weight_kg"], p["activity_level"]) == ("female", 162.5, 58.0, "light")
     assert (p["goal_type"], p["target_weight_kg"], p["pace"]) == ("fat_loss", 54.0, "normal")
-    assert (p["diet_type"], p["cuisine"], p["experience_level"], p["workout_location"], p["days_per_week"]) == ("vegetarian", "indian", "beginner", "home", 3)
+    assert (p["diet_type"], p["cuisines"], p["experience_level"], p["workout_location"], p["days_per_week"]) == ("vegetarian", ["indian"], "beginner", "home", 3)
     assert p["session_minutes"] == 45 and p["diabetes"] is False and p["injury_areas"] == []
 
 

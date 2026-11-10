@@ -82,9 +82,33 @@ test('preferences: diet plus disliked foods (Enter adds, repeats ignored, × rem
 
   await screen.findByRole('heading', { name: 'Your training' })
   expect(sent(calls, '/onboarding/preferences')).toEqual({
-    diet_type: 'vegetarian', cuisine: 'indian', disliked_foods: ['Karela', 'Baingan'],
+    diet_type: 'vegetarian', cuisines: ['indian'], disliked_foods: ['Karela', 'Baingan'],
   })
   expect(screen.queryByText(/More cuisines are coming/)).not.toBeInTheDocument()  // gone with the screen
+})
+
+test('preferences: Indian is preselected, at least one cuisine is required, and the choice is sent as a list', async () => {
+  const calls = fakeFetch({
+    'GET /onboarding/status': { body: status('preferences', ['consent', 'basics', 'goal']) },
+    'PUT /onboarding/preferences': { body: status('training', ['consent', 'basics', 'goal', 'preferences']) },
+  })
+  render()
+  fireEvent.click(await screen.findByLabelText(/^Vegetarian/))
+  const indian = screen.getByLabelText(/^Indian/) as HTMLInputElement
+  expect(indian.type).toBe('checkbox')
+  expect(indian.checked).toBe(true)                                           // preselected: nobody has to think about it today
+  const next = screen.getByRole('button', { name: 'Continue' })
+  expect(next).toBeEnabled()
+
+  fireEvent.click(indian)                                                     // none left: the server would refuse, so the button is off
+  expect(indian.checked).toBe(false)
+  expect(next).toBeDisabled()
+
+  fireEvent.click(indian)
+  expect(next).toBeEnabled()
+  fireEvent.click(next)
+  await screen.findByRole('heading', { name: 'Your training' })
+  expect(sent(calls, '/onboarding/preferences')).toEqual({ diet_type: 'vegetarian', cuisines: ['indian'], disliked_foods: [] })
 })
 
 // --- Training ---

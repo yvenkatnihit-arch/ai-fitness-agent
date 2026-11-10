@@ -48,6 +48,9 @@ class WorkoutResult:
     tokens: int
     cost_usd: float
     latency_ms: int
+    sets_trimmed: int = 0              # sets the weekly-cap step took out of the plan (D-087)
+    exercises_trimmed: int = 0
+    unresolved: tuple[str, ...] = ()   # muscles the cap step could not bring under the cap
 
     @property
     def passed(self) -> bool:
@@ -110,15 +113,20 @@ def _run(sc: Scenario, library: list[ExerciseOption], ask, counter: dict) -> Wor
     payload = build_payload(split, [DayPick(p.label, p.keys) for p in picks], by_key, level=sc.level, goal=sc.goal, pace=sc.pace, flagged=False,
                             week_start=date(2026, 11, 9), focus=sc.focus)
     problems = validate_payload(payload, set(by_key))
-    all_keys = [k for p in picks for k in p.keys]
+    # Everything below is measured on the FINAL plan (after the weekly-cap trim), not on the model's picks.
+    trained = [d["exercises"] for d in payload["days"] if not d["is_rest"]]
+    all_keys = [e["exercise_key"] for exs in trained for e in exs]
     caps = tuple(f"{m}: {n} sets" for m, n in sorted(weekly_sets(payload, by_key).items()) if n > MAX_WEEKLY_SETS_PER_MUSCLE)
-    coverage = statistics.mean(len({by_key[k].movement_pattern for k in p.keys} & set(d.patterns)) / len(d.patterns) for p, d in zip(picks, split.days, strict=True))
-    counts_ok = statistics.mean(abs(len(p.keys) - per_day) <= 1 for p in picks)
+    coverage = statistics.mean(len({by_key[e["exercise_key"]].movement_pattern for e in exs} & set(d.patterns)) / len(d.patterns)
+                               for exs, d in zip(trained, split.days, strict=True))
+    counts_ok = statistics.mean(abs(len(exs) - per_day) <= 1 for exs in trained)
+    vt = payload.get("volume_trimmed") or {}
     main = [by_key[k].muscle_groups[0] for k in all_keys]
     focus_ok = (statistics.mean(main.count(m) >= 2 for m in sc.focus) if sc.focus else None)
     repeats = len(all_keys) - len(set(all_keys))
     return WorkoutResult(refused=False, refusal="", safety=tuple(safety_violations(all_keys, by_key, sc)), problems=tuple(problems), cap_breaches=caps,
-                         pattern_coverage=coverage, counts_ok=counts_ok, focus_ok=focus_ok, repeat_rate=repeats / len(all_keys) if all_keys else 0.0, **base)
+                         pattern_coverage=coverage, counts_ok=counts_ok, focus_ok=focus_ok, repeat_rate=repeats / len(all_keys) if all_keys else 0.0,
+                         sets_trimmed=vt.get("sets_removed", 0), exercises_trimmed=vt.get("exercises_removed", 0), unresolved=tuple(vt.get("unresolved", [])), **base)
 
 
 def run_workout_eval(library: list[ExerciseOption], *, use_cache: bool = True, max_calls: int = MAX_CALLS,
@@ -136,6 +144,7 @@ def run_workout_eval(library: list[ExerciseOption], *, use_cache: bool = True, m
             raise RuntimeError(f"eval budget reached: {max_calls} real calls in one run")
         out.append(result)
         spent["real"] = counter["real"]
+        cache.save()   # after EVERY scenario: a crash or a dropped connection must not lose paid results
     cache.save()
     return out
 
@@ -159,6 +168,10 @@ def summarize(results: list[WorkoutResult]) -> dict:
         "count_ok_rate": statistics.mean(r.counts_ok for r in made) if made else 1.0,
         "focus_ok_rate": statistics.mean(focus) if focus else 1.0,
         "mean_repeat_rate": statistics.mean(r.repeat_rate for r in made) if made else 0.0,
+        "trimmed_plan_rate": sum(bool(r.sets_trimmed or r.exercises_trimmed) for r in made) / m,
+        "mean_sets_trimmed": statistics.mean(r.sets_trimmed for r in made) if made else 0.0,
+        "mean_exercises_trimmed": statistics.mean(r.exercises_trimmed for r in made) if made else 0.0,
+        "unresolved_cap_rate": sum(bool(r.unresolved) for r in made) / m,
         "avg_tokens": statistics.mean(r.tokens for r in results) if results else 0,
         "total_cost_usd": sum(r.cost_usd for r in results),
         "median_latency_ms": statistics.median(r.latency_ms for r in results) if results else 0,

@@ -57,8 +57,8 @@ def _with_defaults(section: str, values: dict[str, Any]) -> dict[str, Any]:
     out = dict(values)
     if section == "training" and out.get("session_minutes") is None:
         out["session_minutes"] = DEFAULT_SESSION_MINUTES
-    if section == "preferences" and out.get("cuisine") is None:
-        out["cuisine"] = "indian"
+    if section == "preferences" and not out.get("cuisines"):
+        out["cuisines"] = ["indian"]
     return out
 
 

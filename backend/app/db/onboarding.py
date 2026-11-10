@@ -127,8 +127,8 @@ def save_goal(conn: Connection, goal: GoalIn, start_weight_kg: float, today: dat
 def save_preferences(conn: Connection, prefs: PreferencesIn) -> None:
     _require_open(conn)
     conn.execute(
-        "update public.profiles set diet_type = %s, cuisine = %s, disliked_foods = %s where id = auth.uid()",
-        (prefs.diet_type, prefs.cuisine, prefs.disliked_foods),
+        "update public.profiles set diet_type = %s, cuisines = %s, disliked_foods = %s where id = auth.uid()",
+        (prefs.diet_type, prefs.cuisines, prefs.disliked_foods),
     )
 
 

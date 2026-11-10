@@ -14,7 +14,7 @@ def read_profile(conn: Connection) -> dict[str, dict[str, Any]] | None:
     """The user's answers by onboarding section, or None until onboarding is finished."""
     row = conn.execute(
         """select display_name, date_of_birth, sex, height_cm, activity_level, experience_level, workout_location,
-                  equipment, days_per_week, session_minutes, diet_type, cuisine, disliked_foods, onboarded_at
+                  equipment, days_per_week, session_minutes, diet_type, cuisines, disliked_foods, onboarded_at
            from public.profiles where id = auth.uid()"""
     ).fetchone()
     if row is None or row[13] is None:
@@ -34,7 +34,7 @@ def read_profile(conn: Connection) -> dict[str, dict[str, Any]] | None:
         "basics": {"display_name": row[0], "date_of_birth": row[1], "sex": row[2], "height_cm": float(row[3]),
                    "weight_kg": float(weight[0]), "activity_level": row[4]},
         "goal": {"goal_type": goal[0], "target_weight_kg": float(goal[1]) if goal[1] is not None else None, "pace": goal[2]},
-        "preferences": {"diet_type": row[10], "cuisine": row[11], "disliked_foods": list(row[12] or [])},
+        "preferences": {"diet_type": row[10], "cuisines": list(row[11] or ["indian"]), "disliked_foods": list(row[12] or [])},
         "training": {"experience_level": row[5], "workout_location": row[6], "equipment": list(row[7] or []),
                      "days_per_week": row[8], "session_minutes": row[9]},
         "screening": {**dict(zip(SCREENING_FLAGS, map(bool, screening[:6]))), "injury_areas": list(screening[6] or [])},
@@ -76,8 +76,8 @@ def update_goal(conn: Connection, goal: GoalIn, latest_weight_kg: float, today: 
 
 def update_preferences(conn: Connection, prefs: PreferencesIn) -> None:
     conn.execute(
-        "update public.profiles set diet_type = %s, cuisine = %s, disliked_foods = %s where id = auth.uid()",
-        (prefs.diet_type, prefs.cuisine, prefs.disliked_foods),
+        "update public.profiles set diet_type = %s, cuisines = %s, disliked_foods = %s where id = auth.uid()",
+        (prefs.diet_type, prefs.cuisines, prefs.disliked_foods),
     )
 
 

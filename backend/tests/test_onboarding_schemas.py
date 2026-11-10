@@ -110,11 +110,17 @@ def test_pace_defaults_to_normal_and_only_accepts_known_values():
 
 # --- Preferences ---
 
-def test_cuisine_defaults_to_indian_and_refuses_cuisines_we_have_no_data_for():
-    assert PreferencesIn(diet_type="vegan").cuisine == "indian"
-    for bad in ("italian", "Indian", "", None):
+def test_cuisines_default_to_indian_and_refuse_cuisines_we_have_no_data_for():
+    assert PreferencesIn(diet_type="vegan").cuisines == ["indian"]
+    assert PreferencesIn(diet_type="vegan", cuisines=["indian"]).cuisines == ["indian"]
+    for bad in (["italian"], ["Indian"], [""], [None], "indian", None, [], ["indian", "indian"], ["indian", "italian"]):
         with pytest.raises(ValidationError):
-            PreferencesIn(diet_type="vegan", cuisine=bad)
+            PreferencesIn(diet_type="vegan", cuisines=bad)
+
+
+def test_the_old_single_cuisine_field_is_refused_so_old_clients_fail_loudly():
+    with pytest.raises(ValidationError):
+        PreferencesIn(diet_type="vegan", cuisine="indian")
 
 
 def test_disliked_foods_are_trimmed_and_deduplicated():

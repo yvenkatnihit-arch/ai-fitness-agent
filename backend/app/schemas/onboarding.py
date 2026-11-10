@@ -16,7 +16,7 @@ from app.calc.targets import Goal
 from app.calc.tdee import ActivityLevel
 from app.core.time import india_today
 from app.core.vocabulary import (
-    EQUIPMENT, Cuisine, DietType, Equipment, ExperienceLevel, InjuryArea, Pace, SessionMinutes, WorkoutLocation,
+    EQUIPMENT, MAX_CUISINES, Cuisine, DietType, Equipment, ExperienceLevel, InjuryArea, Pace, SessionMinutes, WorkoutLocation,
 )
 from app.safety import safety_config as cfg
 from app.safety.safety_config import Sex
@@ -86,8 +86,15 @@ class PreferencesIn(_Form):
     """Step 3: diet and foods to avoid."""
 
     diet_type: DietType
-    cuisine: Cuisine = "indian"  # D-042: only cuisines with validated food data
+    cuisines: list[Cuisine] = Field(default_factory=lambda: ["indian"], min_length=1, max_length=MAX_CUISINES)   # D-088: one or more
     disliked_foods: list[FoodName] = Field(default_factory=list, max_length=30)
+
+    @field_validator("cuisines")
+    @classmethod
+    def no_repeated_cuisines(cls, value: list[str]) -> list[str]:
+        if len(set(value)) != len(value):
+            raise ValueError("pick each cuisine once")
+        return value
 
     @field_validator("disliked_foods")
     @classmethod

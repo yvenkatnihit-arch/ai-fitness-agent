@@ -10,7 +10,7 @@ afterEach(() => vi.unstubAllGlobals())
 
 const PROFILE: Profile = {
   display_name: 'Meera', date_of_birth: '1995-08-20', sex: 'female', height_cm: 162.5, weight_kg: 58, activity_level: 'light',
-  goal_type: 'fat_loss', target_weight_kg: 54, pace: 'normal', diet_type: 'vegetarian', cuisine: 'indian', disliked_foods: ['Karela'],
+  goal_type: 'fat_loss', target_weight_kg: 54, pace: 'normal', diet_type: 'vegetarian', cuisines: ['indian'], disliked_foods: ['Karela'],
   experience_level: 'beginner', workout_location: 'home', equipment: ['yoga_mat'], days_per_week: 3, session_minutes: 45,
   pregnant_or_breastfeeding: false, diabetes: false, heart_or_bp: false, kidney: false, recent_surgery_or_injury: false,
   eating_disorder_history: false, injury_areas: [],

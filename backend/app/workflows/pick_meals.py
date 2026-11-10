@@ -25,6 +25,10 @@ DAYS = 7
 MAX_TOKENS = 8000          # generous: Gemini's own reasoning tokens count toward this limit
 FALLBACK_TRIES = 12        # rotations the code search tries per day
 Ask = Callable[[str], LLMResult]
+# The call settings, in one place so the app and the evals use exactly the same ones (D-086).
+# thinking_budget 0: the picker only chooses dishes from lists. Gemini's hidden thinking tokens are billed and count against max_tokens: one
+# week used about 10,800 output tokens (4,000 per call hidden) and 48 s (found by the meal eval, D-086).
+MEAL_CALL: dict = {"node": "meal_picker", "max_tokens": MAX_TOKENS, "temperature": 0.0, "json_mode": True, "thinking_budget": 0}
 
 
 class PoolTooSmall(Exception):
@@ -57,8 +61,7 @@ class WeekPlan:
 
 def _default_ask(user_id: UUID | None) -> Ask:
     def ask(prompt: str) -> LLMResult:
-        return call_llm("mid", [("system", SYSTEM), ("human", prompt)], flow="plan_generation", node="meal_picker",
-                        max_tokens=MAX_TOKENS, user_id=user_id, temperature=0.0, json_mode=True)
+        return call_llm("mid", [("system", SYSTEM), ("human", prompt)], flow="plan_generation", user_id=user_id, **MEAL_CALL)
     return ask
 
 
@@ -85,11 +88,12 @@ def _best_fallback(pool: dict[str, SlotPool], slots: Sequence[str], index: int, 
 
 
 def pick_meals(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str], targets: DayTargets, goal: str,
-               emphasis: str | None = None, *, ask: Ask | None = None, user_id: UUID | None = None) -> WeekPlan:
+               emphasis: str | None = None, *, ask: Ask | None = None, user_id: UUID | None = None,
+               cuisines: Collection[str] | None = None) -> WeekPlan:
     slots = slots_for(targets.kcal)
     shares = shares_for(slots)
     scale = portion_scale_for(targets.kcal)
-    pool = build_pool(foods, diet_type, dislikes, slots)
+    pool = build_pool(foods, diet_type, dislikes, slots, cuisines)
     empty = [s.replace("_", " ") for s in slots if pool[s].missing]
     if empty:
         raise PoolTooSmall(f"Your diet and dislikes leave no choice for: {', '.join(empty)}. Try removing a dislike.")

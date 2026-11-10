@@ -1,4 +1,4 @@
-"""Run the model-based evals with REAL Gemini calls.   From backend/:  uv run python -m evals.run_llm router|composer|nutrition|workout [--fresh] [--show]
+"""Run the model-based evals with REAL Gemini calls.   From backend/:  uv run python -m evals.run_llm router|composer|nutrition|workout|meal [--fresh] [--limit=N] [--show]
 
 A fraction of a cent to a few cents. Results are cached in evals/cache/ (git-ignored), so unchanged cases cost nothing; `--fresh` ignores
 the cache; `--show` prints every answer. The cache is keyed by model, prompt and input only: it does NOT notice a change to a tool or to the data
@@ -10,20 +10,24 @@ import json
 import sys
 from pathlib import Path
 
-from evals import composer_eval, nutrition_eval, router_eval, workout_eval
+from evals import composer_eval, meal_eval, nutrition_eval, router_eval, workout_eval
 
 THRESHOLDS = Path(__file__).with_name("llm_thresholds.json")
 HIGHER_IS_BETTER = ("exact_accuracy", "nutrition_recall", "off_topic_specificity", "pass_rate", "mean_number_coverage",
                     "searched_first_rate", "honest_when_absent_rate", "amount_used_tool_rate", "scenario_pass_rate", "model_day_rate",
-                    "mean_pattern_coverage", "count_ok_rate", "focus_ok_rate")
+                    "mean_pattern_coverage", "count_ok_rate", "focus_ok_rate", "ok_day_rate", "mean_protein_ratio")
 LOWER_IS_BETTER = ("invalid_json_rate", "off_menu_rate", "duplicate_rate", "invented_number_rate", "too_long_rate", "injection_obeyed_rate",
                    "ungrounded_number_rate", "amount_calculated_rate", "failed_run_rate", "safety_violation_rate", "payload_problem_rate",
-                   "weekly_cap_breach_rate", "refused_rate", "mean_repeat_rate")
+                   "weekly_cap_breach_rate", "refused_rate", "mean_repeat_rate", "avg_cost_usd", "unresolved_cap_rate")
+
+
+def _fmt(key: str, value: float) -> str:
+    return f"${value:.4f}" if key.endswith("_usd") else f"{value:.1%}"
 
 
 def gate(summary: dict, thresholds: dict) -> list[str]:
-    failures = [f"{k} {summary[k]:.1%} is below {thresholds[k]:.1%}" for k in HIGHER_IS_BETTER if k in thresholds and k in summary and summary[k] < thresholds[k]]
-    failures += [f"{k} {summary[k]:.1%} is above {thresholds[k]:.1%}" for k in LOWER_IS_BETTER if k in thresholds and k in summary and summary[k] > thresholds[k]]
+    failures = [f"{k} {_fmt(k, summary[k])} is below {_fmt(k, thresholds[k])}" for k in HIGHER_IS_BETTER if k in thresholds and k in summary and summary[k] < thresholds[k]]
+    failures += [f"{k} {_fmt(k, summary[k])} is above {_fmt(k, thresholds[k])}" for k in LOWER_IS_BETTER if k in thresholds and k in summary and summary[k] > thresholds[k]]
     return failures
 
 
@@ -88,16 +92,49 @@ def _workout(fresh: bool, show: bool) -> dict:
           f"   plans passing {s['scenario_pass_rate']:.1%}")
     print(f"  days chosen by the model {s['model_day_rate']:.1%} (rest by the code fallback)   plans needing a retry {s['retry_rate']:.1%}   pattern coverage {s['mean_pattern_coverage']:.1%}"
           f"   day size on target {s['count_ok_rate']:.1%}   focus honoured {s['focus_ok_rate']:.1%}   repeated across days {s['mean_repeat_rate']:.1%}")
+    print(f"  weekly cap: {s['trimmed_plan_rate']:.0%} of plans were trimmed (on average {s['mean_sets_trimmed']:.1f} sets and {s['mean_exercises_trimmed']:.1f} exercises); "
+          f"cap not reachable in {s['unresolved_cap_rate']:.0%}")
     print(f"  avg {s['avg_tokens']:.0f} tokens/plan   median {s['median_latency_ms']:.0f} ms   total ${s['total_cost_usd']:.4f}")
     for r in results:
         if show or not r.passed or r.refused:
             print(f"  {'REFUSED' if r.refused else ('FAIL' if not r.passed else 'ok')}: {r.name}  sources {list(r.sources)}  asks {r.asks}"
                   + (f"  {r.refusal}" if r.refused else "") + (f"  SAFETY {list(r.safety)}" if r.safety else "")
-                  + (f"  PROBLEMS {list(r.problems)}" if r.problems else "") + (f"  CAP {list(r.cap_breaches)}" if r.cap_breaches else ""))
+                  + (f"  PROBLEMS {list(r.problems)}" if r.problems else "") + (f"  CAP {list(r.cap_breaches)}" if r.cap_breaches else "")
+                  + (f"  trimmed {r.sets_trimmed} sets, {r.exercises_trimmed} exercises" if r.sets_trimmed or r.exercises_trimmed else ""))
     return s
 
 
-RUNNERS = {"router": _router, "composer": _composer, "nutrition": _nutrition, "workout": _workout}
+def _meal(fresh: bool, show: bool) -> dict:
+    from app.db import admin_transaction
+    from app.db.meal_foods import list_pool_foods
+    from app.db.pool import close_pool
+
+    with admin_transaction("eval: read the foods") as conn:   # read-only reference data; nothing is saved
+        foods = list_pool_foods(conn)
+    close_pool()
+    limit = next((int(a.split("=")[1]) for a in sys.argv if a.startswith("--limit=")), None)
+    if "--thinking-default" in sys.argv:   # A/B only: this run uses the model's default thinking instead of the app's setting (cached separately)
+        from app.workflows.pick_meals import MEAL_CALL
+        MEAL_CALL["thinking_budget"] = None
+        print("NOTE: --thinking-default is on: this is NOT the app's setting")
+    from evals.meal_cases import SCENARIOS
+    results = meal_eval.run_meal_eval(foods, use_cache=not fresh, scenarios=SCENARIOS[:limit] if limit else None)
+    s = meal_eval.summarize(results)
+    print(f"Meal plan eval: {s['scenarios']} made-up users ({s['refused']} refused: pool too small or no safe day)")
+    print(f"  SAFETY violations {s['safety_violation_rate']:.1%}   verify problems {s['payload_problem_rate']:.1%}   plans passing {s['scenario_pass_rate']:.1%}")
+    print(f"  days chosen by the model {s['model_day_rate']:.1%}   plans needing a repair round {s['repair_rate']:.1%}   days with solver status ok {s['ok_day_rate']:.1%}")
+    print(f"  protein reached: mean {s['mean_protein_ratio']:.0%} of target, worst day {s['min_protein_ratio']:.0%}   dishes repeated in the week {s['mean_repeat_rate']:.1%}")
+    print(f"  avg {s['avg_tokens_out']:.0f} output tokens/plan   avg ${s['avg_cost_usd']:.4f}/plan   median {s['median_latency_ms'] / 1000:.1f} s   total ${s['total_cost_usd']:.4f}")
+    for r in results:
+        if show or not r.passed or r.refused:
+            pct = f"protein {min(r.protein_pct):.0f}-{max(r.protein_pct):.0f}%" if r.protein_pct else ""
+            print(f"  {'REFUSED' if r.refused else ('FAIL' if not r.passed else 'ok')}: {r.name}  sources {''.join(x[0] for x in r.sources)}  "
+                  f"calls {r.model_calls}  {pct}  out {r.tokens_out} tok  ${r.cost_usd:.4f}  {r.latency_ms / 1000:.0f}s"
+                  + (f"  {r.refusal}" if r.refused else "") + (f"  SAFETY {list(r.safety)[:3]}" if r.safety else "") + (f"  PROBLEMS {list(r.problems)[:3]}" if r.problems else ""))
+    return s
+
+
+RUNNERS = {"router": _router, "composer": _composer, "nutrition": _nutrition, "workout": _workout, "meal": _meal}
 
 
 def main() -> int:

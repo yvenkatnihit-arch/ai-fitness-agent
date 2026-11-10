@@ -95,17 +95,17 @@ def test_pace_and_cuisine_are_saved_and_pace_can_be_changed(client, user_id):
     client.put("/onboarding/consent", json=CONSENT)
     client.put("/onboarding/basics", json=BASICS)
     assert client.put("/onboarding/goal", json={**GOAL, "pace": "fast"}).status_code == 200
-    assert client.put("/onboarding/preferences", json={**PREFS, "cuisine": "indian"}).status_code == 200
+    assert client.put("/onboarding/preferences", json={**PREFS, "cuisines": ["indian"]}).status_code == 200
 
     def saved():
         with admin_transaction("test: check pace and cuisine") as conn:
             pace = conn.execute("select pace from public.goals where user_id = %s and active", (user_id,)).fetchone()[0]
-            cuisine = conn.execute("select cuisine from public.profiles where id = %s", (user_id,)).fetchone()[0]
-        return pace, cuisine
+            cuisines = conn.execute("select cuisines from public.profiles where id = %s", (user_id,)).fetchone()[0]
+        return pace, cuisines
 
-    assert saved() == ("fast", "indian")
+    assert saved() == ("fast", ["indian"])
     client.put("/onboarding/goal", json={**GOAL, "pace": "slow"})   # changing it updates the same goal
-    assert saved() == ("slow", "indian")
+    assert saved() == ("slow", ["indian"])
     client.put("/onboarding/goal", json=GOAL)                       # not sent: back to the default
     assert saved()[0] == "normal"
 
@@ -114,7 +114,9 @@ def test_unknown_pace_or_cuisine_is_a_422_and_saves_nothing(client, user_id):
     client.put("/onboarding/consent", json=CONSENT)
     client.put("/onboarding/basics", json=BASICS)
     assert client.put("/onboarding/goal", json={**GOAL, "pace": "extreme"}).status_code == 422
-    assert client.put("/onboarding/preferences", json={**PREFS, "cuisine": "martian"}).status_code == 422
+    assert client.put("/onboarding/preferences", json={**PREFS, "cuisines": ["martian"]}).status_code == 422
+    assert client.put("/onboarding/preferences", json={**PREFS, "cuisines": []}).status_code == 422
+    assert client.put("/onboarding/preferences", json={**PREFS, "cuisine": "indian"}).status_code == 422   # the old field is refused
 
 
 def test_fat_loss_target_above_current_weight_is_refused(client):

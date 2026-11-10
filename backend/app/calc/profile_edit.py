@@ -12,7 +12,7 @@ from typing import Any
 FIELDS: dict[str, tuple[str, ...]] = {
     "basics": ("display_name", "date_of_birth", "sex", "height_cm", "weight_kg", "activity_level"),
     "goal": ("goal_type", "target_weight_kg", "pace"),
-    "preferences": ("diet_type", "cuisine", "disliked_foods"),
+    "preferences": ("diet_type", "cuisines", "disliked_foods"),
     "training": ("experience_level", "workout_location", "equipment", "days_per_week", "session_minutes"),
     "screening": ("pregnant_or_breastfeeding", "diabetes", "heart_or_bp", "kidney", "recent_surgery_or_injury",
                   "eating_disorder_history", "injury_areas"),
@@ -28,7 +28,7 @@ TARGET_FIELDS = frozenset({"date_of_birth", "sex", "height_cm", "weight_kg", "ac
 WORKOUT_FIELDS = frozenset({"experience_level", "workout_location", "equipment", "days_per_week", "session_minutes",
                             "injury_areas", "goal_type", "pace", *SCREENING_FLAGS})
 # Fields that make the active meal plan no longer match the person (their targets or their diet).
-MEAL_FIELDS = TARGET_FIELDS | {"diet_type", "disliked_foods", "cuisine"}
+MEAL_FIELDS = TARGET_FIELDS | {"diet_type", "disliked_foods", "cuisines"}
 
 
 class UnknownFields(ValueError):

@@ -97,7 +97,8 @@ def reject(user_id: UUID, proposal_id: UUID) -> tuple:
 def _apply_meal(conn, user_id: UUID, payload: dict[str, Any], mt: MealTargets, profile: MealProfile) -> None:
     """Verify the meal plan against the foods table and TODAY's targets, then write it with code-computed nutrition."""
     foods = {f.key: f for f in list_pool_foods(conn)}
-    problems = verify_payload(payload, foods, diet_type=profile.diet_type, dislikes=profile.dislikes, targets=mt.day)
+    problems = verify_payload(payload, foods, diet_type=profile.diet_type, dislikes=profile.dislikes, targets=mt.day,
+                              cuisines=profile.cuisines)
     if problems:
         raise ProposalCannotBeApplied("This meal plan did not pass our safety checks, so it was not applied. Please generate a new one.")
     week_start = effective_week_start(date.fromisoformat(payload["week_start"]), india_today())

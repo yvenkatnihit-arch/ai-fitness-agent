@@ -37,14 +37,14 @@ def generate_meal_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated:
     mt = meal_targets(saved, today)
     try:
         week = pick_meals(foods, profile.diet_type, profile.dislikes, mt.day, saved.goal_type, mt.emphasis,
-                          ask=ask, user_id=user_id)
+                          ask=ask, user_id=user_id, cuisines=profile.cuisines)
     except (PoolTooSmall, MealPlanFailed) as error:
         raise NotReady(str(error)) from None
 
     payload = build_payload(week, mt.day, diet_type=profile.diet_type, goal=saved.goal_type,
                             week_start=next_monday(today), numbers_hidden=mt.numbers_hidden)
     problems = verify_payload(payload, {f.key: f for f in foods}, diet_type=profile.diet_type,
-                              dislikes=profile.dislikes, targets=mt.day)
+                              dislikes=profile.dislikes, targets=mt.day, cuisines=profile.cuisines)
     if problems:   # a bug on our side, never the user's fault: refuse to save rather than save something unsafe
         raise RuntimeError(f"generated meal plan failed verification: {problems[:5]}")
     with admin_transaction("save pending meal proposal") as admin:
