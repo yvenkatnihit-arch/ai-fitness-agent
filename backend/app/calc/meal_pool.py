@@ -9,7 +9,7 @@ sweeteners (not meals), and raw meat and fish (raw versus cooked weight is ambig
 """
 
 from collections.abc import Collection, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 # DB slot names (meal_plan_items.slot). Normal days use four meals; big days (BIG_DAY_KCAL and up) add a mid-morning one,
 # because no one fits 3,000 kcal into four meals (found on real data, D-065).
@@ -107,6 +107,17 @@ def disliked(food: PoolFood, dislikes: Collection[str]) -> bool:
     return any(w in n for w in wanted for n in names)
 
 
+def localised(food: PoolFood, cuisines: Collection[str] | None) -> PoolFood:
+    """For a user who did not choose Indian, a food that has a bowl or a cup measure drops its katori (an Indian measure), so a shared food
+    such as curd reads "1 cup" in a Mediterranean plan. Indian users, and foods with only a katori, are left as they are."""
+    if cuisines is None or "indian" in cuisines:
+        return food
+    names = {u for u, _ in food.units}
+    if "katori" in names and names & {"bowl", "cup"}:
+        return replace(food, units=tuple((u, g) for u, g in food.units if u != "katori"))
+    return food
+
+
 def allowed_foods(foods: Sequence[PoolFood], diet_type: str, dislikes: Collection[str],
                   cuisines: Collection[str] | None = None) -> list[PoolFood]:
     """`cuisines` None means every cuisine; otherwise a food must belong to at least one of the user's cuisines."""
@@ -114,7 +125,7 @@ def allowed_foods(foods: Sequence[PoolFood], diet_type: str, dislikes: Collectio
         raise ValueError(f"diet_type must be one of {list(ALLOWED_DIET_CLASSES)}, got {diet_type!r}")
     ok = ALLOWED_DIET_CLASSES[diet_type]
     wanted = None if cuisines is None else set(cuisines)
-    return [f for f in foods if f.diet_class in ok and f.category not in EXCLUDED_CATEGORIES and not disliked(f, dislikes)
+    return [localised(f, cuisines) for f in foods if f.diet_class in ok and f.category not in EXCLUDED_CATEGORIES and not disliked(f, dislikes)
             and (wanted is None or wanted & set(f.cuisines))]
 
 

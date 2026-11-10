@@ -1,12 +1,52 @@
-key,name,local_names,category,cooked_g,reviewed_by,note
-idli,Idli,,dish_breakfast,720,,2:1 parboiled rice and urad dal batter; steamed; about 18 idlis of 40 g; salt not counted
-dosa,Plain dosa,dosai,dish_breakfast,500,,Rice and urad dal batter; about 10 dosas of 50 g with 2.5 g oil each
-upma,Upma,uppittu;rava upma,dish_breakfast,400,,Sooji roasted then cooked in about 250 ml water; curry leaves left out (a gap; negligible weight)
-rasam,Rasam,saaru;chaaru,dish_soup,600,,Thin tamarind-tomato soup with a little toor dal; mostly water so the cooked weight is about 4x the raw weight
-kadhi,Kadhi,,dish_dal,500,,Curd and besan simmered with about 300 ml water; oil tadka
-keema,Keema,mutton keema,dish_curry_meat,400,,USDA goat is lean (109 kcal raw); keema mince is often fattier so real values may be higher
-kheer,Kheer,payasam;payesh,dish_sweet,700,,Whole milk simmered with rice until reduced to about 700 g
-khoa,Khoa (mawa),khoya;mawa,dairy,180,,Whole milk boiled down to about 18 % of its weight (khoa has about 25-35 % moisture); USDA cow milk is 3.25 % fat so khoa from buffalo or full-cream milk is richer (about 420 kcal)
-barfi,Milk barfi,burfi;khoa barfi,dish_sweet,240,,Plain barfi: whole milk boiled down to khoa plus sugar
-besan_ladoo,Besan ladoo,besan laddu,dish_sweet,220,,Besan roasted in ghee; sugar added; a little moisture lost while roasting
-papad,Papad (roasted),poppadum;appalam,dish_snack,100,,Urad dal papad roasted; fried papad absorbs oil so log oil separately
+key,name,local_names,category,cooked_g,reviewed_by,note,cuisines
+idli,Idli,,dish_breakfast,720,,2:1 parboiled rice and urad dal batter; steamed; about 18 idlis of 40 g; salt not counted,indian
+dosa,Plain dosa,dosai,dish_breakfast,500,,Rice and urad dal batter; about 10 dosas of 50 g with 2.5 g oil each,indian
+upma,Upma,uppittu;rava upma,dish_breakfast,400,,Sooji roasted then cooked in about 250 ml water; curry leaves left out (a gap; negligible weight),indian
+rasam,Rasam,saaru;chaaru,dish_soup,600,,Thin tamarind-tomato soup with a little toor dal; mostly water so the cooked weight is about 4x the raw weight,indian
+kadhi,Kadhi,,dish_dal,500,,Curd and besan simmered with about 300 ml water; oil tadka,indian
+keema,Keema,mutton keema,dish_curry_meat,400,,USDA goat is lean (109 kcal raw); keema mince is often fattier so real values may be higher,indian
+kheer,Kheer,payasam;payesh,dish_sweet,700,,Whole milk simmered with rice until reduced to about 700 g,indian
+khoa,Khoa (mawa),khoya;mawa,dairy,180,,Whole milk boiled down to about 18 % of its weight (khoa has about 25-35 % moisture); USDA cow milk is 3.25 % fat so khoa from buffalo or full-cream milk is richer (about 420 kcal),indian
+barfi,Milk barfi,burfi;khoa barfi,dish_sweet,240,,Plain barfi: whole milk boiled down to khoa plus sugar,indian
+besan_ladoo,Besan ladoo,besan laddu,dish_sweet,220,,Besan roasted in ghee; sugar added; a little moisture lost while roasting,indian
+papad,Papad (roasted),poppadum;appalam,dish_snack,100,,Urad dal papad roasted; fried papad absorbs oil so log oil separately,indian
+shakshuka,Shakshuka (eggs in tomato and pepper sauce),shakshouka,dish_breakfast,650,,Serves 2 (2 eggs each); sauce simmered until thick,mediterranean
+ful_medames,Ful medames (mashed fava beans),foul;ful,dish_breakfast,560,,"Serves 2; beans lightly mashed with oil, lemon and garlic",mediterranean
+menemen,Menemen (Turkish scrambled eggs with tomato and pepper),,dish_breakfast,480,,Serves 2,mediterranean
+yogurt_walnut_honey,Greek yogurt with walnuts and honey,,dish_breakfast,350,,"Serves 1 to 2; nothing is cooked, so the cooked weight is the sum",mediterranean
+oats_yogurt_figs,Overnight oats with Greek yogurt and figs,,dish_breakfast,490,,"Serves 2; soaked, not cooked",mediterranean
+feta_spinach_omelette,Omelette with feta and spinach,,dish_breakfast,300,,Serves 2; spinach wilts and loses water,mediterranean
+couscous_cooked,"Couscous (cooked, with a little olive oil)",,dish_grain,620,,"200 g dry swells about 3 times (USDA: one cup of dry couscous, 173 g, gives 528 g cooked)",mediterranean
+bulgur_pilaf,Bulgur pilaf with onion and tomato,,dish_grain,640,,"Water 1:2, so about 2 times the dry weight",mediterranean
+rice_vermicelli_pilaf,Rice with vermicelli (Middle Eastern style),,dish_grain,660,,,mediterranean
+quinoa_pilaf,Quinoa pilaf with onion and parsley,,dish_grain,520,,,mediterranean
+orzo_tomato,Orzo with tomato (Greek style),,dish_grain,640,,Pasta cooked in the tomato sauce,mediterranean
+mujaddara,Mujaddara (lentils and rice with caramelised onion),mudardara;megadarra,dish_legume,650,,Serves 3 to 4; onions fried down to a third of their weight,mediterranean
+lentil_soup,Lentil soup (shorbat adas),red lentil soup,dish_legume,1300,,"Serves 4; red lentils, carrot and onion, finished with lemon",mediterranean
+chickpea_stew,Chickpea and tomato stew with spinach,,dish_legume,800,,Serves 3 to 4,mediterranean
+falafel,Falafel (fried),,dish_legume,440,,About 16 pieces of 27 g; the frying oil listed is only what the falafel absorbs,mediterranean
+fasolada,Fasolada (Greek white bean soup),,dish_legume,1100,,Serves 3 to 4,mediterranean
+white_bean_salad,White bean salad with tomato and parsley,,dish_legume,560,,Not cooked: the cooked weight is the sum of the ingredients,mediterranean
+lentil_salad,"Lentil salad with cucumber, tomato and feta",,dish_legume,640,,"Lentils boiled first (about 2.3 times their dry weight), then mixed",mediterranean
+chicken_souvlaki,Chicken souvlaki (grilled chicken skewers),,dish_meat_fish,240,,"300 g raw breast, 3 skewers of 80 g; grilling loses about 20% of the weight",mediterranean
+chicken_shawarma,Chicken shawarma (oven-roasted marinated thigh),,dish_meat_fish,330,,"400 g raw thigh, 3 portions of 110 g; yogurt and lemon marinade",mediterranean
+lamb_kofta,Lamb kofta (grilled minced lamb with parsley),kofta;kofte,dish_meat_fish,360,,About 8 pieces of 45 g; grilling loses about 25%,mediterranean
+baked_sea_bass_tomato,Baked sea bass with tomato and olives,branzino,dish_meat_fish,620,,Serves 2 (2 fillets of 250 g raw); baked until the tomato is thick,mediterranean
+grilled_salmon_lemon,Grilled salmon with lemon,,dish_meat_fish,320,,2 fillets of 160 g cooked (200 g raw each),mediterranean
+garlic_shrimp,Garlic shrimp with lemon and parsley,gambas,dish_meat_fish,260,,Serves 2,mediterranean
+chicken_apricot_tagine,Chicken tagine with apricots and almonds,,dish_meat_fish,560,,Serves 2 to 3; slow-cooked in its own sauce,mediterranean
+tuna_white_bean_salad,Tuna and white bean salad,,dish_meat_fish,540,,"Serves 2; not cooked, so the cooked weight is the sum",mediterranean
+tabbouleh,Tabbouleh (parsley and bulgur salad),tabouli,dish_vegetable,440,,"Bulgur soaked, not boiled: it swells to about 3 times its dry weight",mediterranean
+greek_salad,Greek salad,horiatiki,dish_vegetable,560,,Not cooked: the cooked weight is the sum,mediterranean
+fattoush,Fattoush (salad with toasted pita),,dish_vegetable,440,,"Pita toasted, so it loses some water",mediterranean
+roasted_vegetables,Roasted Mediterranean vegetables,,dish_vegetable,500,,Roasting loses about a third of the raw weight,mediterranean
+ratatouille,Ratatouille,,dish_vegetable,800,,Serves 3 to 4; simmered,mediterranean
+eggplant_stew,Eggplant stew with tomato (imam bayildi style),aubergine stew,dish_vegetable,560,,Serves 2 to 3,mediterranean
+okra_tomato_stew,Okra and tomato stew (bamya),bamia,dish_vegetable,580,,Serves 3,mediterranean
+stuffed_vine_leaves,Stuffed vine leaves with rice (dolma),dolma;dolmades;warak enab,dish_vegetable,440,,About 18 pieces of 24 g; the rice swells while they simmer,mediterranean
+green_beans_olive_oil,Green beans stewed in olive oil and tomato,fasolakia,dish_vegetable,450,,Serves 2 to 3,mediterranean
+hummus,Hummus,,dish_dip,380,,Blended with a little of the cooking liquid,mediterranean
+baba_ganoush,Baba ganoush (smoked aubergine dip),baba ghanouj,dish_dip,450,,"Aubergine roasted until soft, then blended",mediterranean
+tzatziki,"Tzatziki (yogurt, cucumber and garlic)",,dish_dip,380,,Cucumber lightly drained,mediterranean
+labneh,Labneh (strained yogurt) with olive oil,,dish_dip,260,,400 g yogurt strained down to about 250 g; the whey is not counted,mediterranean
+muhammara,Muhammara (roasted red pepper and walnut dip),,dish_dip,380,,"Peppers roasted, skinned and blended",mediterranean

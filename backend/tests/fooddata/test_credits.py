@@ -35,3 +35,13 @@ def test_a_food_from_an_uncredited_source_stops_the_build():
 def test_committed_credits_file_matches_the_current_data():
     # If this fails: run `uv run python -m fooddata.build` and commit frontend/src/sources/credits.json.
     assert CREDITS.read_text(encoding="utf-8") == render(current_credits(VALIDATED))
+
+
+def test_foods_in_a_cuisine_the_app_has_not_enabled_are_not_credited_yet():
+    from fooddata.credits import in_enabled_cuisines
+    rows_ = [{"source": "usda_sr_legacy", "cuisines": "indian"}, {"source": "usda_sr_legacy", "cuisines": "mediterranean"},
+             {"source": "uk_cofid", "cuisines": "indian;mediterranean"}, {"source": "uk_cofid"}]          # a missing value means Indian
+    kept = in_enabled_cuisines(rows_)
+    assert [r["source"] for r in kept] == ["usda_sr_legacy", "uk_cofid", "uk_cofid"]
+    credits = build_credits(MANIFEST, kept)
+    assert [(s["key"], s["foods"]) for s in credits["sources"]] == [("usda_sr_legacy", 1), ("uk_cofid", 2)]

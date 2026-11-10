@@ -95,3 +95,39 @@ fenugreek_seed,tsp,usda,self,1 tsp,3.7,
 ginger,tsp,usda,self,1 tsp,2,
 flaxseed,tbsp,usda,self,"1 tbsp, whole",10.3,
 sesame,tbsp,usda,self,1 tbsp,9,
+pita_white,piece,usda,self,"1 pita, large (6-1/2"" dia)",60,
+pita_whole_wheat,piece,usda,self,"1 pita, large (6-1/2"" dia)",64,
+shakshuka,bowl,volume,172921,1 cup (8 fl oz),241,saucy dish: density of a prepared vegetable soup
+ful_medames,bowl,volume,175203,1 cup,179,mashed beans: density of cooked white beans
+menemen,cup,volume,172187,1 cup,220,density of scrambled eggs
+oats_yogurt_figs,bowl,volume,173905,1 cup,234,thick porridge: density of cooked oats
+couscous_cooked,cup,volume,169700,"1 cup, cooked",157,
+bulgur_pilaf,cup,volume,170287,1 cup,182,density of cooked bulgur
+rice_vermicelli_pilaf,cup,volume,168878,1 cup,158,density of cooked rice
+quinoa_pilaf,cup,volume,168917,1 cup,185,density of cooked quinoa
+orzo_tomato,cup,volume,169737,1 cup elbows not packed,120,density of cooked pasta
+mujaddara,cup,volume,172421,1 cup,198,density of cooked lentils
+lentil_soup,bowl,volume,172921,1 cup (8 fl oz),241,density of a prepared vegetable soup
+chickpea_stew,bowl,volume,172921,1 cup (8 fl oz),241,stew with sauce: density of a prepared vegetable soup
+falafel,piece,recipe,falafel,1 falafel,27,440 g cooked / about 16 pieces
+fasolada,bowl,volume,172921,1 cup (8 fl oz),241,density of a prepared vegetable soup
+white_bean_salad,cup,volume,175203,1 cup,179,density of cooked white beans
+lentil_salad,cup,volume,172421,1 cup,198,density of cooked lentils
+chicken_souvlaki,piece,recipe,chicken_souvlaki,1 skewer,80,240 g cooked / 3 skewers
+chicken_shawarma,piece,recipe,chicken_shawarma,1 portion,110,330 g cooked / 3 portions
+lamb_kofta,piece,recipe,lamb_kofta,1 kofta,45,360 g cooked / 8 pieces
+grilled_salmon_lemon,piece,recipe,grilled_salmon_lemon,1 fillet,160,320 g cooked / 2 fillets
+chicken_apricot_tagine,bowl,volume,172921,1 cup (8 fl oz),241,stew with sauce: density of a prepared vegetable soup
+tuna_white_bean_salad,cup,volume,175203,1 cup,179,density of cooked white beans
+tabbouleh,cup,volume,170457,"1 cup, chopped or sliced",180,density of chopped tomato
+greek_salad,cup,volume,170457,"1 cup, chopped or sliced",180,density of chopped tomato
+fattoush,cup,volume,170457,"1 cup, chopped or sliced",180,density of chopped tomato
+roasted_vegetables,cup,volume,169292,"1 cup, sliced",180,density of cooked zucchini
+ratatouille,bowl,volume,172921,1 cup (8 fl oz),241,stew: density of a prepared vegetable soup
+eggplant_stew,bowl,volume,172921,1 cup (8 fl oz),241,stew: density of a prepared vegetable soup
+okra_tomato_stew,bowl,volume,172921,1 cup (8 fl oz),241,stew: density of a prepared vegetable soup
+stuffed_vine_leaves,piece,recipe,stuffed_vine_leaves,1 stuffed leaf,24,440 g cooked / about 18 pieces
+green_beans_olive_oil,cup,volume,169141,1 cup,125,density of cooked green beans
+curd,cup,volume,171284,1 cup (8 fl oz),245,density of plain whole-milk yogurt; so a non-Indian plan can say cup instead of katori
+oats_water,cup,volume,173905,1 cup,234,density of cooked oats
+oats_milk,cup,volume,173905,1 cup,234,density of cooked oats

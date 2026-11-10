@@ -10,6 +10,7 @@ import csv
 import json
 from pathlib import Path
 
+from fooddata import cuisines as cuisine_data
 from fooddata.download import DATA_DIR, MANIFEST
 
 CREDITS = DATA_DIR.parent / "frontend" / "src" / "sources" / "credits.json"
@@ -48,10 +49,18 @@ def build_credits(manifest: dict, validated_rows: list[dict]) -> dict:
     return {"sources": sources, "recipes": recipes, "notes": NOTES}
 
 
+def in_enabled_cuisines(rows: list[dict]) -> list[dict]:
+    """Only foods the app can actually show: at least one of their cuisines is enabled (D-088). The page must not claim foods that are
+    still waiting to be loaded."""
+    from app.core.vocabulary import CUISINES
+
+    return [r for r in rows if set(cuisine_data.parse(r.get("cuisines"))) & set(CUISINES)]
+
+
 def current_credits(validated: Path) -> dict:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     with validated.open(encoding="utf-8", newline="") as handle:
-        return build_credits(manifest, list(csv.DictReader(handle)))
+        return build_credits(manifest, in_enabled_cuisines(list(csv.DictReader(handle))))
 
 
 def render(credits: dict) -> str:

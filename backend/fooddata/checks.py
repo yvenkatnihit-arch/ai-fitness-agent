@@ -87,7 +87,7 @@ NON_VEG = re.compile(r"\b(beef|pork|lamb|mutton|veal|chicken|turkey|duck|poultry
 EGG = re.compile(r"\begg(s)?\b", re.I)
 DAIRY = re.compile(r"\b(milk|cheese|butter|ghee|yogurt|yoghurt|curd|paneer|cream|whey|dairy|khoa|khoya)\b", re.I)
 PLANT_MILK = re.compile(r"\b(soy|soya|almond|oat|coconut|rice|cashew)\s+(milk|cream|yogurt|yoghurt|butter|paneer)\b|"
-                        r"\b(peanut|nut|cocoa|apple|shea)\s+butter\b", re.I)
+                        r"\b(peanut|nut|cocoa|apple|shea|sesame|sunflower|seed)\s+butter\b", re.I)
 # Plant foods whose names contain an animal word ("coconut meat" is the white flesh of a coconut).
 PLANT_PHRASES = re.compile(r"\b(coconut|nut)\s+meat\b|\bexpressed from grated meat\b|\beggplant\b|"
                            r"\bghee made from vegetable oil\b|"
@@ -107,7 +107,7 @@ def check_diet_class(name: str, category: str | None, diet_class: str) -> list[I
     """
     plain_name = EGG_OF_BIRD.sub("egg", PLANT_PHRASES.sub(" ", name))
     needed = "vegan"
-    if DAIRY.search(plain_name) and not PLANT_MILK.search(plain_name):
+    if DAIRY.search(PLANT_MILK.sub(" ", plain_name)):   # take the plant phrase out first: "sesame butter with cream" still has cream
         needed = "vegetarian"
     if EGG.search(plain_name) and not re.search(r"\begg\s*(plant|less|-?free)\b", plain_name, re.I):
         needed = "eggetarian"

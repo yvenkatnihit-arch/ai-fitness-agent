@@ -18,6 +18,7 @@ from pathlib import Path
 
 import psycopg
 
+from fooddata import cuisines as cuisine_data
 from fooddata.build import VALIDATED
 from fooddata.units import UNITS_VALIDATED, Unit
 
@@ -40,6 +41,7 @@ class FoodRow:
     source_ref: str
     review_status: str
     synonyms: tuple[str, ...]
+    cuisines: tuple[str, ...] = ("indian",)
 
 
 def _number(row: dict, field: str, digits: int) -> float:
@@ -73,7 +75,11 @@ def to_food_row(row: dict) -> FoodRow:
         fiber_g=_number(row, "fiber_g", 2) if row["fiber_g"] else None,
         source=row["source"], source_ref=row["source_id"], review_status=row["status"],
         synonyms=synonyms_from(row["local_names"], row["name"]),
+        cuisines=cuisine_data.parse(row.get("cuisines")),
     )
+    bad = cuisine_data.problems(row.get("cuisines"))
+    if bad:
+        raise ValueError(f"{food.key}: {bad[0]}")
     if not 1 <= len(food.name) <= 120:
         raise ValueError(f"{food.key}: name must be 1-120 characters")
     if not 0 <= food.kcal <= 900:
@@ -82,6 +88,26 @@ def to_food_row(row: dict) -> FoodRow:
     if mass > MACRO_MASS_LIMIT:
         raise ValueError(f"{food.key}: macros + fibre = {mass:.1f} g per 100 g (limit {MACRO_MASS_LIMIT})")
     return food
+
+
+def split_by_enabled(foods: list[FoodRow]) -> tuple[list[FoodRow], dict[str, list[str]]]:
+    """(foods to load, cuisines still waiting -> the foods held back). A cuisine goes live only when the app enables it
+    (app.core.vocabulary.CUISINES, D-088). A food is loaded with ONLY its enabled cuisines (a shared food stays Indian until the
+    other cuisine is enabled); a food with no enabled cuisine at all is held back, never loaded early."""
+    from dataclasses import replace
+
+    from app.core.vocabulary import CUISINES
+
+    loadable: list[FoodRow] = []
+    waiting: dict[str, list[str]] = {}
+    for food in foods:
+        enabled = tuple(c for c in food.cuisines if c in CUISINES)
+        for cuisine in food.cuisines:
+            if cuisine not in CUISINES and not enabled:
+                waiting.setdefault(cuisine, []).append(food.key)
+        if enabled:
+            loadable.append(replace(food, cuisines=enabled))
+    return loadable, waiting
 
 
 def read_validated(path: Path = VALIDATED) -> list[FoodRow]:
@@ -96,15 +122,16 @@ def read_validated(path: Path = VALIDATED) -> list[FoodRow]:
 
 UPSERT = """
 insert into public.foods (key, name, category, diet_class, is_dish, kcal_per_100g, protein_g_per_100g,
-                          carbs_g_per_100g, fat_g_per_100g, fiber_g_per_100g, source, source_ref, review_status)
+                          carbs_g_per_100g, fat_g_per_100g, fiber_g_per_100g, source, source_ref, review_status, cuisines)
 values (%(key)s, %(name)s, %(category)s, %(diet_class)s, %(is_dish)s, %(kcal)s, %(protein_g)s,
-        %(carbs_g)s, %(fat_g)s, %(fiber_g)s, %(source)s, %(source_ref)s, %(review_status)s)
+        %(carbs_g)s, %(fat_g)s, %(fiber_g)s, %(source)s, %(source_ref)s, %(review_status)s, %(cuisines)s)
 on conflict (key) do update set
   name = excluded.name, category = excluded.category, diet_class = excluded.diet_class,
   is_dish = excluded.is_dish, kcal_per_100g = excluded.kcal_per_100g,
   protein_g_per_100g = excluded.protein_g_per_100g, carbs_g_per_100g = excluded.carbs_g_per_100g,
   fat_g_per_100g = excluded.fat_g_per_100g, fiber_g_per_100g = excluded.fiber_g_per_100g,
-  source = excluded.source, source_ref = excluded.source_ref, review_status = excluded.review_status
+  source = excluded.source, source_ref = excluded.source_ref, review_status = excluded.review_status,
+  cuisines = excluded.cuisines
 returning id, (xmax = 0) as inserted
 """
 
@@ -123,7 +150,7 @@ def load_foods(conn: psycopg.Connection, foods: list[FoodRow]) -> LoadResult:
     """Upsert every food and replace its synonyms. The caller commits or rolls back."""
     result = LoadResult()
     for food in foods:
-        food_id, inserted = conn.execute(UPSERT, food.__dict__).fetchone()
+        food_id, inserted = conn.execute(UPSERT, {**food.__dict__, "cuisines": list(food.cuisines)}).fetchone()
         result.ids[food.key] = food_id
         if inserted:
             result.inserted += 1
@@ -142,6 +169,12 @@ def load_foods(conn: psycopg.Connection, foods: list[FoodRow]) -> LoadResult:
 def read_units(path: Path = UNITS_VALIDATED) -> list[Unit]:
     with path.open(encoding="utf-8", newline="") as handle:
         return [Unit(r["key"], r["unit"], float(r["grams"]), r["source"]) for r in csv.DictReader(handle)]
+
+
+def units_of_loaded_foods(units: list[Unit], loaded_keys: set[str]) -> tuple[list[Unit], int]:
+    """A food's household units follow the food: units of a held-back food are skipped too. Returns (units to load, how many skipped)."""
+    keep = [u for u in units if u.key in loaded_keys]
+    return keep, len(units) - len(keep)
 
 
 def load_units(conn: psycopg.Connection, units: list[Unit], ids: dict[str, int]) -> int:
@@ -164,10 +197,16 @@ def main() -> int:
 
     from app.core.config import get_settings  # only needed when talking to the database
 
-    foods = read_validated()
+    foods, waiting = split_by_enabled(read_validated())
+    for cuisine, keys in waiting.items():   # never load a cuisine's foods before the app enables it (D-088)
+        print(f"HELD BACK: {len(keys)} food(s) belong only to the cuisine '{cuisine}', which the app has not enabled yet: "
+              f"{', '.join(keys[:6])}{' ...' if len(keys) > 6 else ''}")
     with psycopg.connect(get_settings().database_url.get_secret_value(), connect_timeout=10) as conn:
         result = load_foods(conn, foods)
-        result.units = load_units(conn, read_units(), result.ids)
+        units, skipped = units_of_loaded_foods(read_units(), set(result.ids))
+        result.units = load_units(conn, units, result.ids)
+        if skipped:
+            print(f"HELD BACK: {skipped} household unit(s) of held-back foods")
         if args.dry_run:
             conn.rollback()
         else:

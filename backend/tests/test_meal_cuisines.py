@@ -6,7 +6,7 @@ from datetime import date
 import pytest
 
 from app.calc.meal_plan_payload import build_payload, verify_payload
-from app.calc.meal_pool import PoolFood, allowed_foods, build_pool
+from app.calc.meal_pool import PoolFood, allowed_foods, build_pool, localised
 from app.calc.meal_solver import DayTargets
 from app.llm.client import LLMBusy
 from app.workflows.pick_meals import PoolTooSmall, pick_meals
@@ -119,3 +119,39 @@ def test_a_plan_made_for_one_cuisine_is_refused_if_the_users_cuisines_change_bef
     by_key = {f.key: f for f in foods}
     assert verify_payload(payload, by_key, diet_type="vegetarian", dislikes=[], targets=TARGETS, cuisines=["indian"]) == []
     assert verify_payload(payload, by_key, diet_type="vegetarian", dislikes=[], targets=TARGETS, cuisines=["mediterranean"]) != []
+
+
+# ---------- units follow the user's cuisines (Step 7.10d) ----------
+
+def with_units(*units):
+    return replace(POOL_FOODS[0], key="curd_like", cuisines=("indian", "mediterranean"), units=tuple(units))
+
+
+def test_a_non_indian_user_sees_a_cup_instead_of_a_katori_when_the_food_has_both():
+    f = with_units(("katori", 155.0), ("cup", 245.0))
+    assert localised(f, ["mediterranean"]).units == (("cup", 245.0),)
+
+
+@pytest.mark.parametrize("cuisines", [None, ["indian"], ["indian", "mediterranean"]])
+def test_an_indian_user_and_an_unfiltered_pool_keep_the_katori(cuisines):
+    f = with_units(("katori", 155.0), ("cup", 245.0))
+    assert localised(f, cuisines) is f
+
+
+def test_a_food_with_only_a_katori_keeps_it_rather_than_losing_every_household_unit():
+    f = with_units(("katori", 155.0))
+    assert localised(f, ["mediterranean"]).units == (("katori", 155.0),)
+    g = with_units(("katori", 155.0), ("tbsp", 15.0))
+    assert localised(g, ["mediterranean"]) is g                       # a spoon unit is no substitute for a measure of the whole dish
+
+
+def test_bowl_also_replaces_katori_and_other_units_are_untouched():
+    f = with_units(("katori", 150.0), ("bowl", 300.0), ("piece", 40.0))
+    assert localised(f, ["mediterranean"]).units == (("bowl", 300.0), ("piece", 40.0))
+
+
+def test_the_pool_a_mediterranean_user_gets_is_localised_and_the_indian_pool_is_not():
+    foods = [replace(f, cuisines=("indian", "mediterranean"), units=(("katori", 150.0), ("cup", 240.0))) if f.key == "toor_dal" else f for f in POOL_FOODS]
+    med = {f.key: f for f in allowed_foods(foods, "vegan", [], ["mediterranean"])}
+    ind = {f.key: f for f in allowed_foods(foods, "vegan", [], ["indian"])}
+    assert med["toor_dal"].units == (("cup", 240.0),) and ind["toor_dal"].units == (("katori", 150.0), ("cup", 240.0))

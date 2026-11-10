@@ -16,6 +16,7 @@ Statuses:  ready    = all checks passed
 import csv
 from pathlib import Path
 
+from fooddata import cuisines as cuisine_data
 from fooddata.carbs import available_carbs
 from fooddata.credits import write_credits
 from fooddata.checks import Issue, check_diet_class, check_dish_plausibility, check_food, compare_sources
@@ -31,7 +32,7 @@ VALIDATED = DATA_DIR / "foods_validated.csv"
 REPORT = DATA_DIR / "reports" / "ingredients_review.md"
 
 COLUMNS = ["key", "name", "local_names", "category", "diet_class", "source", "source_id",
-           "check_source", "check_id", "match", "note"]
+           "check_source", "check_id", "match", "note", "cuisines"]
 DIET_CLASSES = {"vegan", "vegetarian", "eggetarian", "non_vegetarian"}
 MATCHES = {"exact", "close", "none"}
 
@@ -42,6 +43,8 @@ def review_row(row: dict, index: dict[tuple[str, str], FoodRecord]) -> Reviewed:
         result.add(Issue("mapping", "error", f"unknown diet class {row['diet_class']!r}"))
     if row["match"] not in MATCHES:
         result.add(Issue("mapping", "error", f"unknown match {row['match']!r}"))
+    for message in cuisine_data.problems(row.get("cuisines")):
+        result.add(Issue("cuisines", "error", message))
     if result.issues:  # the row itself is invalid: the checks below depend on these values
         result.status = "blocked"
         return result
@@ -104,13 +107,14 @@ def write_outputs(results: list[Reviewed]) -> None:
     with VALIDATED.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["key", "name", "local_names", "category", "diet_class", "source", "source_id",
-                         "source_name", "kcal", "protein_g", "carbs_g", "fat_g", "fiber_g", "carbs_quality", "match", "status"])
+                         "source_name", "kcal", "protein_g", "carbs_g", "fat_g", "fiber_g", "carbs_quality", "match", "status", "cuisines"])
         for r in results:
             if r.status in ("ready", "review"):
                 f = r.food
                 writer.writerow([r.row["key"], r.row["name"], r.row["local_names"], r.row["category"],
                                  r.row["diet_class"], f.source, f.source_id, f.name, f.kcal, f.protein_g,
-                                 round(r.carbs_g, 2), f.fat_g, f.fiber_g, r.carbs_quality, r.row["match"], r.status])
+                                 round(r.carbs_g, 2), f.fat_g, f.fiber_g, r.carbs_quality, r.row["match"], r.status,
+                                 cuisine_data.to_cell(cuisine_data.parse(r.row.get("cuisines")))])
 
     REPORT.parent.mkdir(exist_ok=True)
     counts = {s: sum(r.status == s for r in results) for s in ("ready", "review", "blocked", "gap")}

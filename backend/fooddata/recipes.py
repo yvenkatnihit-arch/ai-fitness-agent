@@ -15,6 +15,7 @@ import csv
 from dataclasses import dataclass
 from pathlib import Path
 
+from fooddata import cuisines as cuisine_data
 from fooddata.checks import DIET_ORDER, Issue, check_diet_class, check_dish_plausibility, check_food
 from fooddata.download import DATA_DIR
 from fooddata.records import FoodRecord
@@ -22,7 +23,7 @@ from fooddata.review import Reviewed
 
 RECIPES = DATA_DIR / "recipes.csv"
 RECIPE_ITEMS = DATA_DIR / "recipe_items.csv"
-RECIPE_COLUMNS = ["key", "name", "local_names", "category", "cooked_g", "reviewed_by", "note"]
+RECIPE_COLUMNS = ["key", "name", "local_names", "category", "cooked_g", "reviewed_by", "note", "cuisines"]
 ITEM_COLUMNS = ["recipe", "ingredient", "raw_g", "note"]
 
 YIELD_RANGE = (0.5, 3.0)       # cooked weight / raw weight; outside this, re-check the cooked weight
@@ -80,6 +81,8 @@ def _positive(value: str) -> float | None:
 def review_recipe(recipe: dict, items: list[dict], ingredients: dict[str, Ingredient]) -> Reviewed:
     row = {**recipe, "diet_class": "", "match": "recipe"}
     result = Reviewed(row)
+    for message in cuisine_data.problems(recipe.get("cuisines")):
+        result.add(Issue("cuisines", "error", message))
     cooked_g = _positive(recipe["cooked_g"])
     if cooked_g is None:
         result.add(Issue("recipe", "error", f"cooked_g must be a positive number, got {recipe['cooked_g']!r}"))

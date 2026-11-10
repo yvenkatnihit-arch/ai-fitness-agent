@@ -81,6 +81,11 @@ def test_alcohol_counts_in_expected_energy():
         ("Butter oil, anhydrous (ghee)", "Dairy and Egg Products", "vegan", False),
         ("Soy milk, unsweetened", "Legumes and Legume Products", "vegan", True),
         ("Peanut butter, smooth", "Legumes and Legume Products", "vegan", True),
+        ("Seeds, sesame butter, tahini, type of kernels unspecified", "Nut and Seed Products", "vegan", True),   # USDA's name for tahini (Step 7.10c)
+        ("Seeds, sunflower seed butter, without salt", "Nut and Seed Products", "vegan", True),
+        ("Tahini and butter spread", None, "vegan", False),                              # a real dairy butter is still caught
+        ("Butter, salted", "Dairy and Egg Products", "vegan", False),
+        ("Sesame butter with cream", None, "vegan", False),                               # the plant-butter exemption must not hide real dairy
         ("Eggplant, raw", "Vegetables and Vegetable Products", "vegan", True),
         ("Lentils, raw", "Legumes and Legume Products", "vegan", True),
         ("Bhaji, karela, with butter ghee, homemade", "DG", "vegan", False),

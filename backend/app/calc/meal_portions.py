@@ -21,7 +21,9 @@ PIECE_FIRST_KEYS = frozenset({"egg", "boiled_egg"})
 
 MIN_PIECE_GRAMS = 15.0     # a smaller piece (an almond is 1.2 g) is not a meal unit: such foods are measured in grams
 PIECE_BOUNDS = {"dish_bread": (1, 4), "egg": (1, 4), "dish_breakfast": (1, 5), "fruit": (1, 2)}   # (min, max) pieces
-PIECE_BOUNDS_BY_KEY = {"egg": (1, 4), "boiled_egg": (1, 4)}   # a food's own key wins over its category
+PIECE_BOUNDS_BY_KEY = {"egg": (1, 4), "boiled_egg": (1, 4),   # a food's own key wins over its category
+                       "falafel": (2, 10),                          # 27 g each: a portion is about 5, never 1 to 3 (Step 7.10d)
+                       "lamb_kofta": (2, 8), "stuffed_vine_leaves": (3, 10), "chicken_souvlaki": (1, 4)}   # 45 g, 24 g and 80 g pieces
 DEFAULT_PIECE_BOUNDS = (1, 3)
 # Cooked dishes measured in a volume unit are counted in HALVES of it, whichever unit the food has (a katori of dal, a bowl of lentil
 # soup, a cup of couscous), in this order of preference.
