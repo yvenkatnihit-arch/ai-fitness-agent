@@ -37,7 +37,8 @@ def test_committed_credits_file_matches_the_current_data():
     assert CREDITS.read_text(encoding="utf-8") == render(current_credits(VALIDATED))
 
 
-def test_foods_in_a_cuisine_the_app_has_not_enabled_are_not_credited_yet():
+def test_foods_in_a_cuisine_the_app_has_not_enabled_are_not_credited_yet(monkeypatch):
+    monkeypatch.setattr("app.core.vocabulary.CUISINES", ("indian",))                       # as if Mediterranean were not enabled
     from fooddata.credits import in_enabled_cuisines
     rows_ = [{"source": "usda_sr_legacy", "cuisines": "indian"}, {"source": "usda_sr_legacy", "cuisines": "mediterranean"},
              {"source": "uk_cofid", "cuisines": "indian;mediterranean"}, {"source": "uk_cofid"}]          # a missing value means Indian

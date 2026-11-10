@@ -165,3 +165,4 @@ def test_the_scenario_set_covers_every_diet_and_the_hard_cases():
     assert any("kidney" in s.profile.screening_flags for s in SCENARIOS) and any(len(s.dislikes) >= 3 for s in SCENARIOS)
     assert any(s.profile.goal == "muscle_gain" for s in SCENARIOS) and len({s.name for s in SCENARIOS}) == len(SCENARIOS)
     assert all(isinstance(s, MealScenario) for s in SCENARIOS)
+    assert {c for s in SCENARIOS for c in s.cuisines} == {"indian", "mediterranean"}                  # D-094: both cuisines are scored

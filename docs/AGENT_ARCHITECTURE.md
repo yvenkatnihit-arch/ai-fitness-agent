@@ -19,7 +19,8 @@ the eval harness and regression gate for them (`backend/evals/`, `python -m eval
 specialist (7.2), router + parallel spawn (7.3), composer (7.4), approvals via interrupt (7.5). **Phase 6 (plan generation) is complete** (edit-workout screen 6.9b committed).
 
 
-**Built, NOT committed:** Step 7.10d-3 (D-093): protein-dense foods in the meal roles and 12 high-protein dishes; measured on the real data, the
+**Built, NOT committed:** Step 7.10e-1 (D-094): the Mediterranean cuisine is ENABLED in the backend and its 86 new foods are loaded into the
+development database; a Mediterranean-only user now gets, and can approve, a Mediterranean meal plan (the frontend is next). Committed: Step 7.10d-3 (D-093): protein-dense foods in the meal roles and 12 high-protein dishes; measured on the real data, the
 Indian vegan and vegetarian fat-loss plans went from 55 and 69 to 75 and 82 percent of the protein target (a regression gate keeps it
 there); the vegan Mediterranean case stays at 48 percent (a decision for Venkat). Committed: 40 Mediterranean dishes (7.10d-1/2,
 D-091, D-092), a full Mediterranean week builds from the real data. Also Step 7.10c (D-090): a `cuisines` column through the food data pipeline, a loader gate, and 31 validated Mediterranean and

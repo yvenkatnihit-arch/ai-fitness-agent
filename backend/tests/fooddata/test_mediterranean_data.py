@@ -143,7 +143,8 @@ def test_the_indian_pool_is_unchanged_by_the_new_dishes():
     assert not {f.key for f in pool["breakfast"].roles["main"]} & {"ful_medames", "pita_white", "yogurt_walnut_honey"}
 
 
-def test_the_loader_can_read_the_whole_validated_file_and_holds_back_only_mediterranean_only_foods():
+def test_the_loader_can_read_the_whole_validated_file_and_holds_back_only_mediterranean_only_foods(monkeypatch):
+    monkeypatch.setattr("app.core.vocabulary.CUISINES", ("indian",))                       # as if Mediterranean were not enabled
     loadable, waiting = load.split_by_enabled(load.read_validated())
     assert set(waiting) == {"mediterranean"} and {"falafel", "mujaddara", "lentil_soup"} <= set(waiting["mediterranean"])
     assert all(f.cuisines == ("indian",) for f in loadable)

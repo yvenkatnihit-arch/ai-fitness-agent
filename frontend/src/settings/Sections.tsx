@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Choice, FieldError, Legend, inputClass } from '../components/ui'
 import {
-  ACTIVITY_LEVELS, DIETS, EQUIPMENT, EXPERIENCE, GOALS, INJURY_AREAS, LOCATIONS, PACES, SCREENING_QUESTIONS, SESSION_MINUTES, SEXES,
+  ACTIVITY_LEVELS, CUISINES, DIETS, EQUIPMENT, EXPERIENCE, GOALS, INJURY_AREAS, LOCATIONS, PACES, SCREENING_QUESTIONS, SESSION_MINUTES, SEXES,
 } from '../onboarding/options'
 import { SectionCard } from './SectionCard'
 import { changedFields, parseList, type Changes, type Profile } from './types'
@@ -94,16 +94,23 @@ export function GoalSection({ profile, saving, error, onSave }: SectionProps) {
 
 export function FoodSection({ profile, saving, error, onSave }: SectionProps) {
   const [diet, setDiet] = useState(profile.diet_type)
+  const [cuisines, setCuisines] = useState(profile.cuisines)
   const [dislikes, setDislikes] = useState(profile.disliked_foods.join(', '))
   const fe = (f: string) => error?.fieldErrors[f]
-  const changes = changedFields(profile, { diet_type: diet, disliked_foods: parseList(dislikes) })
+  const changes = changedFields(profile, { diet_type: diet, cuisines, disliked_foods: parseList(dislikes) })
+  const toggleCuisine = (value: string) => setCuisines(cuisines.includes(value) ? cuisines.filter((c) => c !== value) : [...cuisines, value])
   return (
-    <SectionCard title="Food" hint="A new diet or dislikes means your meal plan needs to be made again." changes={changes}
+    <SectionCard title="Food" hint="A new diet, cuisine or dislikes means your meal plan needs to be made again." changes={changes}
                  saving={saving} error={error} onSave={onSave}>
       <fieldset className="flex flex-col gap-2">
         <Legend>Diet</Legend>
         {DIETS.map(([value, label, hint]) => <Choice key={value} type="radio" name="diet" checked={diet === value} onChange={() => setDiet(value)} label={label} hint={hint} />)}
         <FieldError message={fe('diet_type')} />
+      </fieldset>
+      <fieldset className="flex flex-col gap-2">
+        <Legend>Cuisines (pick one or more)</Legend>
+        {CUISINES.map(([value, label, hint]) => <Choice key={value} type="checkbox" name="cuisines" checked={cuisines.includes(value)} onChange={() => toggleCuisine(value)} label={label} hint={hint} />)}
+        <FieldError message={fe('cuisines')} />
       </fieldset>
       <label className={labelClass}>Foods you dislike (separate with commas)
         <input className={inputClass} value={dislikes} onChange={(e) => setDislikes(e.target.value)} />

@@ -34,6 +34,7 @@ export const PACES = [
 // Only cuisines that have validated food data (backend Cuisine). More are added after their data is loaded.
 export const CUISINES = [
   ['indian', 'Indian', 'Rotis, dals, sabzis, rice dishes, South Indian breakfasts and more'],
+  ['mediterranean', 'Mediterranean and Middle Eastern', 'Grain bowls, hummus, falafel, grilled fish and chicken, salads, yogurt'],
 ] as const
 
 export const DIETS = [

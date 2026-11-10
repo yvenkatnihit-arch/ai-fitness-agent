@@ -36,4 +36,6 @@ SCENARIOS: list[MealScenario] = [
     MealScenario("non-vegetarian, muscle gain, dislikes fish and paneer", "non_vegetarian", MUSCLE_M, ("fish", "paneer")),
     MealScenario("non-vegetarian, kidney flag (protein cap)", "non_vegetarian", KIDNEY_M),
     MealScenario("vegetarian, fat loss, dislikes paneer, soya, mushroom", "vegetarian", FAT_LOSS_F, ("paneer", "soya", "mushroom")),
+    MealScenario("Mediterranean, vegetarian, fat loss, woman", "vegetarian", FAT_LOSS_F, (), ("mediterranean",)),
+    MealScenario("Mediterranean, non-vegetarian, muscle gain, man", "non_vegetarian", MUSCLE_M, (), ("mediterranean",)),
 ]

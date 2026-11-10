@@ -89,7 +89,13 @@ def test_the_loader_refuses_an_unknown_cuisine_with_a_clear_message():
         load.to_food_row(validated_row(cuisines="martian"))
 
 
-def test_a_food_is_loaded_with_only_its_enabled_cuisines_and_one_with_none_is_held_back():
+@pytest.fixture
+def only_indian_enabled(monkeypatch):
+    """The loader gate is about ANY cuisine the app has not enabled yet; Mediterranean is live (D-094), so pretend only Indian is."""
+    monkeypatch.setattr("app.core.vocabulary.CUISINES", ("indian",))
+
+
+def test_a_food_is_loaded_with_only_its_enabled_cuisines_and_one_with_none_is_held_back(only_indian_enabled):
     foods = [load.to_food_row(validated_row(key="a")), load.to_food_row(validated_row(key="b", cuisines="mediterranean")),
              load.to_food_row(validated_row(key="c", cuisines="indian;mediterranean"))]
     loadable, waiting = load.split_by_enabled(foods)
@@ -98,7 +104,7 @@ def test_a_food_is_loaded_with_only_its_enabled_cuisines_and_one_with_none_is_he
     assert load.split_by_enabled(foods[:1]) == ([foods[0]], {})
 
 
-def test_the_loader_reports_what_it_holds_back_and_loads_the_rest(monkeypatch, capsys):
+def test_the_loader_reports_what_it_holds_back_and_loads_the_rest(monkeypatch, capsys, only_indian_enabled):
     rows = [load.to_food_row(validated_row(key="hummus", cuisines="mediterranean")), load.to_food_row(validated_row(key="dal"))]
     monkeypatch.setattr(load, "read_validated", lambda: rows)
     class Done(Exception):
@@ -119,9 +125,13 @@ def test_the_upsert_writes_the_cuisines_column():
     assert "cuisines" in load.UPSERT and "cuisines = excluded.cuisines" in load.UPSERT
 
 
-def test_the_real_validated_file_can_always_be_loaded_today():
-    """While Mediterranean is not enabled, every Indian food (shared ones included) is loadable and only Mediterranean-only foods wait."""
+def test_the_real_validated_file_can_always_be_loaded_today(monkeypatch):
+    """With every enabled cuisine the whole file loads; with only Indian enabled, the Mediterranean-only foods wait (the gate still works)."""
     foods = load.read_validated()
+    everything, none_waiting = load.split_by_enabled(foods)
+    assert none_waiting == {} and len(everything) == len(foods)                  # Mediterranean is enabled (D-094)
+    import app.core.vocabulary as vocab
+    monkeypatch.setattr(vocab, "CUISINES", ("indian",))
     loadable, waiting = load.split_by_enabled(foods)
     assert set(waiting) <= {"mediterranean"}
     assert len(loadable) + sum(len(v) for v in waiting.values()) == len(foods)
@@ -137,7 +147,7 @@ def test_units_follow_their_foods_so_held_back_foods_leave_no_orphan_units():
     assert load.units_of_loaded_foods(units, {"dal", "falafel"}) == (units, 0)
 
 
-def test_the_real_unit_file_has_no_unit_the_loader_would_choke_on():
+def test_the_real_unit_file_has_no_unit_the_loader_would_choke_on(only_indian_enabled):
     """What `fooddata.load` really does: keep only the units of loadable foods, then every one of them must have a loaded food."""
     loadable, _ = load.split_by_enabled(load.read_validated())
     keys = {f.key for f in loadable}

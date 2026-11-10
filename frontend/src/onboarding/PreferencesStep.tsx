@@ -37,7 +37,7 @@ export function PreferencesStep({ onSaved }: StepProps) {
             <Choice key={value} type="checkbox" name="cuisines" checked={cuisines.includes(value)}
                     onChange={() => toggleCuisine(value)} label={label} hint={hint} />
           ))}
-          <p className="text-xs text-muted">More cuisines are coming. We add each one only after its food data is checked.</p>
+          <p className="text-xs text-muted">More cuisines are coming. We add each one only after its food data is checked. You can change this later in Settings.</p>
           <FieldError message={fieldError('cuisines')} />
         </fieldset>
 

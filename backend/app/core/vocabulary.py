@@ -32,7 +32,7 @@ Equipment = Literal[
 # How fast the user wants to go (D-042). Only picks a point inside the safety limits, never beyond them.
 Pace = Literal["slow", "normal", "fast"]
 # Cuisines with validated food data. A new one is added here only after its foods are loaded.
-Cuisine = Literal["indian"]
+Cuisine = Literal["indian", "mediterranean"]
 MAX_CUISINES = 5   # the most cuisines one person can pick (the same number is in the profiles.cuisines check)
 
 # What an exercise trains and how it moves (the exercise library and the workout splits both use these).

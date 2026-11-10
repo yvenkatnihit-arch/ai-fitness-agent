@@ -87,6 +87,16 @@ test('dislikes are typed as a comma-separated list', async () => {
   expect(screen.queryByText(/New daily target/)).not.toBeInTheDocument()                  // targets did not change
 })
 
+test('cuisines are edited as a list and only the list is sent', async () => {
+  const calls = fakeFetch({ 'GET /profile': { body: PROFILE }, 'PATCH /profile': { body: update({ changed: ['cuisines'], meal_plan_stale: true }) } })
+  render()
+  expect(await screen.findByLabelText(/^Indian/)).toBeChecked()
+  fireEvent.click(screen.getByLabelText(/^Mediterranean/))
+  fireEvent.click(save('Save food'))
+  await screen.findByRole('region', { name: 'What changed' })
+  expect(calls.find((c) => c.method === 'PATCH')!.body).toEqual({ cuisines: ['indian', 'mediterranean'] })
+})
+
 test('a goal change sends only the goal fields that changed', async () => {
   const calls = fakeFetch({ 'GET /profile': { body: PROFILE }, 'PATCH /profile': { body: update({ changed: ['goal_type', 'target_weight_kg'], workout_plan_stale: true }) } })
   render()

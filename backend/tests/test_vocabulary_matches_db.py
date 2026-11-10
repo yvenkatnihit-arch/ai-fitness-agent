@@ -54,5 +54,7 @@ def test_injury_areas_match():
 
 def test_the_cuisine_lists_in_both_tables_match_the_vocabulary():
     """foods.cuisines and profiles.cuisines each have a check list; both must equal Cuisine (a new cuisine is added to all three together)."""
-    lists = [set(re.findall(r"'(\w+)'", m)) for m in re.findall(r"cuisines\s+<@\s+array\[([^\]]*)\]", SQL)]
-    assert len(lists) == 2 and all(values == set(v.CUISINES) for values in lists)
+    # Every migration that sets the lists is in the history; the LAST definition of each table's list is the one in force.
+    found = re.findall(r"public\.(foods|profiles)\s+add constraint \w+\s+check \(cuisines\s+<@\s+array\[([^\]]*)\]", SQL, flags=re.S)
+    latest = {table: set(re.findall(r"'(\w+)'", values)) for table, values in found}      # later migrations overwrite earlier ones
+    assert set(latest) == {"foods", "profiles"} and all(values == set(v.CUISINES) for values in latest.values())

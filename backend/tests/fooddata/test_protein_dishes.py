@@ -84,7 +84,8 @@ def test_the_new_category_has_portion_and_validation_rules():
     assert HALF_UNIT_BOUNDS["dish_protein"] == (1, 4) and "dish_protein" in DISH_KCAL_RANGES
 
 
-def test_the_loader_still_reads_everything_and_holds_back_only_mediterranean_only_foods():
+def test_the_loader_still_reads_everything_and_holds_back_only_mediterranean_only_foods(monkeypatch):
+    monkeypatch.setattr("app.core.vocabulary.CUISINES", ("indian",))                       # as if Mediterranean were not enabled
     from fooddata import load
     loadable, waiting = load.split_by_enabled(load.read_validated())
     assert set(waiting) == {"mediterranean"}

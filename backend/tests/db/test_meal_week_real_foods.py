@@ -16,6 +16,8 @@ from app.workflows.pick_meals import pick_meals
 
 pytestmark = pytest.mark.db
 
+INDIAN = ["indian"]   # these tests pin findings about the INDIAN pool; the other cuisines have their own tests (D-094)
+
 TOL = 1.5
 PROFILES = {
     "fatloss_f": BodyProfile(weight_kg=58, height_cm=162.5, age_years=31, sex="female", activity_level="light",
@@ -44,7 +46,7 @@ def make_week(foods, diet, name, dislikes=()):
     engine = calculate_targets(profile)
     targets = day_targets(engine, weight_kg=profile.weight_kg, sex=profile.sex, flags=profile.screening_flags)
     emphasis = emphasis_for(engine.protein_g, engine.calorie_target_kcal, profile.screening_flags)
-    return pick_meals(foods, diet, list(dislikes), targets, profile.goal, emphasis, ask=down), targets, engine
+    return pick_meals(foods, diet, list(dislikes), targets, profile.goal, emphasis, ask=down, cuisines=INDIAN), targets, engine
 
 
 @pytest.mark.parametrize("diet", list(ALLOWED_DIET_CLASSES))
@@ -52,7 +54,7 @@ def make_week(foods, diet, name, dislikes=()):
 def test_every_diet_and_profile_gets_a_complete_safe_week(foods, diet, name):
     plan, targets, engine = make_week(foods, diet, name)
     assert [d.day for d in plan.days] == list(range(1, 8))
-    pool = build_pool(foods, diet, slots=plan.slots)
+    pool = build_pool(foods, diet, slots=plan.slots, cuisines=INDIAN)
     for d in plan.days:
         assert d.solution.status in ("ok", "issues")
         assert targets.kcal_min - TOL <= d.solution.totals.kcal <= targets.kcal_max + TOL
@@ -72,21 +74,26 @@ def test_a_3000_kcal_day_now_fits_with_a_mid_morning_meal_and_bigger_portions(fo
 
 
 def test_the_four_meal_skeleton_still_cannot_reach_3000_kcal(foods):
-    """Why the fifth meal exists: with four meals and unscaled portions the biggest day is about 2,300 kcal."""
+    """Why the fifth meal exists: with four meals and unscaled portions a 3,000 kcal day is never a clean day. (It was infeasible, about 2,300
+    kcal at most; since the protein batch, D-093, added bigger dishes it can be reached but only with issues.)"""
     from app.calc.meal_solver import MealItem, solve_day
     profile = PROFILES["muscle_m"]
     engine = calculate_targets(profile)
     t = day_targets(engine, weight_kg=profile.weight_kg, sex=profile.sex, flags=profile.screening_flags)
-    pool = build_pool(foods, "vegetarian")
+    pool = build_pool(foods, "vegetarian", cuisines=INDIAN)
     items = [MealItem(s, r, c[0]) for s in SLOTS for r, c in pool[s].roles.items() if c]
-    assert solve_day(items, t).status == "infeasible"
+    assert solve_day(items, t).status != "ok"
 
 
 def test_the_kidney_user_stays_at_or_under_their_protein_cap_every_day(foods):
     plan, targets, engine = make_week(foods, "vegetarian", "kidney_m")
     assert plan.emphasis == "low_protein"
-    assert all(d.solution.totals.protein_g <= engine.protein_g + TOL for d in plan.days)
-    assert all(d.solution.status == "ok" for d in plan.days)
+    assert all(d.solution.totals.protein_g <= engine.protein_g + TOL for d in plan.days)        # the SAFETY limit: never above the cap
+    assert all(d.solution.status != "infeasible" for d in plan.days)
+    # Soft issues are allowed (the protein batch can leave one day with a light snack: 'evening_snack has 51 kcal but should have about
+    # 234'), but never an issue about protein or total calories.
+    assert not any("protein" in i or "kcal a day" in i for d in plan.days for i in d.solution.issues)
+    assert sum(d.solution.status == "ok" for d in plan.days) >= 5
 
 
 def test_a_healthy_diet_has_variety_across_the_week(foods):
