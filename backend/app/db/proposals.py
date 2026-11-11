@@ -40,18 +40,19 @@ def recent_pending(conn: Connection, proposal_type: str, within_seconds: int) ->
     ).fetchone()
 
 
-def replace_pending(admin_conn: Connection, user_id: UUID, proposal_type: str, summary: str, payload: dict) -> tuple:
-    """Admin: an older pending generated proposal of this type is no longer wanted (expired); save the new one as pending."""
+def replace_pending(admin_conn: Connection, user_id: UUID, proposal_type: str, summary: str, payload: dict,
+                    source: str = "plan_generation") -> tuple:
+    """Admin: an older pending proposal of this type and source is no longer wanted (expired); save the new one as pending."""
     admin_conn.execute(
         """update public.plan_proposals set status = 'expired', decided_at = now()
-           where user_id = %s and status = 'pending' and type = %s and source = 'plan_generation'""",
-        (user_id, proposal_type),
+           where user_id = %s and status = 'pending' and type = %s and source = %s""",
+        (user_id, proposal_type, source),
     )
     return admin_conn.execute(
         f"""insert into public.plan_proposals (user_id, type, source, summary, payload)
-            values (%s, %s, 'plan_generation', %s, %s)
+            values (%s, %s, %s, %s, %s)
             returning {PROPOSAL_COLUMNS}""",
-        (user_id, proposal_type, summary, Jsonb(payload)),
+        (user_id, proposal_type, source, summary, Jsonb(payload)),
     ).fetchone()
 
 

@@ -6,8 +6,8 @@ from datetime import date
 import pytest
 
 from app.agents.context import RunContext
-from app.agents.plan_tools import (GET_MY_MEAL_PLAN_DAY, GET_MY_TARGETS, GET_MY_WORKOUT_DAY, GET_TODAY_LOGGED, NO_MEAL_PLAN, NO_TARGETS,
-                                   NO_WORKOUT_PLAN, DayArgs, NoArgs)
+from app.agents.plan_tools import (GET_MY_MEAL_PLAN_DAY, GET_MY_TARGETS, GET_MY_WORKOUT_DAY, GET_TODAY_LOGGED, GET_WEEK_LOGGED, NO_MEAL_PLAN,
+                                   NO_TARGETS, NO_WORKOUT_PLAN, DayArgs, NoArgs)
 from app.db import admin_transaction
 from app.llm.client import LLMBusy
 from tests.db.test_onboarding_complete import client, onboard, users  # noqa: F401  (shared fixtures)
@@ -33,7 +33,7 @@ def on_a_wednesday(monkeypatch):
 
 
 def run(tool, user, args=None):
-    return tool.run(RunContext(user), args or (NoArgs() if tool in (GET_MY_TARGETS, GET_TODAY_LOGGED) else DayArgs()))
+    return tool.run(RunContext(user), args or (NoArgs() if tool in (GET_MY_TARGETS, GET_TODAY_LOGGED, GET_WEEK_LOGGED) else DayArgs()))
 
 
 def approved_meal_plan(client):
@@ -157,3 +157,46 @@ def test_a_tool_only_ever_reads_the_callers_own_data(client, users, on_a_wednesd
     assert run(GET_MY_MEAL_PLAN_DAY, other) == {"error": NO_MEAL_PLAN}
     assert run(GET_MY_WORKOUT_DAY, other) == {"error": NO_WORKOUT_PLAN}
     assert run(GET_TODAY_LOGGED, other)["meals_logged"] == 0
+
+
+# ---------- the last 7 days (7.8 -> Step 8.4) ----------
+
+def log(client, roti_pieces, days_ago=0):
+    from datetime import timedelta
+    from app.core.time import india_today
+    body = {"slot": "lunch", "logged_on": (india_today() - timedelta(days=days_ago)).isoformat(),
+            "items": [{"food_id": food_id("roti"), "quantity": roti_pieces, "unit": "piece"}]}
+    response = client.post("/meals", json=body)
+    assert response.status_code == 201, response.text
+    return response.json()
+
+
+def test_the_week_summary_adds_up_the_days_that_were_logged_and_leaves_the_rest_unlogged(client, users):
+    onboard(client)
+    a, b = log(client, 2, days_ago=0), log(client, 4, days_ago=2)
+    got = run(GET_WEEK_LOGGED, users[0])
+    assert got["days_logged"] == 2 and len(got["days"]) == 7 and [d["logged"] for d in got["days"]].count(False) == 5
+    assert got["days"][-1]["kcal"] == round(a["totals"]["kcal"], 1) and got["days"][-3]["kcal"] == round(b["totals"]["kcal"], 1)
+    assert got["average_when_logged"]["kcal"] == round((a["totals"]["kcal"] + b["totals"]["kcal"]) / 2, 1)
+    shown = client.get("/targets/current").json()
+    assert got["calorie_target"] == shown["calorie_target_kcal"] and got["protein_target_g"] == shown["protein_g"]
+
+
+def test_an_empty_week_says_so(client, users):
+    onboard(client)
+    got = run(GET_WEEK_LOGGED, users[0])
+    assert got["days_logged"] == 0 and "Nothing logged" in got["note"] and "average_when_logged" not in got
+
+
+def test_a_user_who_must_not_see_numbers_gets_only_the_logged_days(client, users):
+    onboard(client, eating_disorder_history=True)
+    log(client, 2)
+    got = run(GET_WEEK_LOGGED, users[0])
+    assert got["days_logged"] == 1 and len(got["logged_on"]) == 1 and "note" in got
+    assert not any(w in repr(got).lower() for w in ("kcal", "protein", "carbs", "average", "target"))
+
+
+def test_another_users_week_is_never_mixed_in(client, users):
+    onboard(client)
+    log(client, 2)
+    assert run(GET_WEEK_LOGGED, users[1])["days_logged"] == 0

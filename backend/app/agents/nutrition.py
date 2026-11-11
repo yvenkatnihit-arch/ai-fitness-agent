@@ -3,7 +3,7 @@
 from uuid import UUID
 
 from app.agents.context import RunContext
-from app.agents.food_tools import PORTION_NUTRITION, SEARCH_FOODS
+from app.agents.food_tools import FIND_FOODS, PORTION_NUTRITION, SEARCH_FOODS
 from app.agents.gemini_model import gemini_model
 from app.agents.runner import Model, RunResult, build_specialist
 from app.agents.spec import SpecialistSpec
@@ -18,12 +18,16 @@ NUTRITION_SPEC = SpecialistSpec(
         "For a plain question quote the per-100 g values and unit weights exactly as search_foods returned them. For ANY question "
         "about an amount (150 g, 3 rotis, a katori, a glass) call portion_nutrition with the food's key, the quantity and the unit "
         "('g' or a unit from search_foods) and quote its numbers exactly; if it reports an error, use the units it lists, or say what "
-        "is missing. Keep answers to two or three short sentences. You do not give medical advice."
+        "is missing. For a question that asks for foods ranked or suggested by a nutrient (which foods are high in protein, low calorie "
+        "options, vegetarian protein sources), call find_foods and list what it returns in the SAME order with its numbers exactly; its "
+        "values are per 100 g, so say so, and never re-sort, add or invent foods. For snack questions use kind=snacks; for ready-to-eat dishes "
+        "use kind=dishes; if the result has a note about dry ingredients, mention it in a few words. Keep answers to two or three short sentences "
+        "(a short list for rankings). You do not give medical advice."
     ),
-    tools=frozenset({"search_foods", "portion_nutrition"}),
+    tools=frozenset({"search_foods", "portion_nutrition", "find_foods"}),
     tier="small",
     max_tokens_per_call=400,
-    max_steps=5,            # search, then one portion calculation per food asked about, then the answer
+    max_steps=5,            # search, then one portion calculation per food asked about (or one ranking), then the answer
     token_budget=6_000,
     timeout_s=30.0,
 )
@@ -33,6 +37,7 @@ def nutrition_registry() -> ToolRegistry:
     registry = ToolRegistry()
     registry.register(SEARCH_FOODS)
     registry.register(PORTION_NUTRITION)
+    registry.register(FIND_FOODS)
     return registry
 
 

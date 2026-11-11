@@ -39,7 +39,8 @@ class RouterResult:
     @property
     def passed(self) -> bool:
         if "borderline" in self.tags:
-            return self.got in (self.expected, ()) or ("also_my_plan" in self.tags and self.got == ("my_plan",))
+            extra = {tag[len("also_"):] for tag in self.tags if tag.startswith("also_")}          # tags like also_my_plan, also_exercises
+            return self.got in (self.expected, ()) or (len(self.got) == 1 and self.got[0] in extra)
         return sorted(self.got) == sorted(self.expected)          # the order the router lists specialists in does not matter
 
 
@@ -84,6 +85,8 @@ def run_router_eval(call: Callable[..., LLMResult] = call_llm, *, use_cache: boo
             calls += 1
             hit = {"text": r.text, "tokens": r.input_tokens + r.output_tokens, "cost": r.cost_usd, "ms": r.latency_ms}
             cache[key] = hit
+            if use_cache:
+                _save_cache(cache)          # keep progress: a dropped connection later in the run must not throw away what was paid for
         valid, off_menu, dup = raw_checks(hit["text"], set(menu))
         got = tuple(a.specialist for a in parse_assignments(hit["text"], menu))
         out.append(RouterResult(message, expected, got, tags, valid, off_menu, dup, hit["tokens"], hit["cost"], hit["ms"]))
@@ -96,6 +99,8 @@ def summarize(results: list[RouterResult]) -> dict:
     scored = [r for r in results if "borderline" not in r.tags]
     food = [r for r in scored if "nutrition" in r.expected]
     mine = [r for r in scored if "my_plan" in r.expected]
+    exercises = [r for r in scored if "exercises" in r.expected]
+    logging = [r for r in scored if "meal_logger" in r.expected]
     other = [r for r in scored if not r.expected]
     rate = lambda rs, f: sum(f(r) for r in rs) / len(rs) if rs else 1.0   # noqa: E731
     return {
@@ -103,6 +108,8 @@ def summarize(results: list[RouterResult]) -> dict:
         "exact_accuracy": rate(scored, lambda r: r.passed),
         "nutrition_recall": rate(food, lambda r: r.passed),
         "my_plan_recall": rate(mine, lambda r: r.passed),
+        "exercises_recall": rate(exercises, lambda r: r.passed),
+        "meal_logger_recall": rate(logging, lambda r: r.passed),
         "off_topic_specificity": rate(other, lambda r: r.passed),
         "borderline_acceptable": rate([r for r in results if "borderline" in r.tags], lambda r: r.passed),
         "invalid_json_rate": rate(results, lambda r: not r.valid_json),
@@ -147,6 +154,8 @@ def run_followup_eval(call: Callable[..., LLMResult] = call_llm, *, use_cache: b
             calls += 1
             hit = {"text": r.text, "tokens": r.input_tokens + r.output_tokens, "cost": r.cost_usd, "ms": r.latency_ms}
             cache[key] = hit
+            if use_cache:
+                _save_cache(cache)          # keep progress: a dropped connection later in the run must not throw away what was paid for
         assignments = parse_assignments(hit["text"], menu)
         task = assignments[0].task if assignments else ""
         resolved = "borderline" in tags or not mentions or any(w in task.lower() for w in mentions)

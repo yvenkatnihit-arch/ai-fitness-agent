@@ -7,6 +7,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from pydantic import BaseModel, ConfigDict
 
 from app.agents import approvals
+from app.agents.claims import PREPARED
 from app.agents.chat_graph import answer_message, resume_chat
 from app.agents.menu import MenuEntry
 from app.agents.router import Assignment
@@ -84,7 +85,7 @@ def test_a_proposal_id_that_is_not_a_uuid_is_ignored():
 def test_the_run_pauses_with_a_card_and_applies_nothing_until_the_user_answers():
     kw = setup(propose_tool("propose_plan", P1))
     out = answer_message("plan please", UID, conversation_id="c1", **kw)
-    assert out["reply"] == "I made a proposal."
+    assert out["reply"] == PREPARED                                   # the words about a proposal come from code, not the model (D-109)
     assert out["waiting_for"] == {"kind": "approve_proposal", "proposal_id": P1, "summary": f"Plan {P1[:4]}"}
     assert kw["decide"].calls == [] and out["decisions"] == []
 
@@ -162,7 +163,7 @@ def test_without_a_checkpointer_nothing_pauses_and_the_proposal_stays_pending():
     kw = setup(propose_tool("propose_plan", P1))
     kw["checkpointer"] = None
     out = answer_message("plan please", UID, **kw)
-    assert out["waiting_for"] is None and kw["decide"].calls == [] and out["reply"] == "I made a proposal."
+    assert out["waiting_for"] is None and kw["decide"].calls == [] and out["reply"] == PREPARED
 
 
 # ---------- the real decision helper ----------

@@ -39,18 +39,19 @@ def foods_for_logging(conn: Connection, food_ids: list[int]) -> dict[int, Loggab
             for r in rows}
 
 
-def insert_meal(conn: Connection, logged_on: date, slot: str, source: str, items: list[NewItem]) -> UUID:
+def insert_meal(conn: Connection, logged_on: date, slot: str, source: str, items: list[NewItem], user_id: UUID | None = None) -> UUID:
+    """As the signed-in user (user_id None: auth.uid()), or, for an approved chat proposal applied on the admin connection, for the named user."""
     meal_id = conn.execute(
         """insert into public.meal_logs (user_id, logged_on, slot, source)
-           values (auth.uid(), %s, %s, %s) returning id""", (logged_on, slot, source)).fetchone()[0]
+           values (coalesce(%s, auth.uid()), %s, %s, %s) returning id""", (user_id, logged_on, slot, source)).fetchone()[0]
     for item in items:
         n = item.nutrition
         conn.execute(
             """insert into public.meal_log_items
                  (meal_log_id, user_id, food_id, quantity, unit, grams, kcal, protein_g, carbs_g, fat_g,
                   match_confidence)
-               values (%s, auth.uid(), %s, %s, %s, %s, %s, %s, %s, %s, 1.0)""",  # 1.0: picked from a list
-            (meal_id, item.food_id, item.quantity, item.unit, item.grams, n.kcal, n.protein_g, n.carbs_g, n.fat_g))
+               values (%s, coalesce(%s, auth.uid()), %s, %s, %s, %s, %s, %s, %s, %s, 1.0)""",  # 1.0: picked from a list
+            (meal_id, user_id, item.food_id, item.quantity, item.unit, item.grams, n.kcal, n.protein_g, n.carbs_g, n.fat_g))
     return meal_id
 
 
@@ -73,6 +74,15 @@ def meals_on(conn: Connection, day: date) -> list[dict]:
             "fat_g": float(r[13]),
         })
     return list(meals.values())
+
+
+def daily_totals(conn: Connection, start: date, end: date) -> dict[date, dict[str, float]]:
+    """Calories and macros per day for the days between start and end (inclusive) that have at least one logged item. RLS: only the caller's logs."""
+    rows = conn.execute(
+        """select m.logged_on, sum(i.kcal), sum(i.protein_g), sum(i.carbs_g), sum(i.fat_g)
+           from public.meal_logs m join public.meal_log_items i on i.meal_log_id = m.id
+           where m.logged_on between %s and %s group by m.logged_on""", (start, end)).fetchall()
+    return {r[0]: {"kcal": float(r[1]), "protein_g": float(r[2]), "carbs_g": float(r[3]), "fat_g": float(r[4])} for r in rows}
 
 
 def delete_meal(conn: Connection, meal_id: UUID) -> bool:

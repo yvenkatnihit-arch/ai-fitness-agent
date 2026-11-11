@@ -19,6 +19,7 @@ from langgraph.types import Command, Send, interrupt
 
 from app.agents.approvals import APPROVE, REJECT, Decide, decide_with_workflow
 from app.agents.composer import compose
+from app.agents.claims import settle_answer
 from app.agents.context import RunContext
 from app.agents.fallback import NOTHING_FITS, nothing_fits_reply  # noqa: F401  (NOTHING_FITS is re-exported: tests and callers import it from here)
 from app.agents.gemini_model import gemini_model
@@ -94,7 +95,9 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
         registry = entry.registry()
         brain = make_model(entry.spec, registry) if make_model else gemini_model(entry.spec, registry, user_id=user_id, flow="chat")
         r = build_specialist(entry.spec, registry, brain).run(assignment.task, RunContext(user_id))
-        return {"results": [SpecialistOutcome(specialist=r.specialist, status=r.status, answer=r.answer, steps=r.steps,
+        can_propose = any(registry.get(name).scope == "propose" for name in entry.spec.tools)
+        answer = settle_answer(can_propose, any(t.proposal_id for t in r.tools), r.answer)   # words about a proposal come from code (D-109)
+        return {"results": [SpecialistOutcome(specialist=r.specialist, status=r.status, answer=answer, steps=r.steps,
                                               tokens=r.tokens, tools=r.tools)]}
 
     def finish(state: ChatState) -> dict[str, Any]:

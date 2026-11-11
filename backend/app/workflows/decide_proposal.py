@@ -17,6 +17,7 @@ from app.db import meal_plans as meal_repo
 from app.db import targets as targets_repo
 from app.db import workout_plans as repo
 from app.db.meal_foods import MealProfile, list_pool_foods, read_meal_profile
+from app.workflows import meal_log_proposal
 from app.workflows.inputs import MealTargets, meal_targets
 
 
@@ -72,6 +73,9 @@ def approve(user_id: UUID, proposal_id: UUID) -> tuple:
             if meal is None:   # cannot happen: the context is loaded whenever the type is meal_change
                 raise ProposalCannotBeApplied("Please try again.")
             _apply_meal(conn, user_id, payload, *meal)
+            return repo.mark_decided(conn, user_id, proposal_id, "approved")
+        if kind == "meal_log":
+            meal_log_proposal.apply(conn, user_id, payload)          # re-resolves every food and amount from the database
             return repo.mark_decided(conn, user_id, proposal_id, "approved")
         if kind != "workout_change":
             raise ProposalCannotBeApplied("This kind of change cannot be approved yet.")

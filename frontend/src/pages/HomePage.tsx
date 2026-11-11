@@ -3,6 +3,9 @@ import { Link, Navigate } from 'react-router'
 
 import { useAuth } from '../auth/context'
 import { ButtonLink, FormError, PageShell } from '../components/ui'
+import { TodayPlans } from '../dashboard/TodayPlans'
+import { TodayProgress } from '../dashboard/TodayProgress'
+import type { Today } from '../dashboard/types'
 import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import type { OnboardingStatus } from '../onboarding/types'
@@ -18,6 +21,7 @@ export function HomePage() {
   const [status, setStatus] = useState<OnboardingStatus | null>(null)
   const [targets, setTargets] = useState<Targets | null>(null)
   const [forecast, setForecast] = useState<Forecast | null>(null)
+  const [today, setToday] = useState<Today | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
 
   useEffect(() => {
@@ -33,6 +37,9 @@ export function HomePage() {
           // The goal date is a bonus: if it can't load, the rest of the page still works.
           const dated = await api.get<Forecast>('/targets/forecast').catch(() => null)
           if (!cancelled) setForecast(dated)
+          // Today's summary is a bonus too: if it cannot load, the targets below still show.
+          const summary = await api.get<Today>('/dashboard/today').catch(() => null)
+          if (!cancelled) setToday(summary)
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof ApiError ? e : new ApiError(0, 'Something went wrong. Please try again.'))
@@ -75,6 +82,8 @@ export function HomePage() {
           <ButtonLink to="/settings" variant="secondary">Settings</ButtonLink>
         </div>
       )}
+      {today && <TodayProgress today={today} />}
+      {today && <TodayPlans today={today} />}
       {targets && <TargetsView targets={targets} />}
       {targets && forecast && <ForecastCard forecast={forecast} />}
       <Link to="/sources" className="text-center text-xs text-muted underline">Data sources</Link>

@@ -168,5 +168,5 @@ def test_an_injected_user_id_from_the_model_is_rejected(fake_db):
 
 
 def test_the_spec_is_cheap_and_read_only():
-    assert NUTRITION_SPEC.tier == "small" and NUTRITION_SPEC.tools == {"search_foods", "portion_nutrition"}
+    assert NUTRITION_SPEC.tier == "small" and NUTRITION_SPEC.tools == {"search_foods", "portion_nutrition", "find_foods"}
     assert all(nutrition_registry().get(t).scope == "read" for t in NUTRITION_SPEC.tools)

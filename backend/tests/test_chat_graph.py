@@ -83,12 +83,16 @@ def test_route_message_makes_one_logged_small_call():
     assert kw["max_tokens"] == 200 and kw["json_mode"] is True and len(messages[1][1]) == 2000
 
 
-def test_the_real_menu_has_only_read_only_specialists():
+def test_the_real_menu_only_the_meal_logger_can_propose_and_everything_else_is_read_only():
     menu = default_menu()
-    assert set(menu) == {"nutrition", "my_plan"}
-    for entry in menu.values():
+    assert set(menu) == {"nutrition", "my_plan", "exercises", "meal_logger"}
+    proposers = set()
+    for name, entry in menu.items():
         reg = entry.registry()
-        assert reg.names() == entry.spec.tools and all(reg.get(t).scope == "read" for t in entry.spec.tools)
+        assert reg.names() == entry.spec.tools
+        if any(reg.get(t).scope == "propose" for t in entry.spec.tools):
+            proposers.add(name)
+    assert proposers == {"meal_logger"}                                  # and even it only prepares a proposal: the user's approval writes anything
 
 
 # ---------- the graph ----------

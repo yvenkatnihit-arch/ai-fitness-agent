@@ -100,8 +100,9 @@ class Specialist:
         try:
             args = tool.args_model.model_validate(call.args)       # strict: unknown fields (user_id too) are errors
         except ValidationError as e:
-            record("bad_args", f"{len(e.errors())} problem(s)")
-            return {"error": "Those arguments are not valid.", "problems": [x["msg"] for x in e.errors()][:5]}
+            where = "; ".join(f"{'.'.join(str(p) for p in x['loc'])}: {x['msg']}" for x in e.errors()[:5])   # field names and messages, never the values
+            record("bad_args", f"{len(e.errors())} problem(s): {where}"[:300])
+            return {"error": "Those arguments are not valid.", "problems": [f"{'.'.join(str(p) for p in x['loc'])}: {x['msg']}" for x in e.errors()][:5]}
         try:
             output = tool.run(ctx, args)                           # identity comes from ctx, never from the model
         except Exception as e:  # noqa: BLE001 - a failing tool must not crash the run

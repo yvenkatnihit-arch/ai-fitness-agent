@@ -42,7 +42,10 @@ def test_another_users_choice_is_not_visible_or_changeable(user_conn, add_user, 
     assert repo.read_split_inputs(user_conn).chosen_key is None     # their own row, not ours
     repo.save_split_choice(user_conn, "full_body_4")
     user_conn.execute("reset role")
-    keys = {r[0] for r in user_conn.execute("select split_key from public.profiles where split_key is not null")}
+    # Only the two throwaway users of THIS test (a real account in the shared database may have a split of its own).
+    keys = {r[0] for r in user_conn.execute(
+        """select p.split_key from public.profiles p join auth.users u on u.id = p.id
+           where p.split_key is not null and u.email like 'scratch-%@example.test'""")}
     assert keys == {"upper_lower_4", "full_body_4"}                  # two separate rows, neither overwrote the other
 
 

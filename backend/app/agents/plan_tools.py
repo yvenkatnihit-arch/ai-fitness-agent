@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.agents.context import RunContext
 from app.agents.tools import Tool
+from app.calc.week_summary import last_days, logged_days_only, summarize_week
 from app.calc.weekdays import DayName, day_name, resolve_day
 from app.core.time import india_today
 from app.db import active_plan
@@ -95,6 +96,21 @@ def _logged_today(ctx: RunContext, args: NoArgs) -> dict[str, Any]:
     return {"meals_logged": len(meals), "meals": foods, "totals_so_far": totals}
 
 
+def _logged_week(ctx: RunContext, args: NoArgs) -> dict[str, Any]:
+    today = india_today()
+    days = last_days(today)
+    with user_transaction(ctx.user_id) as conn:
+        totals = meals_repo.daily_totals(conn, days[0], today)
+        row = targets_repo.current_targets(conn)
+    hidden = bool(row[6]) if row else False
+    summary = summarize_week(totals, today, float(row[0]) if row else None, float(row[1]) if row else None)
+    if hidden:
+        return {**logged_days_only(summary["days"]), "note": "No calorie or macro numbers may be shared for this user."}
+    if summary["days_logged"] == 0:
+        summary["note"] = "Nothing logged in the last 7 days. They can log meals on the Log a meal screen."
+    return summary
+
+
 GET_MY_TARGETS = Tool("get_my_targets", "The user's own daily calorie and macro targets (calories, protein, fat, carbs) and why.",
                       NoArgs, _targets, scope="read")
 GET_MY_MEAL_PLAN_DAY = Tool("get_my_meal_plan_day", "What the user's approved meal plan says to eat on one day (meals, foods, portions).",
@@ -102,3 +118,5 @@ GET_MY_MEAL_PLAN_DAY = Tool("get_my_meal_plan_day", "What the user's approved me
 GET_MY_WORKOUT_DAY = Tool("get_my_workout_day", "What the user's approved workout plan has on one day (focus, exercises, sets, reps, rest, form cues).",
                           DayArgs, _workout_day, scope="read")
 GET_TODAY_LOGGED = Tool("get_today_logged", "What the user has logged eating TODAY and the totals so far.", NoArgs, _logged_today, scope="read")
+GET_WEEK_LOGGED = Tool("get_week_logged", "What the user logged eating over the last 7 days, per day, with averages and how many days were near their "
+                       "calorie target. Days without a log are not counted as zero.", NoArgs, _logged_week, scope="read")

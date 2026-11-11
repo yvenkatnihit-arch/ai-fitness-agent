@@ -37,9 +37,6 @@ export function TargetsView({ targets }: { targets: Targets }) {
         </section>
       )}
 
-      <p className="text-center text-xs text-muted">
-        Your weekly meal and workout plans are coming in a later update.
-      </p>
     </div>
   )
 }

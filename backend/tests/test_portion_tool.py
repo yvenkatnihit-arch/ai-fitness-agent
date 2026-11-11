@@ -81,7 +81,7 @@ def test_the_arguments_are_strict(args):
 
 def test_the_tool_is_read_only_and_on_the_specialists_allowlist():
     assert PORTION_NUTRITION.scope == "read" and "portion_nutrition" in NUTRITION_SPEC.tools
-    assert nutrition_registry().names() == {"search_foods", "portion_nutrition"}
+    assert nutrition_registry().names() == {"search_foods", "portion_nutrition", "find_foods"}
 
 
 def test_a_specialist_can_search_then_calculate_then_answer_with_the_tools_numbers(fake_db, monkeypatch):

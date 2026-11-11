@@ -165,7 +165,7 @@ export function ChatPage() {
 
       {card && (
         <section aria-label="Proposal waiting for your answer" className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm ring-2 ring-brand">
-          <h2 className="text-base font-bold text-ink">The coach suggests a change</h2>
+          <h2 className="text-base font-bold text-ink">Please confirm</h2>
           <p className="text-sm text-ink-soft">{card.summary}</p>
           <div className="grid grid-cols-2 gap-3">
             <button
