@@ -19,6 +19,7 @@ from app.db import meals as meals_repo
 from app.db import targets as targets_repo
 from app.db.active_meal_plan import read_active_meal_plan
 from app.db.transactions import user_transaction
+from app.workflows import weight_log
 from app.schemas.meal_plans import to_active_meal_plan
 from app.schemas.targets import to_targets_out
 
@@ -111,6 +112,18 @@ def _logged_week(ctx: RunContext, args: NoArgs) -> dict[str, Any]:
     return summary
 
 
+def _weight(ctx: RunContext, args: NoArgs) -> dict[str, Any]:
+    """The weight trend, worked out by code (app.calc.weight_trend). Nothing for a user who must not see numbers."""
+    history = weight_log.read(ctx.user_id, 90)
+    if history.numbers_hidden:
+        return {"note": "This user's plan focuses on regular balanced meals, so no weights may be shared."}
+    if not history.entries:
+        return {"note": "No weight has been logged yet. They can log one on the Home screen."}
+    out = history.model_dump(exclude_none=True, exclude={"numbers_hidden", "entries"}, mode="json")
+    out["recent_weigh_ins"] = [{"date": e.date.isoformat(), "weight_kg": e.weight_kg} for e in history.entries[-5:]]
+    return out
+
+
 GET_MY_TARGETS = Tool("get_my_targets", "The user's own daily calorie and macro targets (calories, protein, fat, carbs) and why.",
                       NoArgs, _targets, scope="read")
 GET_MY_MEAL_PLAN_DAY = Tool("get_my_meal_plan_day", "What the user's approved meal plan says to eat on one day (meals, foods, portions).",
@@ -120,3 +133,5 @@ GET_MY_WORKOUT_DAY = Tool("get_my_workout_day", "What the user's approved workou
 GET_TODAY_LOGGED = Tool("get_today_logged", "What the user has logged eating TODAY and the totals so far.", NoArgs, _logged_today, scope="read")
 GET_WEEK_LOGGED = Tool("get_week_logged", "What the user logged eating over the last 7 days, per day, with averages and how many days were near their "
                        "calorie target. Days without a log are not counted as zero.", NoArgs, _logged_week, scope="read")
+GET_MY_WEIGHT = Tool("get_my_weight", "The user's own weight progress: latest weight, change since they started, distance to their target weight, "
+                     "percent of the way there, weekly rate and recent weigh-ins.", NoArgs, _weight, scope="read")

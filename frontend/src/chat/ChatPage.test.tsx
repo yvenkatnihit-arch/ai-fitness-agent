@@ -254,3 +254,44 @@ test('New chat forgets the remembered chat', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'New chat' }))
   expect(sessionStorage.getItem('coach-chat-id')).toBeNull()
 })
+
+// ---------- example questions (chips) ----------
+
+test('an empty chat offers example questions; tapping one sends it at once and the chips go away', async () => {
+  const calls = fakeFetch({ 'POST /chat': { body: reply() } })
+  render()
+  const chips = screen.getByRole('list', { name: 'Example questions' })
+  expect(within(chips).getAllByRole('button').length).toBeGreaterThanOrEqual(6)
+  fireEvent.click(within(chips).getByRole('button', { name: 'Protein in paneer' }))
+  expect(await screen.findByText(/18 g of protein/)).toBeInTheDocument()
+  expect(calls[0].body).toEqual({ message: 'How much protein is in paneer?' })              // sent exactly as the chip's full question
+  expect(screen.queryByRole('list', { name: 'Example questions' })).not.toBeInTheDocument()    // they leave once the conversation starts
+})
+
+test('every example question is a real message within the limit, and they cover each chat skill', async () => {
+  const { SUGGESTIONS } = await import('./suggestions')
+  expect(new Set(SUGGESTIONS.map((s) => s.label)).size).toBe(SUGGESTIONS.length)
+  for (const s of SUGGESTIONS) {
+    expect(s.message.length).toBeGreaterThan(5)
+    expect(s.message.length).toBeLessThanOrEqual(1000)
+  }
+  const text = SUGGESTIONS.map((s) => s.message.toLowerCase()).join(' | ')
+  for (const skill of ['protein is in', 'high in protein', 'workout', 'lunch', 'on track', 'plank', 'i ate']) expect(text).toContain(skill)
+})
+
+test('the example chips come back after New chat', async () => {
+  fakeFetch({ 'POST /chat': { body: reply() } })
+  render()
+  fireEvent.click(screen.getByRole('button', { name: 'Log a meal' }))
+  await screen.findByText(/18 g of protein/)
+  fireEvent.click(screen.getByRole('button', { name: 'New chat' }))
+  expect(screen.getByRole('list', { name: 'Example questions' })).toBeInTheDocument()
+})
+
+test('the chips are not offered when an earlier chat is reopened', async () => {
+  sessionStorage.setItem('coach-chat-id', 'c9')
+  fakeFetch({ 'GET /chat/c9': { body: { id: 'c9', messages: [{ id: 1, role: 'user', content: 'hi', blocked: null }, { id: 2, role: 'assistant', content: 'Hello!', blocked: null }] } } })
+  render()
+  expect(await screen.findByText('Hello!')).toBeInTheDocument()
+  expect(screen.queryByRole('list', { name: 'Example questions' })).not.toBeInTheDocument()
+})

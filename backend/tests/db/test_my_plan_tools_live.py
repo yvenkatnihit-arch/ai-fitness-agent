@@ -1,7 +1,7 @@
 """Step 7.12a (D-103): the "my plan" tools against the real database. Nothing here calls a model except as switched off (code picks the
 dishes and exercises); the tools themselves never call one."""
 
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 
@@ -200,3 +200,35 @@ def test_another_users_week_is_never_mixed_in(client, users):
     onboard(client)
     log(client, 2)
     assert run(GET_WEEK_LOGGED, users[1])["days_logged"] == 0
+
+
+# ---------- weight progress (Step 8.6) ----------
+
+from app.agents.plan_tools import GET_MY_WEIGHT   # noqa: E402
+
+
+def test_the_weight_tool_reports_the_trend_the_weight_endpoint_shows(client, users):
+    onboard(client)
+    client.post("/weight", json={"weight_kg": 59.5, "measured_on": (india_today_for_tests() - timedelta(days=10)).isoformat()})
+    client.post("/weight", json={"weight_kg": 57.0})
+    shown = client.get("/weight").json()
+    got = run(GET_MY_WEIGHT, users[0])
+    for key in ("latest_kg", "start_weight_kg", "target_weight_kg", "change_since_start_kg", "kg_to_target", "percent_to_target", "weekly_change_kg"):
+        assert got[key] == shown[key]
+    assert [w["weight_kg"] for w in got["recent_weigh_ins"]] == [59.5, 57.0]
+
+
+def test_a_user_with_no_weigh_in_is_told_where_to_log_one(client, users):
+    assert "No weight has been logged" in run(GET_MY_WEIGHT, users[1])["note"]
+
+
+def test_a_user_who_must_not_see_numbers_gets_no_weight_from_the_tool(client, users):
+    onboard(client, eating_disorder_history=True)
+    got = run(GET_MY_WEIGHT, users[0])
+    assert set(got) == {"note"} and "no weights may be shared" in got["note"]
+    assert not any(ch.isdigit() for ch in got["note"])
+
+
+def india_today_for_tests():
+    from app.core.time import india_today
+    return india_today()

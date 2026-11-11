@@ -7,6 +7,7 @@ import { TodayPlans } from '../dashboard/TodayPlans'
 import { TodayProgress } from '../dashboard/TodayProgress'
 import type { Today } from '../dashboard/types'
 import { ApiError } from '../lib/api'
+import { WeightCard } from '../weight/WeightCard'
 import { useApi } from '../lib/useApi'
 import type { OnboardingStatus } from '../onboarding/types'
 import { TargetsView } from '../targets/TargetsView'
@@ -51,6 +52,9 @@ export function HomePage() {
     }
   }, [api])
 
+  // A weigh-in moves the goal date (it starts from the latest weight), so the forecast is asked for again.
+  const refreshForecast = () => { api.get<Forecast>('/targets/forecast').then(setForecast, () => {}) }
+
   if (status && !status.completed) return <Navigate to="/onboarding" replace />
 
   return (
@@ -84,9 +88,13 @@ export function HomePage() {
       )}
       {today && <TodayProgress today={today} />}
       {today && <TodayPlans today={today} />}
+      {targets && <WeightCard onChanged={refreshForecast} />}
       {targets && <TargetsView targets={targets} />}
       {targets && forecast && <ForecastCard forecast={forecast} />}
-      <Link to="/sources" className="text-center text-xs text-muted underline">Data sources</Link>
+      <div className="flex justify-center gap-4 text-xs text-muted">
+        <Link to="/how-it-works" className="underline">How the AI works</Link>
+        <Link to="/sources" className="underline">Data sources</Link>
+      </div>
     </PageShell>
   )
 }

@@ -5,6 +5,7 @@ import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { AnswerDetails } from './AnswerDetails'
 import { PastChats } from './PastChats'
+import { SUGGESTIONS } from './suggestions'
 import { MAX_MESSAGE_CHARS, type ChatLine, type ChatReply, type ConversationDetail, type ProposalCard } from './types'
 
 // The open chat is remembered for this browser tab, so a refresh brings it back (never anything but the id).
@@ -76,9 +77,9 @@ export function ChatPage() {
     setCard(reply.waiting_for)
   }
 
-  async function send(event?: FormEvent) {
+  async function send(event?: FormEvent, example?: string) {
     event?.preventDefault()
-    const text = draft.trim()
+    const text = (example ?? draft).trim()
     if (!text || busy) return
     setBusy('sending')
     setError(null)
@@ -146,7 +147,23 @@ export function ChatPage() {
       {showPast && <PastChats currentId={conversationId} onOpen={(id) => void open(id)} onDeleted={(id) => { if (id === conversationId) newChat() }} />}
 
       <section aria-label="Conversation" className="flex min-h-48 flex-col gap-2">
-        {lines.length === 0 && <p className="text-sm text-ink-soft">Try: &ldquo;How much protein is in paneer?&rdquo;</p>}
+        {lines.length === 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-ink-soft">Not sure what to ask? Tap an example:</p>
+            <ul aria-label="Example questions" className="flex flex-wrap gap-2">
+              {SUGGESTIONS.map((s) => (
+                <li key={s.label}>
+                  <button
+                    type="button" title={s.message} disabled={busy !== null} onClick={() => void send(undefined, s.message)}
+                    className="rounded-full border border-brand bg-brand-soft px-3 py-1.5 text-sm font-medium text-brand-strong transition hover:opacity-90 disabled:opacity-50"
+                  >
+                    {s.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {lines.map((line) => (
           <div key={line.id} className={`flex flex-col gap-1 ${line.role === 'user' ? 'items-end' : 'items-start'}`}>
             <p

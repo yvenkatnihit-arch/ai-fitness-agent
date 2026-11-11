@@ -13,11 +13,12 @@ and a validated food database, not from the AI, and the AI can only *propose* ch
 |---|---|
 | Sign up / sign in | Supabase login |
 | Onboarding | Consent, body details, goal and pace, diet and cuisines, training setup, health screening. Ends with your daily targets |
-| Home (the dashboard) | Today at a glance: calories and macros eaten against your targets, what you logged, what your meal plan and workout say for today, then your targets and a goal-date forecast (a range, not a promise) |
+| Home (the dashboard) | Today at a glance: calories and macros eaten against your targets, what you logged, what your meal plan and workout say for today, a weight log with a trend chart, then your targets and a goal-date forecast (a range, not a promise) |
+| How the AI works | The rules the AI cannot break, the eval scores it is held to, and your own AI usage and cost |
 | Meal plan | The coach builds a 7-day plan from our food database; code works out the portions; you read it and **Approve** or **Reject** |
 | Workout plan | Pick a split, the coach picks exercises from our library for your equipment and injuries; you approve; you can edit a day |
 | Log a meal | Search foods, pick household units (katori, piece, bowl, cup), see totals. No AI involved |
-| Chat (round button, bottom-left) | Ask about foods ("calories in 2 rotis", "which vegetarian foods are high in protein"), exercises ("how do I do a plank", "an alternative to bench press for a shoulder injury"), your own data ("what's my calorie target", "what's for lunch tomorrow", "what workout do I have on Monday", "am I on track this week"), or tell it what you ate ("I ate 2 rotis and dal for lunch"): it prepares the log and you press Approve to save it |
+| Chat (round button, bottom-left) | Ask about foods ("calories in 2 rotis", "which vegetarian foods are high in protein"), exercises ("how do I do a plank", "an alternative to bench press for a shoulder injury"), your own data ("what's my calorie target", "what's for lunch tomorrow", "what workout do I have on Monday", "am I on track this week"), your weight progress ("how much weight have I lost"), or tell it what you ate ("I ate 2 rotis and dal for lunch"): it prepares the log and you press Approve to save it |
 | Settings | Change your details, diet, cuisines and dislikes; your plans are marked out of date when they no longer match |
 
 ## How it is built
@@ -98,11 +99,12 @@ Open http://localhost:5173.
 1. Open the app, **sign up**, and finish **onboarding** (about 2 minutes). You land on Home with your targets and goal-date range.
 2. **Meal plan** → *Generate my plan* (about a minute, about $0.04 of Gemini). Read the plan, open "How this plan was made" (which days the AI chose and which our code chose, the checks it passed), then **Approve**.
 3. **Workout** → pick a split on the Splits screen, generate a plan, approve it.
-4. **Log a meal**: search "roti", add 2 pieces and a katori of dal, and watch the totals.
-5. Tap the round **chat button**: ask "how much protein is in paneer?", then "and how much fat?" (it remembers), then "what's for lunch tomorrow?", "what workout do I have on Monday?", "how do I do a plank?" and "which vegetarian foods are high in protein?".
+4. **Log a meal**: search "roti", add 2 pieces and a katori of dal, and watch the totals. Then on Home, **log your weight** and watch the chart and your goal date move.
+5. Tap the round **chat button** and the example chips (or type): ask "how much protein is in paneer?", then "and how much fat?" (it remembers), then "what's for lunch tomorrow?", "what workout do I have on Monday?", "how do I do a plank?" and "which vegetarian foods are high in protein?".
    Then say "I ate 2 rotis and a katori of dal for lunch": a **Please confirm** card appears, nothing is saved yet, press **Approve** and go back to Home to see it in today's progress.
    Try "hello" or "make me a workout plan" to see how it redirects you to the right screen. Open **Past chats** to reopen or delete a conversation.
-6. **Settings** → add the Mediterranean cuisine → your meal plan is marked out of date → generate a new one.
+6. Open **How the AI works** (link at the bottom of Home) for the rules, the eval scores and your usage.
+7. **Settings** → add the Mediterranean cuisine → your meal plan is marked out of date → generate a new one.
 
 ## Tests and evals
 
@@ -126,7 +128,7 @@ More commands (cost per day, protein report, Docker, food data tools) are in `CL
 Honest list, so nobody is surprised:
 
 - **Not deployed.** It runs locally. A backend `Dockerfile` exists and the plan is Vercel (frontend) and Render (backend), but there is no live URL and no CI yet (roadmap Phase 11).
-- **Phase 8 to 10:** weekly check-in and weight trends, a weekly chart and the statistics pages (Home has a today dashboard), and hardening (data export, account deletion, security review, cost view). The privacy notice is a draft.
+- **Phase 8 to 10:** weekly check-in, a weekly calories chart and the statistics pages (Home has a today dashboard and a weight log with a trend), and hardening (data export, account deletion, security review, cost view). The privacy notice is a draft.
 - **Chat is limited:** four specialists (foods and food rankings, your own plan, targets and progress, exercises from our library, and logging one meal at a time with your confirmation). Creating or changing plans stays on the plan screens; chat points you there. Replies arrive whole (no streaming). The LLM-judged guardrail layer (NeMo) and LangSmith tracing are planned, not built.
 - **Food data:** 52 of our own recipes (Mediterranean and some Indian dishes) are drafted but not yet signed off by a reviewer, and the app labels their values "being checked". Two cuisines only (Indian, Mediterranean and Middle Eastern); English only.
 - **Visual design is functional, not polished.** A redesign is planned after the backend is complete.

@@ -42,7 +42,7 @@ def test_the_day_argument_only_accepts_the_allowed_names_and_defaults_to_today()
 
 def test_the_specialist_is_wired_read_only_with_exactly_its_four_tools():
     registry = my_plan_registry()
-    assert registry.names() == MY_PLAN_SPEC.tools == {"get_my_targets", "get_my_meal_plan_day", "get_my_workout_day", "get_today_logged", "get_week_logged"}
+    assert registry.names() == MY_PLAN_SPEC.tools == {"get_my_targets", "get_my_meal_plan_day", "get_my_workout_day", "get_today_logged", "get_week_logged", "get_my_weight"}
     assert all(t.scope == "read" for t in registry.all())                      # nothing here can propose or change anything
     MY_PLAN_SPEC.check(registry)                                              # the harness would refuse a bad spec
     assert MY_PLAN_SPEC.tier == "small" and MY_PLAN_SPEC.max_steps <= 5
@@ -56,5 +56,5 @@ def test_the_router_menu_lists_the_specialist_with_a_description_that_names_its_
 
 def test_the_prompt_forbids_inventing_numbers_and_changing_anything():
     prompt = MY_PLAN_SPEC.system_prompt.lower()
-    for phrase in ("only from what it returns", "never invent", "never do arithmetic", "cannot change anything", "must not see calorie", "get_week_logged", "is not a day they ate nothing"):
+    for phrase in ("only from what it returns", "never invent", "never do arithmetic", "cannot change anything", "must not see calorie", "get_week_logged", "is not a day they ate nothing", "get_my_weight", "do not judge whether a change is good or bad"):
         assert phrase in prompt

@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from 'react-router'
 import { RequireAuth } from './auth/RequireAuth'
 import { ChatBubble } from './chat/ChatBubble'
 import { ChatPage } from './chat/ChatPage'
+import { InsightsPage } from './insights/InsightsPage'
 import { MealLogPage } from './meals/MealLogPage'
 import { MealPlanPage } from './plans/MealPlanPage'
 import { WorkoutPlanPage } from './plans/WorkoutPlanPage'
@@ -26,6 +27,7 @@ function App() {
       <Route path="/sources" element={<SourcesPage />} />
       <Route path="/onboarding" element={signedIn(<OnboardingPage />)} />
       <Route path="/chat" element={signedIn(<ChatPage />)} />
+      <Route path="/how-it-works" element={withChat(<InsightsPage />)} />
       <Route path="/log" element={withChat(<MealLogPage />)} />
       <Route path="/settings" element={withChat(<SettingsPage />)} />
       <Route path="/meal-plan" element={withChat(<MealPlanPage />)} />
