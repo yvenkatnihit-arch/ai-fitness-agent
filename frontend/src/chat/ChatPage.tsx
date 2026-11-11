@@ -4,7 +4,26 @@ import { FormError, PageShell, PrimaryButton, inputClass } from '../components/u
 import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { AnswerDetails } from './AnswerDetails'
-import { MAX_MESSAGE_CHARS, type ChatLine, type ChatReply, type ProposalCard } from './types'
+import { PastChats } from './PastChats'
+import { MAX_MESSAGE_CHARS, type ChatLine, type ChatReply, type ConversationDetail, type ProposalCard } from './types'
+
+// The open chat is remembered for this browser tab, so a refresh brings it back (never anything but the id).
+const STORAGE_KEY = 'coach-chat-id'
+const remember = (id: string | null) => {
+  try {
+    if (id) sessionStorage.setItem(STORAGE_KEY, id)
+    else sessionStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // storage can be blocked (private window): the chat still works, it just is not remembered
+  }
+}
+const remembered = () => {
+  try {
+    return sessionStorage.getItem(STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
 
 const asApiError = (e: unknown) => (e instanceof ApiError ? e : new ApiError(0, 'Something went wrong. Please try again.'))
 
@@ -18,6 +37,7 @@ export function ChatPage() {
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState<'sending' | 'deciding' | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
+  const [showPast, setShowPast] = useState(false)
   const nextId = useRef(1)
   const bottom = useRef<HTMLDivElement>(null)
 
@@ -25,11 +45,33 @@ export function ChatPage() {
     bottom.current?.scrollIntoView?.({ block: 'end' }) // jsdom (tests) has no scrollIntoView
   }, [lines, card, busy])
 
+  async function open(id: string, quiet = false) {
+    setError(null)
+    try {
+      const chat = await api.get<ConversationDetail>(`/chat/${id}`)
+      setLines(chat.messages.map((m) => ({ id: nextId.current++, role: m.role, text: m.content, blocked: m.blocked !== null })))
+      setConversationId(chat.id)
+      setCard(null) // a proposal still waiting from an earlier session stays on the plan screen: the chat only offers the latest turn live
+      setShowPast(false)
+      remember(chat.id)
+    } catch (e) {
+      if (quiet) remember(null) // the remembered chat is gone (deleted elsewhere): just start fresh
+      else setError(asApiError(e))
+    }
+  }
+
+  useEffect(() => {
+    const id = remembered()
+    if (id) void open(id, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, [])
+
   const add = (role: ChatLine['role'], text: string, extra: Partial<ChatLine> = {}) =>
     setLines((current) => [...current, { id: nextId.current++, role, text, ...extra }])
 
   function show(reply: ChatReply) {
     setConversationId(reply.conversation_id)
+    remember(reply.conversation_id)
     add('assistant', reply.reply, { blocked: reply.blocked !== null, meta: reply.meta })
     setCard(reply.waiting_for)
   }
@@ -70,6 +112,7 @@ export function ChatPage() {
   }
 
   function newChat() {
+    remember(null)
     setLines([])
     setConversationId(null)
     setCard(null)
@@ -93,6 +136,14 @@ export function ChatPage() {
         Ask about foods, calories and protein. The coach can make mistakes, and for medical questions please ask a doctor. Any plan change it
         suggests only happens if you approve it.
       </p>
+
+      <button
+        type="button" onClick={() => setShowPast((v) => !v)} aria-expanded={showPast}
+        className="self-start text-sm font-semibold text-brand-strong"
+      >
+        {showPast ? 'Hide past chats' : 'Past chats'}
+      </button>
+      {showPast && <PastChats currentId={conversationId} onOpen={(id) => void open(id)} onDeleted={(id) => { if (id === conversationId) newChat() }} />}
 
       <section aria-label="Conversation" className="flex min-h-48 flex-col gap-2">
         {lines.length === 0 && <p className="text-sm text-ink-soft">Try: &ldquo;How much protein is in paneer?&rdquo;</p>}

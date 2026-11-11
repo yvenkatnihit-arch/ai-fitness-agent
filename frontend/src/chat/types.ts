@@ -24,4 +24,8 @@ export type ChatLine = {
   meta?: ChatMeta
 }
 
+// GET /chat (the list) and GET /chat/{id} (one conversation).
+export type ConversationSummary = { id: string; title: string | null; updated_at: string }
+export type ConversationDetail = { id: string; messages: { id: number; role: 'user' | 'assistant'; content: string; blocked: string | null }[] }
+
 export const MAX_MESSAGE_CHARS = 1000 // the same limit as the backend (app/workflows/chat_turn.py)

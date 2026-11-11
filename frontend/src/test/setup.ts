@@ -6,4 +6,7 @@ import { afterEach } from 'vitest'
 
 // Remove each test's rendered page before the next test. Testing Library only does this
 // automatically when test globals are enabled, and we import test functions explicitly.
-afterEach(() => cleanup())
+afterEach(() => {
+  cleanup()
+  sessionStorage.clear() // the chat remembers its open conversation in the tab: one test must not leak it into the next
+})

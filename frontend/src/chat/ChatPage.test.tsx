@@ -164,3 +164,93 @@ test('the message box allows at most 1000 characters, like the server', () => {
   render()
   expect(screen.getByLabelText('Your message')).toHaveAttribute('maxlength', '1000')
 })
+
+// ---------- past chats and keeping the open chat (7.11h) ----------
+
+const SAVED = { id: 'c9', messages: [
+  { id: 1, role: 'user', content: 'tell me about paneer', blocked: null },
+  { id: 2, role: 'assistant', content: 'Paneer is a dairy food.', blocked: null },
+  { id: 3, role: 'user', content: 'something hard', blocked: 'crisis' },
+  { id: 4, role: 'assistant', content: 'I am really sorry you feel this way.', blocked: 'crisis' },
+] }
+const LIST = { conversations: [{ id: 'c9', title: 'tell me about paneer', updated_at: '2026-11-10T10:00:00Z' }, { id: 'c8', title: 'calories in rotis', updated_at: '2026-11-09T09:00:00Z' }] }
+
+test('Past chats lists earlier chats; opening one shows its messages and the next message continues it', async () => {
+  const calls = fakeFetch({ 'GET /chat': { body: LIST }, 'GET /chat/c9': { body: SAVED }, 'POST /chat': { body: reply({ conversation_id: 'c9' }) } })
+  render()
+  fireEvent.click(screen.getByRole('button', { name: 'Past chats' }))
+  const list = await screen.findByRole('region', { name: 'Past chats' })
+  expect(within(list).getByText('calories in rotis')).toBeInTheDocument()
+  fireEvent.click(within(list).getByText('tell me about paneer'))
+  expect(await screen.findByText('Paneer is a dairy food.')).toBeInTheDocument()
+  expect(screen.queryByRole('region', { name: 'Past chats' })).not.toBeInTheDocument()            // the list closes once a chat is open
+  expect(screen.getByText('I am really sorry you feel this way.').className).toContain('bg-warn-soft')   // a stopped turn still looks like a notice
+  type('and the fat?')
+  send()
+  await waitFor(() => expect(calls.filter((c) => c.method === 'POST')).toHaveLength(1))
+  expect(calls.find((c) => c.method === 'POST')!.body).toEqual({ message: 'and the fat?', conversation_id: 'c9' })
+})
+
+test('deleting a past chat removes it from the list; deleting the open chat clears the screen', async () => {
+  const calls = fakeFetch({ 'GET /chat': { body: LIST }, 'GET /chat/c9': { body: SAVED }, 'DELETE /chat/c9': { status: 204, body: null }, 'DELETE /chat/c8': { status: 204, body: null } })
+  render()
+  fireEvent.click(screen.getByRole('button', { name: 'Past chats' }))
+  const list = await screen.findByRole('region', { name: 'Past chats' })
+  fireEvent.click(within(list).getByRole('button', { name: 'Delete chat: calories in rotis' }))
+  await waitFor(() => expect(within(list).queryByText('calories in rotis')).not.toBeInTheDocument())
+  expect(calls.some((c) => c.method === 'DELETE' && c.path === '/chat/c8')).toBe(true)
+  fireEvent.click(within(list).getByText('tell me about paneer'))                                  // open the other one...
+  await screen.findByText('Paneer is a dairy food.')
+  fireEvent.click(screen.getByRole('button', { name: 'Past chats' }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Delete chat: tell me about paneer' }))   // ...then delete it while open
+  await waitFor(() => expect(screen.queryByText('Paneer is a dairy food.')).not.toBeInTheDocument())
+})
+
+test('a failed delete shows a message and keeps the chat in the list', async () => {
+  fakeFetch({ 'GET /chat': { body: LIST }, 'DELETE /chat/c8': { status: 404, body: { detail: "We couldn't find that conversation." } } })
+  render()
+  fireEvent.click(screen.getByRole('button', { name: 'Past chats' }))
+  const list = await screen.findByRole('region', { name: 'Past chats' })
+  fireEvent.click(within(list).getByRole('button', { name: 'Delete chat: calories in rotis' }))
+  expect(await within(list).findByRole('alert')).toHaveTextContent("couldn't find that conversation")
+  expect(within(list).getByText('calories in rotis')).toBeInTheDocument()
+})
+
+test('an empty list says there are no earlier chats yet', async () => {
+  fakeFetch({ 'GET /chat': { body: { conversations: [] } } })
+  render()
+  fireEvent.click(screen.getByRole('button', { name: 'Past chats' }))
+  expect(await screen.findByText('No earlier chats yet.')).toBeInTheDocument()
+})
+
+test('a refresh brings the open chat back (the id is remembered for the tab)', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ conversation_id: 'c9' }) } })
+  const first = render()
+  type('hello')
+  send()
+  await screen.findByText(/18 g of protein/)
+  expect(sessionStorage.getItem('coach-chat-id')).toBe('c9')
+  first.unmount()                                                                                 // "refresh": a brand-new page
+  fakeFetch({ 'GET /chat/c9': { body: SAVED } })
+  render()
+  expect(await screen.findByText('Paneer is a dairy food.')).toBeInTheDocument()
+})
+
+test('a remembered chat that no longer exists is forgotten quietly, with no error shown', async () => {
+  sessionStorage.setItem('coach-chat-id', 'gone')
+  fakeFetch({ 'GET /chat/gone': { status: 404, body: { detail: "We couldn't find that conversation." } } })
+  render()
+  await waitFor(() => expect(sessionStorage.getItem('coach-chat-id')).toBeNull())
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled()                              // a normal empty chat
+})
+
+test('New chat forgets the remembered chat', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ conversation_id: 'c9' }) } })
+  render()
+  type('hello')
+  send()
+  await screen.findByText(/18 g of protein/)
+  fireEvent.click(screen.getByRole('button', { name: 'New chat' }))
+  expect(sessionStorage.getItem('coach-chat-id')).toBeNull()
+})
