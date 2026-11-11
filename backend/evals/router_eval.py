@@ -39,8 +39,8 @@ class RouterResult:
     @property
     def passed(self) -> bool:
         if "borderline" in self.tags:
-            return self.got in (self.expected, ())
-        return self.got == self.expected
+            return self.got in (self.expected, ()) or ("also_my_plan" in self.tags and self.got == ("my_plan",))
+        return sorted(self.got) == sorted(self.expected)          # the order the router lists specialists in does not matter
 
 
 def _load_cache() -> dict:
@@ -94,13 +94,15 @@ def run_router_eval(call: Callable[..., LLMResult] = call_llm, *, use_cache: boo
 
 def summarize(results: list[RouterResult]) -> dict:
     scored = [r for r in results if "borderline" not in r.tags]
-    food = [r for r in scored if r.expected]
+    food = [r for r in scored if "nutrition" in r.expected]
+    mine = [r for r in scored if "my_plan" in r.expected]
     other = [r for r in scored if not r.expected]
     rate = lambda rs, f: sum(f(r) for r in rs) / len(rs) if rs else 1.0   # noqa: E731
     return {
         "cases": len(results), "scored": len(scored), "borderline": len(results) - len(scored),
         "exact_accuracy": rate(scored, lambda r: r.passed),
         "nutrition_recall": rate(food, lambda r: r.passed),
+        "my_plan_recall": rate(mine, lambda r: r.passed),
         "off_topic_specificity": rate(other, lambda r: r.passed),
         "borderline_acceptable": rate([r for r in results if "borderline" in r.tags], lambda r: r.passed),
         "invalid_json_rate": rate(results, lambda r: not r.valid_json),

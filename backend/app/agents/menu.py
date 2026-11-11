@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from app.agents.my_plan import MY_PLAN_SPEC, WHEN as MY_PLAN_WHEN, my_plan_registry
 from app.agents.nutrition import NUTRITION_SPEC, nutrition_registry
 from app.agents.spec import SpecialistSpec
 from app.agents.tools import ToolRegistry
@@ -23,4 +24,5 @@ def default_menu() -> Menu:
         NUTRITION_SPEC.name: MenuEntry(
             NUTRITION_SPEC, nutrition_registry,
             "questions about a food or dish: calories, protein, carbs, fat, household portion weights"),
+        MY_PLAN_SPEC.name: MenuEntry(MY_PLAN_SPEC, my_plan_registry, MY_PLAN_WHEN),
     }

@@ -83,11 +83,12 @@ def test_route_message_makes_one_logged_small_call():
     assert kw["max_tokens"] == 200 and kw["json_mode"] is True and len(messages[1][1]) == 2000
 
 
-def test_the_real_menu_has_the_nutrition_specialist_with_read_only_tools():
+def test_the_real_menu_has_only_read_only_specialists():
     menu = default_menu()
-    assert set(menu) == {"nutrition"}
-    reg = menu["nutrition"].registry()
-    assert all(reg.get(t).scope == "read" for t in menu["nutrition"].spec.tools)
+    assert set(menu) == {"nutrition", "my_plan"}
+    for entry in menu.values():
+        reg = entry.registry()
+        assert reg.names() == entry.spec.tools and all(reg.get(t).scope == "read" for t in entry.spec.tools)
 
 
 # ---------- the graph ----------
