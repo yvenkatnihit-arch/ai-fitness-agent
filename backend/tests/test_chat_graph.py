@@ -100,7 +100,7 @@ def test_one_specialist_means_its_answer_is_the_reply():
 
 def test_no_assignments_gives_the_friendly_message_and_spawns_nothing():
     spawned = []
-    out = answer_message("hello", UID, menu=MENU, router=fake_router(), make_model=lambda s, r: spawned.append(s) or (lambda m: Turn(final="x")))
+    out = answer_message("what is the capital of France", UID, menu=MENU, router=fake_router(), make_model=lambda s, r: spawned.append(s) or (lambda m: Turn(final="x")))
     assert out["reply"] == NOTHING_FITS and out["results"] == [] and spawned == []
 
 

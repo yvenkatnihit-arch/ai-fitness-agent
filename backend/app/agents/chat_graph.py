@@ -20,6 +20,7 @@ from langgraph.types import Command, Send, interrupt
 from app.agents.approvals import APPROVE, REJECT, Decide, decide_with_workflow
 from app.agents.composer import compose
 from app.agents.context import RunContext
+from app.agents.fallback import NOTHING_FITS, nothing_fits_reply  # noqa: F401  (NOTHING_FITS is re-exported: tests and callers import it from here)
 from app.agents.gemini_model import gemini_model
 from app.agents.menu import Menu, default_menu
 from app.agents.router import Assignment, route_message
@@ -31,8 +32,6 @@ from app.safety.guards import check_input, check_output
 
 logger = logging.getLogger(__name__)
 
-NOTHING_FITS = ("I can help with questions about foods and dishes for now, such as calories, protein and portion sizes. "
-                "What would you like to know?")
 SPECIALIST_FAILED = "I could not finish that one. Please try again."
 
 Router = Callable[[str], list[Assignment]]
@@ -114,7 +113,7 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
         good = [(r["specialist"], r["answer"]) for r in done if r["status"] == "ok" and r["answer"]]
         answers = [a for _, a in good]
         if not state.get("assignments"):
-            return {"reply": NOTHING_FITS}
+            return {"reply": nothing_fits_reply(state["message"])}
         if not answers:
             return {"reply": SPECIALIST_FAILED}
         if len(answers) == 1:

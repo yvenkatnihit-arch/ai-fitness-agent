@@ -8,7 +8,7 @@ export function PageShell({
   title, subtitle, back, action, children,
 }: { title: string; subtitle?: string; back?: boolean; action?: ReactNode; children: ReactNode }) {
   return (
-    <main className="min-h-screen bg-bg px-4 py-6">
+    <main className="min-h-screen bg-bg px-4 pb-24 pt-6">
       <div className="mx-auto flex w-full max-w-md flex-col gap-4">
         <header className="flex items-center justify-between gap-3">
           <div className="min-w-0">
