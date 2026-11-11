@@ -56,5 +56,5 @@ def test_the_router_menu_lists_the_specialist_with_a_description_that_names_its_
 
 def test_the_prompt_forbids_inventing_numbers_and_changing_anything():
     prompt = MY_PLAN_SPEC.system_prompt.lower()
-    for phrase in ("only from what it returns", "never invent", "never do arithmetic", "cannot change anything", "must not see calorie", "get_week_logged", "is not a day they ate nothing", "get_my_weight", "do not judge whether a change is good or bad"):
+    for phrase in ("only from what it returns", "never invent", "never do arithmetic", "cannot change anything", "must not see calorie", "get_week_logged", "is not a day they ate nothing", "get_my_weight", "do not judge whether a change is good or bad", "left_today_negative_means_over"):
         assert phrase in prompt

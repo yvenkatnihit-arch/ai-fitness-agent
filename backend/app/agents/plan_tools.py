@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.agents.context import RunContext
 from app.agents.tools import Tool
-from app.calc.week_summary import last_days, logged_days_only, summarize_week
+from app.calc.week_summary import last_days, logged_days_only, remaining_today, summarize_week
 from app.calc.weekdays import DayName, day_name, resolve_day
 from app.core.time import india_today
 from app.db import active_plan
@@ -88,13 +88,20 @@ def _logged_today(ctx: RunContext, args: NoArgs) -> dict[str, Any]:
         row = targets_repo.current_targets(conn)
     hidden = bool(row[6]) if row else False             # focus_on_habits
     if not meals:
-        return {"meals_logged": 0, "note": "Nothing logged today yet. They can log a meal on the Log a meal screen."}
+        out = {"meals_logged": 0, "note": "Nothing logged today yet. They can log a meal on the Log a meal screen or tell the chat what they ate."}
+        if row and not hidden:
+            out["left_today_negative_means_over"] = remaining_today({k: 0.0 for k in ("kcal", "protein_g", "carbs_g", "fat_g")}, float(row[0]), float(row[1]), float(row[3]), float(row[2]))
+        return out
     foods = [{"slot": m["slot"], "foods": [f"{i['food_name']} ({i['quantity']:g} {i['unit']})" for i in m["items"]]} for m in meals]
     if hidden:
         return {"meals_logged": len(meals), "meals": foods, "note": "No calorie or macro numbers may be shared for this user."}
     items = [i for m in meals for i in m["items"]]
     totals = {k: round(sum(i[k] for i in items), 1) for k in ("kcal", "protein_g", "carbs_g", "fat_g")}
-    return {"meals_logged": len(meals), "meals": foods, "totals_so_far": totals}
+    out = {"meals_logged": len(meals), "meals": foods, "totals_so_far": totals}
+    if row:                                            # row = calorie, protein, fat, carbs targets (worked out by code, shown on the Targets screen)
+        left = remaining_today(totals, float(row[0]), float(row[1]), float(row[3]), float(row[2]))
+        out["left_today_negative_means_over"] = left
+    return out
 
 
 def _logged_week(ctx: RunContext, args: NoArgs) -> dict[str, Any]:

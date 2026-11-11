@@ -27,12 +27,13 @@ def words(text: str) -> list[str]:
 
 def score(option: ExerciseOption, query_words: Sequence[str]) -> int:
     name = option.name.lower()
+    compact = re.sub(r"[^a-z]", "", name)                  # "push-up" -> "pushup", so a query written either way finds it
     muscles = " ".join(option.muscle_groups).replace("_", " ")
     other = f"{' '.join(option.equipment)} {option.movement_pattern.replace('_', ' ')}".lower()
     total = 0
     for w in query_words:
         forms = (w, w[:-1]) if w.endswith("s") and len(w) > 3 else (w,)      # "squats" finds "Squat", "lunges" finds "Lunge"
-        if any(f in name for f in forms):
+        if any(f in name or f in compact for f in forms):
             total += 3
         if any(f in muscles for f in forms):
             total += 2

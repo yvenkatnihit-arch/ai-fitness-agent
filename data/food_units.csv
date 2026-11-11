@@ -142,3 +142,9 @@ chicken_tikka,piece,recipe,chicken_tikka,1 piece,50,300 g cooked / 6 pieces
 moong_chilla,piece,recipe,moong_chilla,1 chilla,50,350 g cooked / 7 pancakes
 besan_chilla,piece,recipe,besan_chilla,1 chilla,55,330 g cooked / 6 pancakes
 protein_chilla,piece,recipe,protein_chilla,1 chilla,55,330 g cooked / 6 pancakes
+tea_black_brewed,cup,volume,self,1 cup (8 fl oz),237,
+coffee_brewed,cup,volume,self,1 cup (8 fl oz),237,
+coconut_water,glass,volume,self,1 cup,245,
+coconut_water,cup,volume,self,1 cup,245,
+masala_chai,cup,recipe,masala_chai,1 cup,150,"one small cup of tea, 150 g"
+lassi_sweet,glass,volume,171284,1 cup (8 fl oz),245,"density of plain whole-milk yogurt; lassi is thinner, so slightly high"

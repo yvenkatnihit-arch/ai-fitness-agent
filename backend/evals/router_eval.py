@@ -20,7 +20,7 @@ from evals.router_cases import CASES
 from evals.router_followups import FOLLOWUPS
 
 CACHE = Path(__file__).with_name("cache") / "router.json"
-MAX_CALLS = 80   # a hard cap on real calls in one run
+MAX_CALLS = 160   # a hard cap on real calls in one run (the case list has grown; progress is saved after each call, so a stopped run resumes)
 
 
 @dataclass(frozen=True)

@@ -55,7 +55,7 @@ def test_medical_drug_and_diagnosis_requests_are_refused(text):
 ])
 def test_red_flag_symptoms_tell_the_user_to_stop_and_see_a_professional(text):
     v = check_input(text)
-    assert v and v.category == "red_flag_pain" and "doctor or physiotherapist" in v.reply
+    assert v and v.category == "red_flag_pain" and "doctor" in v.reply and ("doctor or physiotherapist" in v.reply or v.reply == messages.RED_FLAG_SYMPTOMS)
 
 
 @pytest.mark.parametrize("text", [

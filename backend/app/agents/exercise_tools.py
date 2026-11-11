@@ -61,11 +61,18 @@ def _search(ctx: RunContext, args: SearchArgs) -> dict[str, Any]:
     if args.injury:
         found = [o for o in found if args.injury not in o.contraindications]  # what the person told us now counts as much as their profile
     shown = [_summary(o, context) for o in found]
+    hidden = []
     if args.fits_me_only:
+        hidden = [{"name": s["name"], "why_not": s["why_not"]} for s in shown if s["fits_you"] is False][:3]
         shown = [s for s in shown if s["fits_you"] is not False]
     if not shown:
-        return {"exercises": [], "note": "Nothing in our library matches" + (" and suits this user." if args.fits_me_only or args.injury else ".")}
+        note = "Nothing in our library matches" + (" and suits this user." if args.fits_me_only or args.injury else ".")
+        if hidden:
+            note = "These ARE in our library but do not suit this user (see not_suitable_for_you): say so and why. " + note
+        return {"exercises": [], "note": note, **({"not_suitable_for_you": hidden} if hidden else {})}
     out: dict[str, Any] = {"exercises": shown[:args.limit]}
+    if hidden:
+        out["not_suitable_for_you"] = hidden                # also mention these when the user asked for one of them by name
     if args.injury:
         out["avoiding_injury"] = args.injury
     return out

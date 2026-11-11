@@ -217,3 +217,11 @@ egg_white,Egg white (raw),egg whites;anda safed,egg,eggetarian,usda_sr_legacy,17
 moong_sprouts,Moong sprouts (raw),sprouted green gram;mung sprouts,vegetable,vegan,usda_sr_legacy,169957,,,exact,"Raw sprouts: mostly water, so low in protein per 100 g",indian
 soy_flour,Soy flour (defatted),soya flour;soya atta,pulse,vegan,usda_sr_legacy,174275,uk_cofid,11-898,close,"USDA is defatted (51.5 g protein); the CoFID cross-check is full-fat soya flour, so a close match only",indian
 soya_chunks,Soya chunks (textured soy protein),nutrela;meal maker;soya nuggets,pulse,vegan,,,,,none,GAP: textured soy protein is not in USDA or CoFID (soy flour and protein isolate are different foods). Nothing substituted; needs IFCT or a package label,indian
+tea_black_brewed,"Black tea (brewed)",chai patti;black tea;kali chai,beverage,vegan,usda_sr_legacy,173227,uk_cofid,17-165,exact,USDA brewed with tap water (plain tea with nothing added); CoFID average infusion cross-checks (both about 0 kcal),indian;mediterranean
+coffee_brewed,"Coffee (brewed, black)",black coffee;filter coffee decoction,beverage,vegan,usda_sr_legacy,171890,,,exact,Brewed with tap water; no milk or sugar,indian;mediterranean
+peanut_butter,Peanut butter (smooth),pb;peanut spread,nut_seed,vegan,uk_cofid,14-892,usda_sr_legacy,172470,exact,"CoFID smooth peanut butter; USDA 'smooth style, without salt' cross-check (598 vs 607 kcal)",indian;mediterranean
+coconut_water,Coconut water,nariyal pani;tender coconut water;elaneer,beverage,vegan,usda_sr_legacy,174831,,,exact,"Ready-to-drink, unsweetened",indian;mediterranean
+ice_cream_vanilla,Ice cream (vanilla),vanilla ice cream,dessert,vegetarian,usda_sr_legacy,167575,,,exact,,indian;mediterranean
+whey_protein_powder,Whey protein powder,whey;protein powder;protein shake powder,supplement,vegetarian,usda_sr_legacy,173180,usda_sr_legacy,173177,close,Generic whey-based powder. Brands differ (about 60 to 80 g protein per 100 g; USDA whey isolate 173177 has 58 g with more carbs): check the label of your tub,indian;mediterranean
+milk_chocolate,Milk chocolate,chocolate;dairy milk,dessert,vegetarian,uk_cofid,17-648,,,exact,,indian;mediterranean
+lassi_sweet,Lassi (sweetened),meetha lassi;sweet lassi;sweet buttermilk drink,beverage,vegetarian,uk_cofid,12-373,,,exact,"CoFID 'Lassi, sweetened'",indian

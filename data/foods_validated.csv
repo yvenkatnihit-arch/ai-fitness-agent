@@ -201,6 +201,14 @@ apricots_dried,Dried apricots,khubani,fruit,vegan,uk_cofid,14-031,"Apricots, dri
 egg_white,Egg white (raw),egg whites;anda safed,egg,eggetarian,usda_sr_legacy,172183,"Egg, white, raw, fresh",52.0,10.9,0.73,0.17,0.0,exact,exact,ready,indian;mediterranean
 moong_sprouts,Moong sprouts (raw),sprouted green gram;mung sprouts,vegetable,vegan,usda_sr_legacy,169957,"Mung beans, mature seeds, sprouted, raw",30.0,3.04,4.14,0.18,1.8,exact,exact,ready,indian
 soy_flour,Soy flour (defatted),soya flour;soya atta,pulse,vegan,usda_sr_legacy,174275,"Soy flour, defatted",327.0,51.46,16.42,1.22,17.5,exact,close,review,indian
+tea_black_brewed,Black tea (brewed),chai patti;black tea;kali chai,beverage,vegan,usda_sr_legacy,173227,"Beverages, tea, black, brewed, prepared with tap water",1.0,0.0,0.3,0.0,0.0,exact,exact,ready,indian;mediterranean
+coffee_brewed,"Coffee (brewed, black)",black coffee;filter coffee decoction,beverage,vegan,usda_sr_legacy,171890,"Beverages, coffee, brewed, prepared with tap water",1.0,0.12,0.0,0.02,0.0,exact,exact,ready,indian;mediterranean
+peanut_butter,Peanut butter (smooth),pb;peanut spread,nut_seed,vegan,uk_cofid,14-892,"Peanut butter, smooth",607.0,22.8,12.2,51.8,6.6,approximate,exact,review,indian;mediterranean
+coconut_water,Coconut water,nariyal pani;tender coconut water;elaneer,beverage,vegan,usda_sr_legacy,174831,"Beverages, Coconut water, ready-to-drink, unsweetened",18.0,0.22,4.24,0.0,0.0,exact,exact,ready,indian;mediterranean
+ice_cream_vanilla,Ice cream (vanilla),vanilla ice cream,dessert,vegetarian,usda_sr_legacy,167575,"Ice creams, vanilla",207.0,3.5,22.9,11.0,0.7,exact,exact,ready,indian;mediterranean
+whey_protein_powder,Whey protein powder,whey;protein powder;protein shake powder,supplement,vegetarian,usda_sr_legacy,173180,"Beverages, Protein powder whey based",352.0,78.13,3.15,1.56,3.1,exact,close,review,indian;mediterranean
+milk_chocolate,Milk chocolate,chocolate;dairy milk,dessert,vegetarian,uk_cofid,17-648,"Chocolate, milk",519.0,7.3,53.33,31.1,2.3,exact,exact,ready,indian;mediterranean
+lassi_sweet,Lassi (sweetened),meetha lassi;sweet lassi;sweet buttermilk drink,beverage,vegetarian,uk_cofid,12-373,"Lassi, sweetened",65.0,2.6,11.74,0.9,0.0,exact,exact,ready,indian
 idli,Idli,,dish_breakfast,vegan,computed,idli,Recipe: Idli,145.28,5.86,27.29,0.48,,exact,recipe,review,indian
 dosa,Plain dosa,dosai,dish_breakfast,vegan,computed,dosa,Recipe: Plain dosa,223.98,5.8,35.63,5.46,,exact,recipe,review,indian
 upma,Upma,uppittu;rava upma,dish_breakfast,vegan,computed,upma,Recipe: Upma,137.48,3.74,19.2,4.29,1.44,exact,recipe,review,indian
@@ -264,3 +272,4 @@ sprouts_chaat,Moong sprouts chaat,sprouts salad,dish_vegetable,vegan,computed,sp
 chana_chaat,Chickpea chaat,chana salad,dish_legume,vegan,computed,chana_chaat,Recipe: Chickpea chaat,100.38,5.26,12.78,1.5,4.69,exact,recipe,review,indian;mediterranean
 chicken_tikka,Chicken tikka (grilled marinated chicken),,dish_curry_meat,non_vegetarian,computed,chicken_tikka,Recipe: Chicken tikka (grilled marinated chicken),188.61,24.99,3.11,8.58,0.4,exact,recipe,review,indian
 greek_yogurt_fruit_bowl,Greek yogurt bowl with apple and almonds,high-protein yogurt bowl,dish_breakfast,vegetarian,computed,greek_yogurt_fruit_bowl,Recipe: Greek yogurt bowl with apple and almonds,92.31,7.66,7.17,3.36,1.16,exact,recipe,review,indian;mediterranean
+masala_chai,Masala chai (with milk and sugar),chai;cutting chai;tea with milk;doodh chai,beverage,vegetarian,computed,masala_chai,Recipe: Masala chai (with milk and sugar),56.48,2.1,7.29,2.18,0.0,exact,recipe,review,indian

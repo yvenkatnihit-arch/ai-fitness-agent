@@ -63,7 +63,8 @@ test('a message a guard stopped is shown as a notice, with no "how it was made" 
   type('something hard')
   send()
   const notice = await screen.findByText('I am really sorry you are feeling this way.')
-  expect(notice.className).toContain('bg-warn-soft')
+  expect(notice.closest('[data-bubble]')).toHaveAttribute('data-bubble', 'notice')
+  expect(notice.closest('[data-bubble]')!.className).toContain('bg-warn-soft')
   expect(screen.queryByText('How this answer was made')).not.toBeInTheDocument()
 })
 
@@ -184,7 +185,7 @@ test('Past chats lists earlier chats; opening one shows its messages and the nex
   fireEvent.click(within(list).getByText('tell me about paneer'))
   expect(await screen.findByText('Paneer is a dairy food.')).toBeInTheDocument()
   expect(screen.queryByRole('region', { name: 'Past chats' })).not.toBeInTheDocument()            // the list closes once a chat is open
-  expect(screen.getByText('I am really sorry you feel this way.').className).toContain('bg-warn-soft')   // a stopped turn still looks like a notice
+  expect(screen.getByText('I am really sorry you feel this way.').closest('[data-bubble]')).toHaveAttribute('data-bubble', 'notice')   // a stopped turn still looks like a notice
   type('and the fat?')
   send()
   await waitFor(() => expect(calls.filter((c) => c.method === 'POST')).toHaveLength(1))
@@ -294,4 +295,87 @@ test('the chips are not offered when an earlier chat is reopened', async () => {
   render()
   expect(await screen.findByText('Hello!')).toBeInTheDocument()
   expect(screen.queryByRole('list', { name: 'Example questions' })).not.toBeInTheDocument()
+})
+
+// ---------- readable replies, honest waiting, and follow-up chips (audit follow-up) ----------
+
+test('a reply with bullets, numbered steps and bold is shown as real lists and bold text, never as raw symbols', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ reply: 'Here is how:\n1. Stand tall\n2. Sit back\n\n* Keep your chest **up**\n* Heels flat' }) } })
+  render()
+  type('how do I squat')
+  send()
+  const bubble = (await screen.findByText('Here is how:')).closest('[data-bubble]') as HTMLElement
+  expect(within(bubble).getAllByRole('list')).toHaveLength(2)
+  expect(within(bubble).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['Stand tall', 'Sit back', 'Keep your chest up', 'Heels flat'])
+  expect(bubble.querySelector('strong')?.textContent).toBe('up')
+  expect(bubble.textContent).not.toContain('*')
+})
+
+test('a reply that contains markup is shown as plain text, never run', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ reply: '<img src=x onerror=alert(1)> and <b>bold?</b>' }) } })
+  const view = render()
+  type('hi')
+  send()
+  const bubble = (await screen.findByText(/onerror/)).closest('[data-bubble]') as HTMLElement
+  expect(bubble.querySelector('img')).toBeNull()
+  expect(bubble.querySelector('b')).toBeNull()
+  expect(bubble.textContent).toContain('<img src=x onerror=alert(1)>')
+  view.unmount()
+})
+
+test('while the coach is working it counts the seconds, and after 10 it says the service can be slow', async () => {
+  vi.useFakeTimers({ shouldAdvanceTime: true })
+  try {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})))                              // never answers
+    render()
+    type('hello')
+    send()
+    const status = await screen.findByRole('status')
+    expect(status).toHaveTextContent('The coach is thinking')
+    expect(status).not.toHaveTextContent('Still working')
+    await vi.advanceTimersByTimeAsync(11_000)
+    expect(screen.getByRole('status')).toHaveTextContent(/1[01] s/)
+    expect(screen.getByRole('status')).toHaveTextContent('Still working: the AI service can be slow at times.')
+  } finally {
+    vi.useRealTimers()
+  }
+})
+
+test('after an answer the chips depend on who answered and never repeat a question already asked', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ meta: { specialists: [{ name: 'my_plan', status: 'ok', steps: 1, tokens: 10, tools: ['get_week_logged'] }], composed: false } }) } })
+  render()
+  type('Am I on track this week?')
+  send()
+  const chips = await screen.findByRole('list', { name: 'Suggested next questions' })
+  const labels = within(chips).getAllByRole('button').map((b) => b.textContent)
+  expect(labels).toEqual(['My weight progress', "Tomorrow's workout"])                          // "Am I on track?" was just asked, so it is not offered again
+})
+
+test('a follow-up chip sends its full question', async () => {
+  const calls = fakeFetch({ 'POST /chat': { body: reply() } })
+  render()
+  type('how much protein in paneer')
+  send()
+  await screen.findByRole('list', { name: 'Suggested next questions' })
+  fireEvent.click(screen.getByRole('button', { name: 'High-protein foods' }))
+  await waitFor(() => expect(calls.filter((c) => c.method === 'POST')).toHaveLength(2))
+  expect(calls.filter((c) => c.method === 'POST')[1].body).toMatchObject({ message: 'Which vegetarian foods are high in protein?', conversation_id: 'c1' })
+})
+
+test('no chips while a proposal card waits for an answer, and the starting examples come back after a reply no specialist gave', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ waiting_for: { kind: 'approve_proposal', proposal_id: 'p1', summary: 'A plan' } }) } })
+  render()
+  type('plan')
+  send()
+  await screen.findByRole('region', { name: 'Proposal waiting for your answer' })
+  expect(screen.queryByRole('list', { name: 'Suggested next questions' })).not.toBeInTheDocument()
+})
+
+test('after a reply with no specialist (a greeting) the first examples are offered again', async () => {
+  fakeFetch({ 'POST /chat': { body: reply({ reply: 'Hi!', meta: { specialists: [], composed: false } }) } })
+  render()
+  type('hello')
+  send()
+  const chips = await screen.findByRole('list', { name: 'Suggested next questions' })
+  expect(within(chips).getAllByRole('button')[0]).toHaveTextContent('Protein in paneer')
 })

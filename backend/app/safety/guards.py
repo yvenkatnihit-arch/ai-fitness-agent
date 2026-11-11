@@ -93,9 +93,11 @@ MEDICAL = [
 ]
 RED_FLAG_PAIN = [
     r"\b(?:sharp|stabbing|shooting|severe) pain\b", r"\bnumb(?:ness)?\b", r"\bswelling\b", r"\bswollen\b", r"\bchest (?:pain|tightness)\b",
-    r"\b(?:dizzy|faint(?:ed|ing)?|passed out|blacked out)\b", r"\bpain (?:that )?(?:won'?t|does not|doesn'?t) (?:go away|stop)\b",
+    r"\b(?:dizzy|dizziness|faint(?:ed|ing)?|passed out|blacked out|light[- ]?headed)\b", r"\bpain (?:that )?(?:won'?t|does not|doesn'?t) (?:go away|stop)\b",
     r"\bcan'?t feel my\b", r"\b(?:gives?|gave) way\b", r"\bknee (?:locks?|locked|locking)\b", r"\bheard a pop\b",
 ]
+# The red flags that are about how the whole body feels, not about a joint or muscle: they get their own reply (D-115).
+RED_FLAG_SYMPTOMS = [r"\bchest (?:pain|tightness)\b", r"\b(?:dizzy|dizziness|faint(?:ed|ing)?|passed out|blacked out|light[- ]?headed)\b"]
 INJECTION = [
     r"\bignore (?:all |any |the |your )?(?:previous|prior|above|earlier|system) (?:instructions|rules|prompts?|messages?)",
     r"\bignore (?:the |all |any |your )?(?:rules|instructions|guidelines|restrictions|limits)\b(?! (?:about|for|on|of|when|if|in|at)\b)",
@@ -172,7 +174,7 @@ def check_input(text: str) -> Verdict | None:
     if _any(MEDICAL, v):
         return Verdict("medical", messages.MEDICAL)
     if _any(RED_FLAG_PAIN, [t]):
-        return Verdict("red_flag_pain", messages.RED_FLAG_PAIN)
+        return Verdict("red_flag_pain", messages.RED_FLAG_SYMPTOMS if _any(RED_FLAG_SYMPTOMS, [t]) else messages.RED_FLAG_PAIN)
     if _any(INJECTION, v):
         return Verdict("injection", messages.INJECTION)
     return None

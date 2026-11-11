@@ -2,11 +2,68 @@
  "as_of": "2026-11-11",
  "source": "The latest recorded run of each eval, with real Gemini calls (see docs/DECISIONS.md). Each score is compared with a pass line in evals/llm_thresholds.json; a run below it fails.",
  "evals": [
-  {"name": "Router: picks the right specialist", "cases": 71, "metric": "exact accuracy", "percent": 100.0, "pass_line_percent": 90.0, "decision": "D-110", "threshold": "router.exact_accuracy"},
-  {"name": "Router: follow-up questions (it sees earlier messages)", "cases": 12, "metric": "right specialist", "percent": 100.0, "pass_line_percent": 85.0, "decision": "D-098", "threshold": "router.followup_route_accuracy"},
-  {"name": "Composer: merges several answers without inventing numbers", "cases": 15, "metric": "pass rate", "percent": 100.0, "pass_line_percent": 90.0, "decision": "D-082", "threshold": "composer.pass_rate"},
-  {"name": "Nutrition specialist: answers only from our food data", "cases": 24, "metric": "pass rate", "percent": 95.8, "pass_line_percent": 85.0, "decision": "D-107", "threshold": "nutrition.pass_rate"},
-  {"name": "Rolling summary: keeps facts, invents no numbers", "cases": 10, "metric": "pass rate", "percent": 100.0, "pass_line_percent": 80.0, "decision": "D-099", "threshold": "summary.pass_rate"},
-  {"name": "Meal plans: every plan passes every safety check", "cases": 9, "metric": "plans passing", "percent": 100.0, "pass_line_percent": 90.0, "decision": "D-094", "threshold": "meal.scenario_pass_rate"}
+  {
+   "name": "Router: picks the right specialist",
+   "cases": 91,
+   "metric": "exact accuracy",
+   "percent": 100.0,
+   "pass_line_percent": 90.0,
+   "decision": "D-110",
+   "threshold": "router.exact_accuracy"
+  },
+  {
+   "name": "Router: follow-up questions (it sees earlier messages)",
+   "cases": 12,
+   "metric": "right specialist",
+   "percent": 100.0,
+   "pass_line_percent": 85.0,
+   "decision": "D-098",
+   "threshold": "router.followup_route_accuracy"
+  },
+  {
+   "name": "Specialists end to end: exercises, meal logging, your own plan",
+   "cases": 19,
+   "metric": "pass rate",
+   "percent": 100.0,
+   "pass_line_percent": 85.0,
+   "decision": "D-115",
+   "threshold": "specialists.pass_rate"
+  },
+  {
+   "name": "Composer: merges several answers without inventing numbers",
+   "cases": 15,
+   "metric": "pass rate",
+   "percent": 100.0,
+   "pass_line_percent": 90.0,
+   "decision": "D-082",
+   "threshold": "composer.pass_rate"
+  },
+  {
+   "name": "Nutrition specialist: answers only from our food data",
+   "cases": 24,
+   "metric": "pass rate",
+   "percent": 95.8,
+   "pass_line_percent": 85.0,
+   "decision": "D-107",
+   "threshold": "nutrition.pass_rate"
+  },
+  {
+   "name": "Rolling summary: keeps facts, invents no numbers",
+   "cases": 10,
+   "metric": "pass rate",
+   "percent": 100.0,
+   "pass_line_percent": 80.0,
+   "decision": "D-099",
+   "threshold": "summary.pass_rate"
+  },
+  {
+   "name": "Meal plans: every plan passes every safety check",
+   "cases": 9,
+   "metric": "plans passing",
+   "percent": 100.0,
+   "pass_line_percent": 90.0,
+   "decision": "D-094",
+   "threshold": "meal.scenario_pass_rate"
+  }
  ]
 }

@@ -27,5 +27,12 @@ RED_FLAG_PAIN = (
     "Sharp pain, swelling, numbness, dizziness or chest pain should be checked by a professional. "
     "I can plan around the problem once you have been seen."
 )
+# Found by the accuracy audit: "I feel dizzy when I fast" got the exercise-pain wording ("before you train that area again"). Dizziness, fainting
+# and chest symptoms are not about a body area, so they get their own wording (same safety category, same rule: a person, not the coach, decides).
+RED_FLAG_SYMPTOMS = (
+    "Feeling dizzy, faint or having chest pain is worth taking seriously. Please stop what you are doing, sit down, and have something to eat and drink. "
+    "If it happens again, or you have chest pain or trouble breathing, please see a doctor. I can't give medical advice, "
+    "but I'm happy to help with food and training once you have been checked."
+)
 INJECTION = "I can only help as your fitness coach, and I can't change my rules or share my instructions. What would you like to know about food or training?"
 UNSAFE_OUTPUT = "I'm sorry, I can't give a safe answer to that one. Please ask a doctor for that part, or ask me about food or training."

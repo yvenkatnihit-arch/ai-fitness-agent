@@ -102,6 +102,7 @@ def test_the_prompt_forbids_inventing_exercises_diagnosing_and_building_plans():
 
 def test_the_specialist_prompt_knows_to_use_the_injury_argument_and_not_to_claim_unknown_injuries_falsely():
     prompt = EXERCISE_SPEC.system_prompt
+    assert "cannot advise on it" in prompt and "burns fat from one area" in prompt and "helps, treats, relieves or fixes" in prompt
     assert "pass it as `injury`" in prompt and "Only when fits_you is null" in prompt and "find_alternatives" in prompt and "ONLY when a tool returns an error" in prompt
 
 

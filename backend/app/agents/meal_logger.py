@@ -26,8 +26,10 @@ MEAL_LOGGER_SPEC = SpecialistSpec(
     timeout_s=40.0,
 )
 
-WHEN = ("the user says what they ATE or had and wants it logged or recorded: 'I ate 2 rotis and dal for lunch', 'log my breakfast: 2 idlis and sambar', "
-        "'add a banana to my snack'. Not for questions about a food, and not for what they have already logged")
+WHEN = ("the user TELLS you what they ate or had (any time, past tense, any language mix) so it can be logged: 'I ate 2 rotis and dal for lunch', "
+        "'ate 3 idlis with sambar for breakfast yesterday', '2 roti aur dal khaya lunch mein', 'had chai', 'log my breakfast: 2 idlis and sambar', "
+        "'add a banana to my snack'. A statement of what they ate counts even without the word log. Not for questions about a food, and not "
+        "for asking what they have already logged")
 
 
 def meal_logger_registry() -> ToolRegistry:

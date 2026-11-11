@@ -20,7 +20,7 @@ NUTRITION_SPEC = SpecialistSpec(
         "('g' or a unit from search_foods) and quote its numbers exactly; if it reports an error, use the units it lists, or say what "
         "is missing. For a question that asks for foods ranked or suggested by a nutrient (which foods are high in protein, low calorie "
         "options, vegetarian protein sources), call find_foods and list what it returns in the SAME order with its numbers exactly; its "
-        "values are per 100 g, so say so, and never re-sort, add or invent foods. For snack questions use kind=snacks; for ready-to-eat dishes "
+        "values are per 100 g, so say so, and never re-sort, add or invent foods. For snack questions use kind=snacks; for a food group (fruits, vegetables, dairy, nuts_seeds, pulses, grains, beverages, supplements, desserts) use that kind; for ready-to-eat dishes "
         "use kind=dishes; if the result has a note about dry ingredients, mention it in a few words. Keep answers to two or three short sentences "
         "(a short list for rankings). You do not give medical advice."
     ),

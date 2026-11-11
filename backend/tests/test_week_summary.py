@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from app.calc.week_summary import DAYS, ON_TARGET_BAND, last_days, logged_days_only, summarize_week
+from app.calc.week_summary import DAYS, ON_TARGET_BAND, last_days, logged_days_only, remaining_today, summarize_week
 
 TODAY = date(2026, 11, 11)                         # a Wednesday
 
@@ -53,3 +53,10 @@ def test_a_user_who_must_not_see_numbers_is_told_only_which_days_they_logged():
     hidden = logged_days_only(summary["days"])
     assert hidden == {"days_logged": 2, "days_checked": 7, "logged_on": ["Monday", "Wednesday"]}
     assert not any(w in repr(hidden).lower() for w in ("kcal", "protein", "1800", "average"))
+
+
+def test_what_is_left_today_is_the_whole_number_target_minus_what_was_eaten_and_goes_negative_when_over():
+    eaten = {"kcal": 173.7, "protein_g": 6.3, "carbs_g": 34.2, "fat_g": 0.9}
+    assert remaining_today(eaten, 1407.6, 116.4, 148.2, 38.7) == {"kcal": 1234.3, "protein_g": 109.7, "carbs_g": 113.8, "fat_g": 38.1}     # 1408 - 173.7, 116 - 6.3 ...
+    over = remaining_today({"kcal": 1500.0, "protein_g": 120.0, "carbs_g": 100.0, "fat_g": 40.0}, 1408, 116, 148, 39)
+    assert over["kcal"] == -92.0 and over["protein_g"] == -4.0 and over["carbs_g"] == 48.0 and over["fat_g"] == -1.0

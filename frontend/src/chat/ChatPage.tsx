@@ -5,7 +5,8 @@ import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { AnswerDetails } from './AnswerDetails'
 import { PastChats } from './PastChats'
-import { SUGGESTIONS } from './suggestions'
+import { RichText } from './RichText'
+import { SUGGESTIONS, followUps } from './suggestions'
 import { MAX_MESSAGE_CHARS, type ChatLine, type ChatReply, type ConversationDetail, type ProposalCard } from './types'
 
 // The open chat is remembered for this browser tab, so a refresh brings it back (never anything but the id).
@@ -26,6 +27,7 @@ const remembered = () => {
   }
 }
 
+const SLOW_AFTER_SECONDS = 10
 const asApiError = (e: unknown) => (e instanceof ApiError ? e : new ApiError(0, 'Something went wrong. Please try again.'))
 
 // Chat with the coach. The coach can answer food questions and PROPOSE a change, but nothing changes until you press Approve.
@@ -39,12 +41,24 @@ export function ChatPage() {
   const [busy, setBusy] = useState<'sending' | 'deciding' | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
   const [showPast, setShowPast] = useState(false)
+  const [seconds, setSeconds] = useState(0)
   const nextId = useRef(1)
   const bottom = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     bottom.current?.scrollIntoView?.({ block: 'end' }) // jsdom (tests) has no scrollIntoView
   }, [lines, card, busy])
+
+  // How long this question has been running. Honest: it only counts seconds, it does not pretend to know which step the coach is on.
+  useEffect(() => {
+    if (busy !== 'sending') return
+    const started = Date.now()
+    const timer = setInterval(() => setSeconds(Math.round((Date.now() - started) / 1000)), 1000)
+    return () => {
+      clearInterval(timer)
+      setSeconds(0)
+    }
+  }, [busy])
 
   async function open(id: string, quiet = false) {
     setError(null)
@@ -128,6 +142,12 @@ export function ChatPage() {
     }
   }
 
+  // After an answer: a few next questions chosen from which specialist just replied (never ones already asked in this chat).
+  const last = lines[lines.length - 1]
+  const more = !busy && !card && last?.role === 'assistant'
+    ? followUps(last.meta?.specialists?.map((s) => s.name) ?? [], lines.filter((l) => l.role === 'user').map((l) => l.text))
+    : []
+
   return (
     <PageShell
       title="Coach chat"
@@ -166,17 +186,37 @@ export function ChatPage() {
         )}
         {lines.map((line) => (
           <div key={line.id} className={`flex flex-col gap-1 ${line.role === 'user' ? 'items-end' : 'items-start'}`}>
-            <p
+            <div
+              data-bubble={line.role === 'user' ? 'user' : line.blocked ? 'notice' : 'coach'}
               className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${
                 line.role === 'user' ? 'bg-brand text-on-brand' : line.blocked ? 'bg-warn-soft text-warn' : 'bg-surface text-ink shadow-sm'
               }`}
             >
-              {line.text}
-            </p>
+              {line.role === 'user' ? line.text : <RichText text={line.text} />}
+            </div>
             {line.meta && <AnswerDetails meta={line.meta} />}
           </div>
         ))}
-        {busy === 'sending' && <p role="status" className="text-sm text-muted">The coach is thinking…</p>}
+        {busy === 'sending' && (
+          <p role="status" className="text-sm text-muted">
+            The coach is thinking… {seconds > 0 ? `${seconds} s` : ''}
+            {seconds >= SLOW_AFTER_SECONDS && ' Still working: the AI service can be slow at times.'}
+          </p>
+        )}
+        {more.length > 0 && (
+          <ul aria-label="Suggested next questions" className="flex flex-wrap gap-2">
+            {more.map((s) => (
+              <li key={s.label}>
+                <button
+                  type="button" title={s.message} onClick={() => void send(undefined, s.message)}
+                  className="rounded-full border border-brand bg-brand-soft px-3 py-1.5 text-sm font-medium text-brand-strong transition hover:opacity-90"
+                >
+                  {s.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         <div ref={bottom} />
       </section>
 

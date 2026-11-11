@@ -118,3 +118,17 @@ def test_a_home_beginner_asking_about_chest_exercises_gets_the_ones_that_suit_th
     names = {e["name"] for e in search(users[0], muscle="chest", limit=8)["exercises"]}
     assert {"Push-Up", "Knee Push-Up"} <= names                                                      # regression: these used to be cut before the filter ran
     assert search(users[0], query="squats", limit=8)["exercises"]                                      # and a plural finds the exercise
+
+
+def test_an_exercise_hidden_for_this_user_is_reported_as_unsuitable_with_the_reason_not_as_missing(client, users):
+    onboard(client)                                                                                  # beginner, home, no equipment
+    got = search(users[0], query="barbell deadlift")
+    assert got["exercises"] == [] or all(e["fits_you"] is True for e in got["exercises"])
+    assert got["not_suitable_for_you"] and all(h["why_not"] for h in got["not_suitable_for_you"])
+    if not got["exercises"]:
+        assert "ARE in our library" in got["note"]                                                   # the model is told it exists
+
+
+def test_a_pushup_question_finds_the_pushup(client, users):
+    onboard(client)
+    assert any(e["name"] == "Push-Up" for e in search(users[0], query="pushup", limit=8)["exercises"])

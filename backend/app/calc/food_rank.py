@@ -7,7 +7,13 @@ from typing import Literal
 from app.calc.meal_pool import ALLOWED_DIET_CLASSES, PoolFood, disliked
 
 SortBy = Literal["most_protein", "least_calories", "most_protein_per_calorie"]
-Kind = Literal["any", "dishes", "ingredients", "snacks"]
+Kind = Literal["any", "dishes", "ingredients", "snacks", "fruits", "vegetables", "dairy", "nuts_seeds", "pulses", "grains", "beverages", "supplements", "desserts"]
+# A kind that means one food group in the database (the categories are the foods table's own).
+GROUP_CATEGORIES = {"fruits": {"fruit"}, "vegetables": {"vegetable"}, "dairy": {"dairy"}, "nuts_seeds": {"nut_seed"}, "pulses": {"pulse"}, "grains": {"cereal"},
+                    "beverages": {"beverage"}, "supplements": {"supplement"}, "desserts": {"dessert"}}
+# Drinks, powders and desserts would swamp a general "low calorie" or "high protein" list (tea is 1 kcal, whey powder is 78 g of protein), so they only
+# appear when the person asks for that group.
+ONLY_WHEN_ASKED = frozenset({"beverage", "supplement", "dessert"})
 # What people mean by a snack: fruit, nuts and seeds, dairy, eggs, and the snack and dip dishes.
 SNACK_CATEGORIES = frozenset({"fruit", "nut_seed", "dairy", "egg", "dish_snack", "dish_dip"})
 MAX_RESULTS = 8
@@ -37,7 +43,9 @@ def rank_foods(foods: Sequence[PoolFood], sort_by: SortBy, kind: Kind = "any", m
     """The best `limit` foods under the filters. Ties are broken by name, so the answer never changes between runs."""
     limit = max(1, min(limit, MAX_RESULTS))
     pool = [f for f in foods
-            if (kind == "any" or (kind == "snacks" and f.category in SNACK_CATEGORIES)
+            if (kind in GROUP_CATEGORIES or f.category not in ONLY_WHEN_ASKED)
+            and (kind == "any" or (kind == "snacks" and f.category in SNACK_CATEGORIES)
+                or (kind in GROUP_CATEGORIES and f.category in GROUP_CATEGORIES[kind])
                 or (kind in ("dishes", "ingredients") and (kind == "dishes") == is_dish(f)))
             and (min_protein_g is None or f.protein_g >= min_protein_g)
             and (max_kcal is None or f.kcal <= max_kcal)]

@@ -8,7 +8,7 @@
       "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
       "credit": "U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. fdc.nal.usda.gov",
       "homepage": "https://fdc.nal.usda.gov/",
-      "foods": 124
+      "foods": 129
     },
     {
       "key": "uk_cofid",
@@ -18,7 +18,7 @@
       "license_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
       "credit": "Public Health England (2021). McCance and Widdowson's The Composition of Foods Integrated Dataset 2021. Contains public sector information licensed under the Open Government Licence v3.0.",
       "homepage": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
-      "foods": 78
+      "foods": 81
     }
   ],
   "recipes": [
@@ -26,7 +26,7 @@
       "key": "computed",
       "name": "Our own recipes",
       "description": "Dishes such as idli, dosa, upma and kheer are not in the sources above. We calculate them from a recipe: raw ingredient weights (from the sources above) plus the weight of the cooked dish. The maths is done by tested code, never by AI. A recipe shows \"values being checked\" until a person has reviewed it.",
-      "foods": 63
+      "foods": 64
     }
   ],
   "notes": [

@@ -42,6 +42,12 @@ def summarize_week(totals_by_day: dict[date, dict[str, float]], today: date, kca
     return out
 
 
+def remaining_today(eaten: dict[str, float], kcal_target: float, protein_target: float, carbs_target: float, fat_target: float) -> dict[str, float]:
+    """What is left of today's targets (target minus eaten), whole numbers like the Targets screen. Negative means over the target."""
+    targets = {"kcal": kcal_target, "protein_g": protein_target, "carbs_g": carbs_target, "fat_g": fat_target}
+    return {k: round(round(targets[k]) - eaten[k], 1) for k in KEYS}
+
+
 def logged_days_only(days: Sequence[dict]) -> dict:
     """What a user who must not see numbers is told: which days they logged, nothing else."""
     return {"days_logged": sum(d["logged"] for d in days), "days_checked": DAYS,

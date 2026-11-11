@@ -65,7 +65,7 @@ SEARCH_FOODS = Tool(
 class FindFoodsArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
     sort_by: SortBy = Field(description="most_protein, least_calories, or most_protein_per_calorie")
-    kind: Kind = Field(default="any", description="dishes (cooked dishes), ingredients (plain foods), snacks (fruit, nuts, dairy, eggs, snack dishes) or any")
+    kind: Kind = Field(default="any", description="dishes (cooked dishes), ingredients (plain foods), snacks (fruit, nuts, dairy, eggs, snack dishes), or one food group: fruits, vegetables, dairy, nuts_seeds, pulses, grains, beverages, supplements, desserts; or any")
     diet: Literal["vegan", "vegetarian", "eggetarian", "non_vegetarian"] | None = Field(
         default=None, description="show foods for this diet instead of the user's own (only when the user asks about another diet)")
     min_protein_g: float | None = Field(default=None, ge=0, le=100, description="only foods with at least this much protein per 100 g")

@@ -232,3 +232,23 @@ def test_a_user_who_must_not_see_numbers_gets_no_weight_from_the_tool(client, us
 def india_today_for_tests():
     from app.core.time import india_today
     return india_today()
+
+
+# ---------- what is left today (found by the accuracy audit) ----------
+
+def test_todays_log_also_says_what_is_left_of_the_targets_worked_out_by_code(client, users):
+    onboard(client)
+    shown = client.get("/targets/current").json()
+    nothing = run(GET_TODAY_LOGGED, users[0])
+    assert nothing["left_today_negative_means_over"]["kcal"] == float(shown["calorie_target_kcal"])           # nothing eaten: the whole target is left
+    logged = client.post("/meals", json={"slot": "lunch", "items": [{"food_id": food_id("roti"), "quantity": 2, "unit": "piece"}]}).json()
+    left = run(GET_TODAY_LOGGED, users[0])["left_today_negative_means_over"]
+    assert left["kcal"] == round(shown["calorie_target_kcal"] - logged["totals"]["kcal"], 1)
+    assert left["protein_g"] == round(shown["protein_g"] - logged["totals"]["protein_g"], 1)
+
+
+def test_a_user_who_must_not_see_numbers_is_not_told_what_is_left(client, users):
+    onboard(client, eating_disorder_history=True)
+    client.post("/meals", json={"slot": "lunch", "items": [{"food_id": food_id("roti"), "quantity": 2, "unit": "piece"}]})
+    assert "left_today_negative_means_over" not in run(GET_TODAY_LOGGED, users[0])
+    assert "left_today_negative_means_over" not in repr(run(GET_TODAY_LOGGED, users[0]))
