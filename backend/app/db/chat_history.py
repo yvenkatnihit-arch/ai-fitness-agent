@@ -45,6 +45,13 @@ def mark_blocked(conn: Connection, user_id: UUID, message_id: int, category: str
     conn.execute("update public.chat_messages set blocked = %s where id = %s and user_id = %s", (category[:40], message_id, user_id))
 
 
+def user_message_times(conn: Connection, user_id: UUID, within_seconds: int) -> list:
+    """When this user sent messages in the last `within_seconds`, across ALL their chats (the rate limit counts the person, not the chat)."""
+    return [r[0] for r in conn.execute(
+        """select created_at from public.chat_messages where user_id = %s and role = 'user'
+           and created_at > now() - make_interval(secs => %s) order by created_at desc limit 1000""", (user_id, within_seconds)).fetchall()]
+
+
 def user_message_ids(conn: Connection, user_id: UUID, conversation_id: UUID) -> list[int]:
     """Every user message id in the conversation, oldest first. Each one is the id of a TURN (see chat_turn.thread_for)."""
     return [r[0] for r in conn.execute(
@@ -81,12 +88,12 @@ def save_summary(conn: Connection, user_id: UUID, conversation_id: UUID, summary
 def unsummarized_before_window(conn: Connection, user_id: UUID, conversation_id: UUID, limit: int = HISTORY_LIMIT
                                ) -> list[tuple[int, str, str]]:
     """Messages that fell out of the last-`limit` window and are not in the summary yet: (id, role, content), oldest first.
-    These are what the next summary must absorb."""
+    These are what the next summary must absorb. Blocked messages are skipped, exactly as `recent_messages` skips them."""
     _, through = read_summary(conn, user_id, conversation_id)
     rows = conn.execute(
         """select id, role, content from public.chat_messages
-           where conversation_id = %s and user_id = %s and id > %s
-             and id not in (select id from public.chat_messages where conversation_id = %s and user_id = %s
+           where conversation_id = %s and user_id = %s and id > %s and blocked is null
+             and id not in (select id from public.chat_messages where conversation_id = %s and user_id = %s and blocked is null
                             order by id desc limit %s)
            order by id""", (conversation_id, user_id, through, conversation_id, user_id, limit)).fetchall()
     return list(rows)

@@ -1,4 +1,4 @@
-"""Run the model-based evals with REAL Gemini calls.   From backend/:  uv run python -m evals.run_llm router|composer|nutrition|workout|meal [--fresh] [--limit=N] [--show]
+"""Run the model-based evals with REAL Gemini calls.   From backend/:  uv run python -m evals.run_llm router|composer|nutrition|workout|meal|summary [--fresh] [--limit=N] [--show]
 
 A fraction of a cent to a few cents. Results are cached in evals/cache/ (git-ignored), so unchanged cases cost nothing; `--fresh` ignores
 the cache; `--show` prints every answer. The cache is keyed by model, prompt and input only: it does NOT notice a change to a tool or to the data
@@ -10,13 +10,13 @@ import json
 import sys
 from pathlib import Path
 
-from evals import composer_eval, meal_eval, nutrition_eval, router_eval, workout_eval
+from evals import composer_eval, meal_eval, nutrition_eval, router_eval, summary_eval, workout_eval
 
 THRESHOLDS = Path(__file__).with_name("llm_thresholds.json")
 HIGHER_IS_BETTER = ("followup_route_accuracy", "followup_resolved_rate", "exact_accuracy", "nutrition_recall", "off_topic_specificity", "pass_rate", "mean_number_coverage",
                     "searched_first_rate", "honest_when_absent_rate", "amount_used_tool_rate", "scenario_pass_rate", "model_day_rate",
-                    "mean_pattern_coverage", "count_ok_rate", "focus_ok_rate", "ok_day_rate", "mean_protein_ratio")
-LOWER_IS_BETTER = ("invalid_json_rate", "off_menu_rate", "duplicate_rate", "invented_number_rate", "too_long_rate", "injection_obeyed_rate",
+                    "mean_pattern_coverage", "facts_kept_rate", "accepted_rate", "count_ok_rate", "focus_ok_rate", "ok_day_rate", "mean_protein_ratio")
+LOWER_IS_BETTER = ("invalid_json_rate", "off_menu_rate", "duplicate_rate", "invented_number_rate", "too_long_rate", "injection_obeyed_rate", "instruction_copied_rate",
                    "ungrounded_number_rate", "amount_calculated_rate", "failed_run_rate", "safety_violation_rate", "payload_problem_rate",
                    "weekly_cap_breach_rate", "refused_rate", "mean_repeat_rate", "avg_cost_usd", "unresolved_cap_rate")
 
@@ -142,7 +142,21 @@ def _meal(fresh: bool, show: bool) -> dict:
     return s
 
 
-RUNNERS = {"router": _router, "composer": _composer, "nutrition": _nutrition, "workout": _workout, "meal": _meal}
+def _summary(fresh: bool, show: bool) -> dict:
+    results = summary_eval.run_summary_eval(use_cache=not fresh)
+    s = summary_eval.summarize(results)
+    print(f"Rolling summary eval: {s['cases']} cases")
+    print(f"  pass rate {s['pass_rate']:.1%}   facts kept {s['facts_kept_rate']:.1%}   invented numbers {s['invented_number_rate']:.1%}   "
+          f"instruction copied {s['instruction_copied_rate']:.1%}   too long {s['too_long_rate']:.1%}   accepted by the app's check {s['accepted_rate']:.1%}")
+    print(f"  avg {s['avg_tokens']:.0f} tokens/call   median {s['median_latency_ms']:.0f} ms   total ${s['total_cost_usd']:.5f}")
+    for r in results:
+        if not r.passed or show:
+            print(f"  {'FAIL' if not r.passed else 'ok  '}: kept {r.kept}/{r.facts}"
+                  + (f", INVENTED {r.invented}" if r.invented else "") + (f", COPIED {r.copied}" if r.copied else "") + f"\n        -> {r.summary!r}")
+    return s
+
+
+RUNNERS = {"summary": _summary, "router": _router, "composer": _composer, "nutrition": _nutrition, "workout": _workout, "meal": _meal}
 
 
 def main() -> int:

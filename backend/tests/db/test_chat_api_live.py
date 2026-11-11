@@ -229,3 +229,76 @@ def test_deleting_a_chat_also_deletes_its_saved_graph_states(client, users, fake
     assert count() > 0
     assert client.delete(f"/chat/{cid}").status_code == 204
     assert count() == 0
+
+
+# ---------- the rolling summary (7.11d, D-099) ----------
+
+@pytest.fixture
+def summary_model(monkeypatch):
+    """Replace only the summarizer's model call. `calls` records what it was asked to fold; `answer` is what it replies."""
+    state = {"calls": [], "answer": "Vegetarian, asked about paneer.", "boom": False}
+
+    def fake(old, messages, *, user_id):
+        state["calls"].append((old, list(messages)))
+        if state["boom"]:
+            raise RuntimeError("model down")
+        return state["answer"]
+    monkeypatch.setattr(chat_turn, "summarize", fake)
+    return state
+
+
+def say(client, cid, n):
+    for i in range(n):
+        cid = client.post("/chat", json={"message": f"question {i}", "conversation_id": cid} if cid else {"message": f"question {i}"}).json()["conversation_id"]
+    return cid
+
+
+def summary_of(cid):
+    return rows("select summary, summarized_through from public.chat_conversations where id = %s", cid)[0]
+
+
+def test_the_summary_is_written_after_enough_messages_leave_the_window(client, users, fake_graph, summary_model):
+    onboard(client)
+    cid = say(client, None, 3)                                    # 6 messages: all inside the window, nothing to fold
+    assert summary_model["calls"] == [] and summary_of(cid) == ("", 0)
+    cid = say(client, cid, 2)                                     # 10 messages: the first 4 have left the window and are folded
+    assert len(summary_model["calls"]) == 1
+    old, folded = summary_model["calls"][0]
+    assert old == "" and [t for _, t in folded][::2] == ["question 0", "question 1"] and len(folded) == 4
+    summary, through = summary_of(cid)
+    first_four = [r[0] for r in rows("select id from public.chat_messages where conversation_id = %s order by id limit 4", cid)]
+    assert summary == "Vegetarian, asked about paneer." and through == first_four[-1]
+
+
+def test_the_next_summary_builds_on_the_old_one_and_the_router_receives_it(client, users, fake_graph, summary_model, monkeypatch):
+    onboard(client)
+    cid = say(client, None, 5)
+    summary_model["answer"] = "Vegetarian, asked about paneer and rotis."
+    seen = []
+    monkeypatch.setattr("app.agents.chat_graph.route_message",
+                        lambda message, menu, *, user_id, history=(), summary="", **k: seen.append(summary) or [])
+    fake_graph["own_router"] = True
+    say(client, cid, 2)                                           # these two turns reach the router with the saved summary
+    assert seen[0] == "Vegetarian, asked about paneer."
+    assert summary_model["calls"][-1][0] == "Vegetarian, asked about paneer."                     # the next fold starts from the old summary
+
+
+def test_a_failing_or_rejected_summary_keeps_the_old_one_and_never_breaks_the_chat(client, users, fake_graph, summary_model):
+    onboard(client)
+    cid = say(client, None, 5)
+    before = summary_of(cid)
+    summary_model["boom"] = True
+    reply = client.post("/chat", json={"message": "still works", "conversation_id": cid})
+    assert reply.status_code == 200 and summary_of(cid) == before                                 # the error was swallowed
+    summary_model["boom"], summary_model["answer"] = False, None                                  # the checks said no
+    assert client.post("/chat", json={"message": "and again", "conversation_id": cid}).status_code == 200
+    assert summary_of(cid) == before
+
+
+def test_blocked_messages_are_never_folded_into_the_summary(client, users, fake_graph, summary_model):
+    onboard(client)
+    cid = client.post("/chat", json={"message": "I want to kill myself"}).json()["conversation_id"]
+    say(client, cid, 5)
+    folded = [t for _, ms in summary_model["calls"] for _, t in ms]
+    joined = " ".join(folded).lower()
+    assert folded and "kill myself" not in joined and "tele-manas" not in joined                  # neither the message nor the crisis reply

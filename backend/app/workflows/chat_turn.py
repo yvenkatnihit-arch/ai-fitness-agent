@@ -9,18 +9,22 @@ History (7.11c): the last 6 messages and the rolling summary go to the ROUTER on
 """
 
 import logging
+from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
 
 from app.agents.approvals import APPROVE, REJECT
 from app.agents.chat_graph import answer_message, resume_chat, waiting_card
 from app.agents.checkpointer import checkpointer
+from app.agents.summarizer import summarize
+from app.core import chat_limits
 from app.db import admin_transaction
 from app.db import chat_history as history
 
 logger = logging.getLogger(__name__)
 
 MAX_MESSAGE_CHARS = 1000
+SUMMARY_BATCH = 4      # fold older messages into the summary only when this many are waiting (one model call per 2 turns, not per turn)
 CHOICES = (APPROVE, REJECT)
 
 
@@ -33,6 +37,12 @@ def thread_for(conversation_id: UUID, turn_id: int) -> str:
 
 class ConversationNotFound(Exception):
     pass
+
+
+class ChatLimitReached(Exception):
+    def __init__(self, wait_seconds: int) -> None:
+        super().__init__(chat_limits.friendly_message(wait_seconds))
+        self.wait_seconds = wait_seconds
 
 
 class NothingWaiting(Exception):
@@ -54,6 +64,11 @@ def _out(conversation_id: UUID, result: dict[str, Any], reply: str) -> dict[str,
 
 
 def send_message(user_id: UUID, message: str, conversation_id: UUID | None = None, **graph_kwargs: Any) -> dict[str, Any]:
+    with admin_transaction("chat: check the limit") as conn:
+        times = history.user_message_times(conn, user_id, chat_limits.LOOKBACK_SECONDS)
+    wait = chat_limits.seconds_to_wait(times, datetime.now(timezone.utc))
+    if wait is not None:
+        raise ChatLimitReached(wait)                              # before anything is saved or any model runs
     with admin_transaction("chat: save the user's message") as conn:
         if conversation_id is None:
             conversation_id = history.create_conversation(conn, user_id, message)
@@ -109,3 +124,24 @@ def delete_conversation(user_id: UUID, conversation_id: UUID) -> None:
             saver.delete_thread(f"{user_id}:{thread_for(conversation_id, turn)}")
     with admin_transaction("chat: delete the conversation") as conn:
         conn.execute("delete from public.chat_conversations where id = %s and user_id = %s", (conversation_id, user_id))
+
+
+def update_summary(user_id: UUID, conversation_id: UUID, **summarize_kwargs: Any) -> bool:
+    """Fold the messages that left the 6-message window into the rolling summary (D-099). Best effort: it runs AFTER the reply is
+    sent, so it must never raise. Returns True when a new summary was saved. A failed or rejected summary keeps the old one."""
+    try:
+        with admin_transaction("chat: read what to summarize") as conn:
+            waiting = history.unsummarized_before_window(conn, user_id, conversation_id)
+            if len(waiting) < SUMMARY_BATCH:
+                return False
+            old, _ = history.read_summary(conn, user_id, conversation_id)
+        new = summarize(old, [(role, text) for _, role, text in waiting], user_id=user_id, **summarize_kwargs)
+        if new is None:
+            logger.warning("chat summary rejected by its checks; keeping the old one")
+            return False
+        with admin_transaction("chat: save the summary") as conn:
+            history.save_summary(conn, user_id, conversation_id, new, waiting[-1][0])
+        return True
+    except Exception:   # noqa: BLE001 - background work after the response: log and carry on
+        logger.exception("chat summary failed; keeping the old one")
+        return False

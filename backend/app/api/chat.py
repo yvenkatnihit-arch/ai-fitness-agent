@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 
 from app.core.auth import CurrentUser, get_current_user
 from app.db import chat_history as history
@@ -23,6 +23,8 @@ def _run(call):
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(error)) from None
     except LLMFailed as error:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(error)) from None
+    except chat_turn.ChatLimitReached as error:
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, str(error), headers={"Retry-After": str(error.wait_seconds)}) from None
     except chat_turn.ConversationNotFound:
         raise HTTPException(status.HTTP_404_NOT_FOUND, NOT_FOUND) from None
     except chat_turn.NothingWaiting:
@@ -30,10 +32,12 @@ def _run(call):
 
 
 @router.post("", response_model=ChatOut)
-def send(body: ChatIn, user: CurrentUser = Depends(get_current_user)) -> ChatOut:
+def send(body: ChatIn, tasks: BackgroundTasks, user: CurrentUser = Depends(get_current_user)) -> ChatOut:
     """One user message in, one reply out. A guard can stop the message before any model runs; a plan change is only ever a
     proposal the user must approve (see `waiting_for` and the decide endpoint)."""
-    return ChatOut(**_run(lambda: chat_turn.send_message(user.id, body.message, body.conversation_id)))
+    out = _run(lambda: chat_turn.send_message(user.id, body.message, body.conversation_id))
+    tasks.add_task(chat_turn.update_summary, user.id, UUID(out["conversation_id"]))   # after the reply is sent: the user never waits for it
+    return ChatOut(**out)
 
 
 @router.post("/{conversation_id}/decide", response_model=ChatOut)
