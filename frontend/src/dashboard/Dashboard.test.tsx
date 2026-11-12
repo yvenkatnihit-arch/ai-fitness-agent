@@ -120,6 +120,10 @@ test('the dashboard sits on Home above the targets and keeps the quick links', a
   render()
   await screen.findByRole('region', { name: "Today's progress" })
   expect(screen.getByRole('link', { name: 'Meal plan' })).toHaveAttribute('href', '/meal-plan')
-  expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings')
+  const settings = screen.getByRole('link', { name: 'Settings' })
+  expect(settings).toHaveAttribute('href', '/settings')
+  expect(settings.querySelector('svg')).not.toBeNull()                                          // a small icon in the top-left corner, not a big button
+  expect(settings).toHaveTextContent('')
+  expect(settings.className).toContain('rounded-full')
   expect(screen.getByText('1,408')).toBeInTheDocument()
 })

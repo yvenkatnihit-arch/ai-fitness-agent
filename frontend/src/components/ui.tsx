@@ -6,13 +6,14 @@ import { Link } from 'react-router'
 // The frame every signed-in screen shares: page background, one centred column, a title row.
 // `back` adds a "Back" link to Home; `action` is anything else for the right of the title (e.g. Sign out).
 export function PageShell({
-  title, subtitle, back, action, children,
-}: { title: string; subtitle?: string; back?: boolean; action?: ReactNode; children: ReactNode }) {
+  title, subtitle, back, action, leading, children,
+}: { title: string; subtitle?: string; back?: boolean; action?: ReactNode; leading?: ReactNode; children: ReactNode }) {
   return (
     <main className="min-h-screen bg-bg px-4 pb-24 pt-6">
       <div className="mx-auto flex w-full max-w-md flex-col gap-4">
         <header className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
+          {leading}
+          <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-ink">{title}</h1>
             {subtitle && <p className="truncate text-xs text-muted">{subtitle}</p>}
           </div>

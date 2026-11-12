@@ -1,3 +1,4 @@
+import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router'
 
@@ -85,6 +86,14 @@ export function HomePage() {
   return (
     <PageShell
       title="AI Fitness Coach"
+      leading={
+        <Link
+          to="/settings" aria-label="Settings" title="Settings"
+          className="glass flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-soft transition hover:border-brand hover:text-brand-strong"
+        >
+          <Settings aria-hidden="true" size={20} />
+        </Link>
+      }
       subtitle={session?.user.email}
       action={
         <button
@@ -119,7 +128,6 @@ export function HomePage() {
                   <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
                   <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
                 </div>
-                <ButtonLink to="/settings" variant="secondary">Settings</ButtonLink>
               </div>
               {today && <TodayPlans today={today} />}
               <AskCoachCard />
