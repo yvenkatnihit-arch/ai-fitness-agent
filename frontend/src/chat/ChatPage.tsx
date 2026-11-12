@@ -6,9 +6,10 @@ import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { AnswerDetails } from './AnswerDetails'
 import { PastChats } from './PastChats'
+import { PromptCards } from './PromptCards'
 import { RichText } from './RichText'
 import { Thumbs, type Thumb } from './Thumbs'
-import { SUGGESTIONS, followUps } from './suggestions'
+import { followUps } from './suggestions'
 import { MAX_MESSAGE_CHARS, type ChatLine, type ChatReply, type ConversationDetail, type ProposalCard } from './types'
 
 // The open chat is remembered for this browser tab, so a refresh brings it back (never anything but the id).
@@ -182,10 +183,13 @@ export function ChatPage() {
       title="Coach chat"
       back
     >
-      <p className="text-xs text-muted">
-        I can answer questions about foods and nutrition, exercises, your own plan, targets, weight and progress, and log a meal for you.
-        The coach can make mistakes, and for medical questions please ask a doctor. Anything it suggests saving only happens if you approve it.
-      </p>
+      <div className="glass flex items-start gap-3 rounded-2xl p-4">
+        <span aria-hidden="true" className="ring-glow mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-brand" />
+        <p className="text-xs text-ink-soft">
+          I can answer questions about foods and nutrition, exercises, your own plan, targets, weight and progress, and log a meal for you.
+          The coach can make mistakes, and for medical questions please ask a doctor. Anything it suggests saving only happens if you approve it.
+        </p>
+      </div>
 
       <button
         type="button" onClick={() => setShowPast((v) => !v)} aria-expanded={showPast}
@@ -199,18 +203,7 @@ export function ChatPage() {
         {lines.length === 0 && (
           <div className="flex flex-col gap-2">
             <p className="text-sm text-ink-soft">Not sure what to ask? Tap an example:</p>
-            <ul aria-label="Example questions" className="flex flex-wrap gap-2">
-              {SUGGESTIONS.map((s) => (
-                <li key={s.label}>
-                  <button
-                    type="button" title={s.message} disabled={busy !== null} onClick={() => void send(undefined, s.message)}
-                    className="rounded-full border border-brand bg-brand-soft px-3 py-1.5 text-sm font-medium text-brand-strong transition hover:opacity-90 disabled:opacity-50"
-                  >
-                    {s.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <PromptCards disabled={busy !== null} onPick={(message) => void send(undefined, message)} />
           </div>
         )}
         {lines.map((line) => (
@@ -218,7 +211,7 @@ export function ChatPage() {
             <div
               data-bubble={line.role === 'user' ? 'user' : line.blocked ? 'notice' : 'coach'}
               className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${
-                line.role === 'user' ? 'bg-brand text-on-brand' : line.blocked ? 'bg-warn-soft text-warn' : 'bg-surface text-ink shadow-sm'
+                line.role === 'user' ? 'rounded-br-md bg-brand text-on-brand' : line.blocked ? 'bg-warn-soft text-warn' : 'glass rounded-bl-md text-ink'
               }`}
             >
               {line.role === 'user' ? line.text : <RichText text={line.text} />}
@@ -230,7 +223,10 @@ export function ChatPage() {
           </div>
         ))}
         {busy === 'sending' && (
-          <p role="status" className="text-sm text-muted">
+          <p role="status" className="flex items-center gap-2 text-sm text-muted">
+            <span aria-hidden="true" className="flex gap-1">
+              <span className="typing-dot" /><span className="typing-dot" /><span className="typing-dot" />
+            </span>
             The coach is thinking… {seconds > 0 ? `${seconds} s` : ''}
             {seconds >= SLOW_AFTER_SECONDS && ' Still working: the AI service can be slow at times.'}
           </p>
@@ -253,7 +249,7 @@ export function ChatPage() {
       </section>
 
       {card && (
-        <section aria-label="Proposal waiting for your answer" className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm ring-2 ring-brand">
+        <section aria-label="Proposal waiting for your answer" className="glass flex flex-col gap-3 rounded-2xl p-4 ring-2 ring-brand">
           <h2 className="text-base font-bold text-ink">Please confirm</h2>
           <p className="text-sm text-ink-soft">{card.summary}</p>
           <div className="grid grid-cols-2 gap-3">
