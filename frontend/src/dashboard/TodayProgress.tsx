@@ -1,6 +1,18 @@
 import { CalorieRing } from './CalorieRing'
 import { MacroCards } from './MacroCards'
+import { MealChecklist } from './MealChecklist'
+import { kcalLeft } from './mealSlots'
 import type { Today } from './types'
+
+// "696 kcal left" under the ring (or how far over, said plainly and without blame).
+function KcalLeft({ eaten, target }: { eaten: number; target: number }) {
+  const { amount, over } = kcalLeft(eaten, target)
+  return (
+    <p aria-label="Calories left today" className="-mt-2 text-center text-sm font-semibold text-ink">
+      {over ? `${amount} kcal over today’s target` : `${amount} kcal left today`}
+    </p>
+  )
+}
 
 // Today's calories (the ring) and macros (the cards) against the targets, from the meals logged today, then what was logged.
 // No numbers for users who must not see them.
@@ -10,12 +22,16 @@ export function TodayProgress({ today }: { today: Today }) {
       <div className="glass flex flex-col gap-4 rounded-3xl p-5">
         <h2 className="text-base font-bold text-ink">Today, {today.weekday}</h2>
         {today.progress ? (
-          <CalorieRing value={today.progress.kcal} />
+          <>
+            <CalorieRing value={today.progress.kcal} />
+            <KcalLeft eaten={today.progress.kcal.eaten} target={today.progress.kcal.target} />
+          </>
         ) : (
           <p className="text-sm text-ink-soft">
             {today.numbers_hidden ? 'Your plan focuses on regular, balanced meals, so there are no numbers to track.' : 'Finish onboarding to see your targets here.'}
           </p>
         )}
+        <MealChecklist today={today} />
       </div>
       {today.progress && <MacroCards progress={today.progress} />}
       <div className="glass rounded-2xl p-4">

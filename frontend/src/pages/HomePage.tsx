@@ -6,12 +6,15 @@ import { useAuth } from '../auth/context'
 import { SwipePanes } from '../components/SwipePanes'
 import { ButtonLink, FormError, PageShell } from '../components/ui'
 import { AskCoachCard } from '../chat/AskCoachCard'
+import { GoalProgress } from '../dashboard/GoalProgress'
 import { InsightCard } from '../dashboard/InsightCard'
+import { NextMealCard } from '../dashboard/NextMealCard'
 import { TodayPlans } from '../dashboard/TodayPlans'
 import { TodayProgress } from '../dashboard/TodayProgress'
 import type { Today } from '../dashboard/types'
 import { ApiError } from '../lib/api'
 import { WeightCard } from '../weight/WeightCard'
+import type { WeightHistory } from '../weight/types'
 import { useApi } from '../lib/useApi'
 import type { OnboardingStatus } from '../onboarding/types'
 import { TargetsView } from '../targets/TargetsView'
@@ -40,6 +43,7 @@ export function HomePage() {
   const [targets, setTargets] = useState<Targets | null>(null)
   const [forecast, setForecast] = useState<Forecast | null>(null)
   const [today, setToday] = useState<Today | null>(null)
+  const [weight, setWeight] = useState<WeightHistory | null>(null) // read by the goal-progress card; the weight card (Weight pane) loads and updates it
   const [error, setError] = useState<ApiError | null>(null)
   const [attempt, setAttempt] = useState(0) // bumped by "Try again" to load everything once more
 
@@ -120,6 +124,8 @@ export function HomePage() {
               <Greeting />
               {today && <TodayProgress today={today} />}
               {today && <InsightCard today={today} />}
+              {today && <NextMealCard today={today} />}
+              <GoalProgress history={weight} />
             </>,
             // 2. The daily targets (what the ring and bars are measured against).
             <>
@@ -139,7 +145,7 @@ export function HomePage() {
             </>,
             // 4. Weight: the log, the chart and the goal date.
             <>
-              <WeightCard onChanged={refreshForecast} />
+              <WeightCard onChanged={refreshForecast} onHistory={setWeight} />
               {forecast && <ForecastCard forecast={forecast} />}
             </>,
           ]}

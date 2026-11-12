@@ -12,7 +12,7 @@ How to use it (about 3 hours): read sections 1 and 2 first (15 minutes), then fo
 |---|---|---|
 | Sign in / sign up (`/sign-in`) | Creates an account | Supabase login; the backend never sees a password |
 | Onboarding (`/onboarding`) | Six short forms: consent, body, goal and pace, diet and cuisines, training setup, health screening | Safety-aware personalisation; ends with daily targets |
-| Home = dashboard (`/`) | Four swipeable panes (tabs on top): **Today** (the dashboard: calorie ring, macro cards, insight, what was logged), **Targets** (daily targets and why), **Plan** (today's meals and workout, links to log, meal plan, workout plan, and starter questions for the coach), **Weight** (log, chart, goal date). A gear icon top-left opens Settings | Everything here is calculated by code, no AI |
+| Home = dashboard (`/`) | Four swipeable panes (tabs on top): **Today** (the dashboard: calorie ring with "kcal left", a meals checklist, macro cards, insight, the next planned meal, goal progress, what was logged), **Targets** (daily targets and why), **Plan** (today's meals and workout, links to log, meal plan, workout plan, and starter questions for the coach), **Weight** (log, chart, goal date). A gear icon top-left opens Settings | Everything here is calculated by code, no AI |
 | Meal plan (`/meal-plan`) | Generates a 7-day plan, reads it, presses **Approve** | AI picks dishes, code works out portions, the user decides |
 | Workout (`/workout`) | Generates a plan (the app picks the right split by itself), approves it, can edit a day | Same pattern, with exercises from our library |
 | Log a meal (`/log`) | Searches foods, picks amounts in household units | Code-only nutrition from a validated database |

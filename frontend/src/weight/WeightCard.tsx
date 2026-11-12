@@ -31,7 +31,7 @@ function describe(h: WeightHistory): string[] {
 }
 
 // The weight log on the dashboard: today's weigh-in, a small chart, and how far along you are. Not shown to users who must not see numbers.
-export function WeightCard({ onChanged }: { onChanged?: () => void }) {
+export function WeightCard({ onChanged, onHistory }: { onChanged?: () => void; onHistory?: (history: WeightHistory) => void }) {
   const api = useApi()
   const [history, setHistory] = useState<WeightHistory | null>(null)
   const [draft, setDraft] = useState('')
@@ -42,11 +42,11 @@ export function WeightCard({ onChanged }: { onChanged?: () => void }) {
   useEffect(() => {
     let cancelled = false
     api.get<WeightHistory>('/weight').then(
-      (h) => { if (!cancelled) setHistory(h) },
+      (h) => { if (!cancelled) { setHistory(h); onHistory?.(h) } },
       () => { /* a bonus card: if it cannot load, the rest of Home still works */ },
     )
     return () => { cancelled = true }
-  }, [api])
+  }, [api, onHistory])
 
   async function save(event: FormEvent) {
     event.preventDefault()
@@ -56,7 +56,9 @@ export function WeightCard({ onChanged }: { onChanged?: () => void }) {
     setError(null)
     try {
       const today = daysAgo(0)
-      setHistory(await api.post<WeightHistory>('/weight', { weight_kg: value, ...(day !== today ? { measured_on: day } : {}) }))
+      const saved = await api.post<WeightHistory>('/weight', { weight_kg: value, ...(day !== today ? { measured_on: day } : {}) })
+      setHistory(saved)
+      onHistory?.(saved)
       setDraft('')
       setDay(today)
       onChanged?.() // the goal-date forecast starts from the latest weight, so it is refreshed
