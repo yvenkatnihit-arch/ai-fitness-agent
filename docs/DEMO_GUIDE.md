@@ -130,7 +130,11 @@ Take: *"I ate 2 rotis and dal for lunch"*. Files in order:
 | exercises | "how do I do a plank", "alternative to lunges for a knee injury" | `search_exercises`, `get_exercise`, `find_alternatives` (each marks whether it fits *you*) |
 | meal_logger | "I ate 2 rotis and dal for lunch" | `search_foods`, `propose_meal_log` (the only tool that creates a proposal) |
 
-If no specialist fits ("hello", "make me a workout plan"), `agents/fallback.py` gives a fixed, topic-aware reply that points to the right screen.
+If no specialist fits ("hello"), or the user asks the chat to make a plan ("make plan for me", "prepare a diet for me": caught by code before the router, D-119), `agents/fallback.py` gives a fixed, topic-aware reply that points to the right screen (Meal plan or Workout plan).
+
+Every coach answer has 👍 / 👎 buttons (D-120). The choice is saved on the message (`chat_messages.feedback`, `PUT /chat/messages/{id}/feedback`), so wrong answers can be found later: `select content, meta from chat_messages where feedback = 'down'`.
+
+The output guard (D-118) lets true reports such as "So far you have logged 700 kcal for the day" through; it still blocks advice below the calorie floor.
 
 What to say: *"The model reads and writes language. Code decides what it may do, does the maths, and checks the result."*
 
@@ -147,7 +151,7 @@ What to say: *"The model reads and writes language. Code decides what it may do,
 - **`backend/scripts/demo_check.py`**: runs a brand-new account through the whole demo and prints PASS or FAIL for each of 20 steps.
 
 ### Flow 9: where the food and exercise data come from
-Foods come from open datasets (USDA SR Legacy, UK CoFID), exercises from the Free Exercise DB plus our own curation. `backend/fooddata/` and `exercisedata/` download them, validate every row (diet class, plausible calories, cross-checks), and load them into the database. Dishes like idli are **calculated from recipes** (raw ingredient weights plus cooked weight). A food shows "values being checked" until a person signs it off (`reviewed_by`). Today: 274 foods, 149 household units, 102 exercises. Credits and licences are on the Data sources page.
+Foods come from open datasets (USDA SR Legacy, UK CoFID), exercises from the Free Exercise DB plus our own curation. `backend/fooddata/` and `exercisedata/` download them, validate every row (diet class, plausible calories, cross-checks), and load them into the database. Dishes like idli are **calculated from recipes** (raw ingredient weights plus cooked weight). A food shows "values being checked" until a person signs it off (`reviewed_by`). Today: 277 foods, 152 household units, 102 exercises. Poha is a known gap (no verified source), and nothing is invented to fill it. Credits and licences are on the Data sources page.
 
 ## 5. The database in one minute
 27 tables, all with row-level security. The ones to know:
@@ -204,7 +208,7 @@ Then on the frontend: `frontend/src/App.tsx` (the routes), `lib/api.ts`, `pages/
 
 ## 10. What the demo model does not do (say this plainly if asked)
 - It runs on a laptop; it is not deployed.
-- No weekly check-in or weekly chart, and no workout logging yet.
+- No weekly check-in or weekly chart, and no workout logging yet. Planned for later (see `docs/PROGRESS.md`): workout logging, and a coach that reads the logs and messages the user on its own (as suggestions only, never overriding the user).
 - The chat cannot create or change plans (those are on the plan screens) and cannot edit or delete a logged meal. It answers with whole replies, not streaming.
 - Two cuisines (Indian; Mediterranean and Middle Eastern), English only.
 - Some foods and all recipes are drafts marked "values being checked" until reviewed.
