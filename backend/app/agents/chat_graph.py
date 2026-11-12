@@ -23,6 +23,7 @@ from app.agents.claims import settle_answer
 from app.agents.context import RunContext
 from app.agents.fallback import NOTHING_FITS, nothing_fits_reply  # noqa: F401  (NOTHING_FITS is re-exported: tests and callers import it from here)
 from app.agents.gemini_model import gemini_model
+from app.agents.fallback import asks_for_a_plan
 from app.agents.menu import Menu, default_menu
 from app.agents.router import Assignment, route_message
 from app.agents.runner import Model, ToolRecord, build_specialist
@@ -80,6 +81,8 @@ def build_chat_graph(*, menu: Menu | None = None, router: Router | None = None, 
 
     def route(state: ChatState) -> dict[str, Any]:
         uid = UUID(state["user_id"])
+        if asks_for_a_plan(state["message"]):      # plans are made on the Meal plan and Workout plan screens, not in chat (D-119)
+            return {"assignments": []}
         picked = (router(state["message"]) if router
                   else route_message(state["message"], menu, user_id=uid, history=state.get("history", ()), summary=state.get("summary", "")))
         return {"assignments": [a for a in picked if a.specialist in menu]}   # the menu is the only authority

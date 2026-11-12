@@ -1165,3 +1165,8 @@ Question asked: "can the LLM create agents depending on the requirements?" Answe
 - **Found in real chat history:** correct answers to "What have I logged today?" and "how many calories left" were replaced by the safety message when they contained a daily phrase, e.g. "So far you have logged 700 kcal for the day." The calorie-floor rule read it as advice to eat 700 kcal a day.
 - **Fix:** a sentence that only reports (logged, eaten, remaining, left, so far...) and has no advice word (should, aim, target, goal, plan...) is skipped by the calorie-floor check. Advice such as "You should eat 900 kcal a day." and "Aim for 800 kcal for the day." is still blocked. All other output rules (drugs, diagnosis, fasting, banned words) still look at the full text.
 - **Still open:** the chat cannot make meal or workout plans (users ask "make a plan for me"); to build only if Venkat agrees.
+
+## D-119 — Asking the chat to make a plan gets a fixed pointer to the plan screens (Venkat: "tell people to use the plan page")
+**Status:** Done (2026-11-12). `backend/app/agents/fallback.py` (`asks_for_a_plan`, `MAKE_PLAN_REPLY`), `chat_graph.py` (route step), `tests/test_chat_make_plan.py`.
+- Messages such as "make plan for me", "prepare a diet for me", "i want a diet for muscle building" are caught by code BEFORE the router, so no model call is spent and no specialist answers wrongly. The reply says chat cannot create plans, names the Meal plan or Workout plan screen (both when unclear), and says what chat can do.
+- Questions about an existing plan ("what workout do I have on friday") are not caught. Plans through chat were considered and left out of the demo model.

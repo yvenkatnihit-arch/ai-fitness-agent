@@ -35,6 +35,21 @@ GREETING_REPLY = "Hi! I am your fitness coach. I can answer questions about food
 THANKS_REPLY = "You are welcome! Ask me anything about your food, workouts or progress whenever you like."
 
 
+# Asking the coach to MAKE a plan or diet. The chat cannot do this, so code answers (never the router, never a specialist): see D-119.
+MAKE_PLAN = re.compile(
+    r"\b(?:make|create|build|prepare|generate|design|draw up|write|set up|suggest|give me)\b.{0,30}"
+    r"\b(?:plan|diet|diet chart|meal plan|workout plan|routine|menu|programme|program)\b"
+    r"|\b(?:diet|plan|routine|programme|program)\b.{0,12}\b(?:for me|for muscle|for fat|for weight|to lose|to gain|to build)\b"
+    r"|\bi (?:want|need) (?:a |an |some )?(?:new )?(?:diet|plan|workout|routine)\b")
+MAKE_PLAN_REPLY = ("I cannot create plans in chat. Use the Meal plan screen for a 7-day meal plan and the Workout plan screen for a workout plan: "
+                   "each is built from your targets and preferences, and nothing is saved until you approve it. "
+                   "In chat I can answer questions about foods and exercises, and tell you what is in your current plan. " + EXAMPLES)
+
+
+def asks_for_a_plan(message: str) -> bool:
+    return bool(MAKE_PLAN.search(" ".join(message.lower().split())))
+
+
 def nothing_fits_reply(message: str) -> str:
     """The reply for a message no specialist took. Always fixed text, chosen by simple patterns."""
     text = " ".join(message.lower().split())
@@ -42,6 +57,11 @@ def nothing_fits_reply(message: str) -> str:
         return GREETING_REPLY
     if THANKS.match(text):
         return THANKS_REPLY
+    if asks_for_a_plan(text):      # the screen for what was asked; both screens when it is not clear which
+        for _, pattern, reply in TOPICS[:2]:
+            if pattern.search(text):
+                return reply
+        return MAKE_PLAN_REPLY
     for _, pattern, reply in TOPICS:
         if pattern.search(text):
             return reply
