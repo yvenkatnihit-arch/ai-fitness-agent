@@ -2,16 +2,13 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, test } from 'vitest'
 
-// Reads the real index.css (tests run from the frontend folder), so a token added to the light theme
-// but forgotten in dark fails here.
+// Reads the real index.css (tests run from the frontend folder). The app is dark only (redesign, D-121).
 const css = readFileSync(resolve(process.cwd(), 'src/index.css'), 'utf-8')
 
 function tokens(block: string): Record<string, string> {
   return Object.fromEntries([...block.matchAll(/--([a-z0-9-]+):\s*(#[0-9a-f]{6})\s*;/gi)].map((m) => [m[1], m[2].toLowerCase()]))
 }
-const darkStart = css.indexOf('@media (prefers-color-scheme: dark)')
-const light = tokens(css.slice(0, darkStart))
-const dark = tokens(css.slice(darkStart, css.indexOf('@theme inline')))
+const theme = tokens(css.slice(0, css.indexOf('@theme inline')))
 
 function luminance(hex: string): number {
   const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -23,9 +20,14 @@ function contrast(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05)
 }
 
-test('dark mode defines exactly the same tokens as light mode', () => {
-  expect(Object.keys(light).length).toBeGreaterThan(10)
-  expect(Object.keys(dark).sort()).toEqual(Object.keys(light).sort())
+test('the theme defines the colour tokens, and there is no light or system-dark variant left to drift', () => {
+  expect(Object.keys(theme).length).toBeGreaterThan(10)
+  expect(css).not.toContain('prefers-color-scheme')
+})
+
+test('the brand is neon lime and text on it is the dark background colour', () => {
+  expect(theme.brand).toBe('#b7ff35')
+  expect(theme['on-brand']).toBe(theme.bg)
 })
 
 test('every colour utility maps to a defined token', () => {
@@ -33,7 +35,7 @@ test('every colour utility maps to a defined token', () => {
   expect(mapped.length).toBeGreaterThan(10)
   for (const [, utility, token] of mapped) {
     expect(utility, 'utility name matches its token').toBe(token)
-    expect(light[token], `${token} missing in light`).toBeDefined()
+    expect(theme[token], `${token} missing`).toBeDefined()
   }
 })
 
@@ -44,10 +46,8 @@ const PAIRS: [string, string][] = [
   ['danger', 'danger-soft'], ['danger', 'surface'], ['warn', 'warn-soft'], ['on-brand', 'ink'], ['ink-soft', 'surface-2'],
   ['muted', 'surface-2'],
 ]
-for (const [name, theme] of [['light', light], ['dark', dark]] as const) {
-  test(`text is readable in ${name} mode`, () => {
-    for (const [text, background] of PAIRS) {
-      expect(contrast(theme[text], theme[background]), `${text} on ${background} (${name})`).toBeGreaterThanOrEqual(4.5)
-    }
-  })
-}
+test('text is readable (WCAG AA, 4.5:1) for every pairing used in the app', () => {
+  for (const [text, background] of PAIRS) {
+    expect(contrast(theme[text], theme[background]), `${text} on ${background}`).toBeGreaterThanOrEqual(4.5)
+  }
+})

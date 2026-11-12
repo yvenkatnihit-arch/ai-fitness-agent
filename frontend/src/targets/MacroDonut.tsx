@@ -28,7 +28,7 @@ export function MacroDonut({ kcal, slices }: { kcal: number; slices: MacroSlice[
     <div className="flex flex-col items-center gap-5 sm:flex-row sm:justify-center sm:gap-8">
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-44 w-44 shrink-0" role="img" aria-label={summary}>
         {/* faint track, visible only if segments ever don't fill the ring */}
-        <circle cx={SIZE / 2} cy={SIZE / 2} r={RADIUS} fill="none" stroke="#f1f5f9" strokeWidth={STROKE} />
+        <circle cx={SIZE / 2} cy={SIZE / 2} r={RADIUS} fill="none" style={{ stroke: "var(--surface-2)" }} strokeWidth={STROKE} />
         <g transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}>
           {withStarts(slices).map(({ slice, start, length }) => {
             const visible = Math.max(length - GAP, 0)
