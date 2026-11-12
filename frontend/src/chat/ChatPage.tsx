@@ -7,6 +7,7 @@ import { useApi } from '../lib/useApi'
 import { AnswerDetails } from './AnswerDetails'
 import { PastChats } from './PastChats'
 import { RichText } from './RichText'
+import { Thumbs, type Thumb } from './Thumbs'
 import { SUGGESTIONS, followUps } from './suggestions'
 import { MAX_MESSAGE_CHARS, type ChatLine, type ChatReply, type ConversationDetail, type ProposalCard } from './types'
 
@@ -65,7 +66,8 @@ export function ChatPage() {
     setError(null)
     try {
       const chat = await api.get<ConversationDetail>(`/chat/${id}`)
-      setLines(chat.messages.map((m) => ({ id: nextId.current++, role: m.role, text: m.content, blocked: m.blocked !== null })))
+      setLines(chat.messages.map((m) => ({ id: nextId.current++, role: m.role, text: m.content, blocked: m.blocked !== null,
+        ...(m.role === 'assistant' ? { messageId: m.id, feedback: m.feedback ?? null } : {}) })))
       setConversationId(chat.id)
       setCard(null) // a proposal still waiting from an earlier session stays on the plan screen: the chat only offers the latest turn live
       setShowPast(false)
@@ -98,10 +100,23 @@ export function ChatPage() {
   const add = (role: ChatLine['role'], text: string, extra: Partial<ChatLine> = {}) =>
     setLines((current) => [...current, { id: nextId.current++, role, text, ...extra }])
 
+  // A thumb shows at once and is saved in the background; if saving fails it goes back and the error is shown.
+  async function rate(line: ChatLine, next: Thumb) {
+    const before = line.feedback ?? null
+    const set = (value: Thumb) => setLines((current) => current.map((l) => (l.id === line.id ? { ...l, feedback: value } : l)))
+    set(next)
+    try {
+      await api.put(`/chat/messages/${line.messageId}/feedback`, { value: next })
+    } catch (e) {
+      set(before)
+      setError(asApiError(e))
+    }
+  }
+
   function show(reply: ChatReply) {
     setConversationId(reply.conversation_id)
     remember(reply.conversation_id)
-    add('assistant', reply.reply, { blocked: reply.blocked !== null, meta: reply.meta })
+    add('assistant', reply.reply, { blocked: reply.blocked !== null, meta: reply.meta, ...(reply.message_id ? { messageId: reply.message_id, feedback: null } : {}) })
     setCard(reply.waiting_for)
   }
 
@@ -208,6 +223,9 @@ export function ChatPage() {
             >
               {line.role === 'user' ? line.text : <RichText text={line.text} />}
             </div>
+            {line.role === 'assistant' && !line.blocked && line.messageId && (
+              <Thumbs value={line.feedback ?? null} onChange={(next) => void rate(line, next)} />
+            )}
             {line.meta && <AnswerDetails meta={line.meta} />}
           </div>
         ))}

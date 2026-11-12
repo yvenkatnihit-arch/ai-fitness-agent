@@ -109,7 +109,7 @@ def test_a_blank_or_overlong_message_or_extra_field_is_refused_and_nothing_is_sa
 def test_a_proposal_pauses_the_chat_and_approving_applies_it_once(client, users, fake_graph):
     onboard(client)
     fake_graph["propose"] = True
-    first = client.post("/chat", json={"message": "make me a plan"}).json()
+    first = client.post("/chat", json={"message": "save my new thing"}).json()
     assert first["waiting_for"] == {"kind": "approve_proposal", "proposal_id": PROPOSAL, "summary": "A new plan"}
     assert DECIDED == []                                                                   # nothing applied without the user's answer
     answer = client.post(f"/chat/{first['conversation_id']}/decide", json={"choice": "approve"})
@@ -212,7 +212,7 @@ def test_each_message_starts_clean_after_a_blocked_turn_and_after_a_paused_turn(
     assert second["blocked"] is None and second["reply"] == "Paneer has 18 g of protein per 100 g."
     assert len(second["meta"]["specialists"]) == 1                                         # nothing piled up from earlier turns
     fake_graph["propose"] = True
-    paused = client.post("/chat", json={"message": "make me a plan", "conversation_id": cid}).json()
+    paused = client.post("/chat", json={"message": "save my new thing", "conversation_id": cid}).json()
     assert paused["waiting_for"]
     fake_graph["propose"] = False
     after = client.post("/chat", json={"message": "never mind, what about tofu?", "conversation_id": cid}).json()
@@ -302,3 +302,24 @@ def test_blocked_messages_are_never_folded_into_the_summary(client, users, fake_
     folded = [t for _, ms in summary_model["calls"] for _, t in ms]
     joined = " ".join(folded).lower()
     assert folded and "kill myself" not in joined and "tele-manas" not in joined                  # neither the message nor the crisis reply
+
+
+def test_a_thumb_on_an_answer_is_saved_shown_in_the_chat_and_taken_back(client, users, fake_graph):
+    onboard(client)
+    body = client.post("/chat", json={"message": "How much protein is in paneer?"}).json()
+    mid = body["message_id"]
+    assert isinstance(mid, int)                                                               # the reply says which saved message it is
+    assert client.put(f"/chat/messages/{mid}/feedback", json={"value": "down"}).status_code == 204
+    detail = client.get(f"/chat/{body['conversation_id']}").json()["messages"]
+    assert [m["feedback"] for m in detail] == [None, "down"]
+    assert client.put(f"/chat/messages/{mid}/feedback", json={"value": None}).status_code == 204
+    assert [m["feedback"] for m in client.get(f"/chat/{body['conversation_id']}").json()["messages"]] == [None, None]
+
+
+def test_a_thumb_needs_a_real_answer_of_yours_and_a_valid_value(client, users, fake_graph):
+    onboard(client)
+    body = client.post("/chat", json={"message": "hello there"}).json()
+    detail = client.get(f"/chat/{body['conversation_id']}").json()["messages"]
+    assert client.put(f"/chat/messages/{detail[0]['id']}/feedback", json={"value": "up"}).status_code == 404     # your own question
+    assert client.put("/chat/messages/99999999/feedback", json={"value": "up"}).status_code == 404
+    assert client.put(f"/chat/messages/{body['message_id']}/feedback", json={"value": "great"}).status_code == 422

@@ -106,7 +106,7 @@ def test_the_blocked_category_and_what_ran_are_kept_with_the_message(profiles):
         cid = ch.create_conversation(conn, profiles[0], "x")
         ch.add_message(conn, profiles[0], cid, "assistant", "I can't help with that.", blocked="self_harm", meta={"specialists": ["nutrition"]})
     with user_transaction(profiles[0]) as conn:
-        (_, _, _, blocked, meta, _), = ch.messages_of(conn, cid)
+        (_, _, _, blocked, meta, _, _), = ch.messages_of(conn, cid)
     assert blocked == "self_harm" and meta == {"specialists": ["nutrition"]}
 
 
@@ -151,3 +151,20 @@ def test_messages_a_guard_stopped_never_come_back_as_context(profiles):
         assert ch.recent_messages(conn, profiles[0], cid) == [("user", "How much protein in paneer?"), ("assistant", "18 g per 100 g.")]
         ch.mark_blocked(conn, profiles[1], bad, "x")                                          # someone else's mark changes nothing
         assert conn.execute("select blocked from public.chat_messages where id = %s", (bad,)).fetchone() == ("prompt_injection",)
+
+
+def test_a_thumb_can_be_set_changed_and_taken_back_only_on_your_own_answers(profiles):
+    mine, ids = chat(profiles[0], ["hi", "hello there"])                 # ids[0] is the user message, ids[1] the assistant reply
+    with admin_transaction("test: thumbs") as conn:
+        assert ch.set_feedback(conn, profiles[0], ids[1], "up")
+        assert ch.set_feedback(conn, profiles[0], ids[1], "down")
+        assert not ch.set_feedback(conn, profiles[0], ids[0], "up")       # a question of yours is not an answer
+        assert not ch.set_feedback(conn, profiles[1], ids[1], "up")       # someone else's answer
+    with user_transaction(profiles[0]) as conn:
+        assert [m[6] for m in ch.messages_of(conn, mine)] == [None, "down"]
+    with admin_transaction("test: take back") as conn:
+        assert ch.set_feedback(conn, profiles[0], ids[1], None)
+    with user_transaction(profiles[0]) as conn:
+        assert [m[6] for m in ch.messages_of(conn, mine)] == [None, None]
+    with user_transaction(profiles[0]) as conn, pytest.raises(psycopg.errors.InsufficientPrivilege):
+        conn.execute("update public.chat_messages set feedback = 'up' where id = %s", (ids[1],))      # users cannot write it themselves

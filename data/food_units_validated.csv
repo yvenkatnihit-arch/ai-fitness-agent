@@ -148,3 +148,6 @@ coconut_water,glass,258.9,glass 250 ml x density from USDA SR Legacy 174831: 1 c
 coconut_water,cup,248.5,cup 240 ml x density from USDA SR Legacy 174831: 1 cup = 245 g
 masala_chai,cup,150.0,our recipe 'masala_chai': 1 cup = 150 g
 lassi_sweet,glass,258.9,glass 250 ml x density from USDA SR Legacy 171284: 1 cup (8 fl oz) = 245 g
+uttapam,piece,88.0,our recipe 'uttapam': 1 uttapam = 88 g
+curd_rice,katori,165.0,our recipe 'curd_rice': 1 katori = 165 g
+lemon_rice,katori,110.0,our recipe 'lemon_rice': 1 katori = 110 g

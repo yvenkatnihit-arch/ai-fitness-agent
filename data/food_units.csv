@@ -148,3 +148,6 @@ coconut_water,glass,volume,self,1 cup,245,
 coconut_water,cup,volume,self,1 cup,245,
 masala_chai,cup,recipe,masala_chai,1 cup,150,"one small cup of tea, 150 g"
 lassi_sweet,glass,volume,171284,1 cup (8 fl oz),245,"density of plain whole-milk yogurt; lassi is thinner, so slightly high"
+uttapam,piece,recipe,uttapam,1 uttapam,88,700 g cooked / 8 uttapams
+curd_rice,katori,recipe,curd_rice,1 katori,165,half of the batch; a katori of curd rice is about 165 g
+lemon_rice,katori,recipe,lemon_rice,1 katori,110,a katori of lemon rice is about 110 g

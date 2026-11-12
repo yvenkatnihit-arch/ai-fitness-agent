@@ -26,7 +26,7 @@
       "key": "computed",
       "name": "Our own recipes",
       "description": "Dishes such as idli, dosa, upma and kheer are not in the sources above. We calculate them from a recipe: raw ingredient weights (from the sources above) plus the weight of the cooked dish. The maths is done by tested code, never by AI. A recipe shows \"values being checked\" until a person has reviewed it.",
-      "foods": 64
+      "foods": 67
     }
   ],
   "notes": [

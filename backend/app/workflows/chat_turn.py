@@ -84,8 +84,8 @@ def send_message(user_id: UUID, message: str, conversation_id: UUID | None = Non
     with admin_transaction("chat: save the reply") as conn:
         if result.get("blocked"):
             history.mark_blocked(conn, user_id, user_message_id, result["blocked"])   # both sides of a blocked turn stay out of context
-        history.add_message(conn, user_id, conversation_id, "assistant", result["reply"], blocked=result.get("blocked"),
-                            meta={**out["meta"], "waiting_for": result["waiting_for"]})
+        out["message_id"] = history.add_message(conn, user_id, conversation_id, "assistant", result["reply"], blocked=result.get("blocked"),
+                                                meta={**out["meta"], "waiting_for": result["waiting_for"]})
     return out
 
 
@@ -108,8 +108,8 @@ def answer_proposal(user_id: UUID, conversation_id: UUID, choice: str, **graph_k
     reply = " ".join(d["message"] for d in result["decisions"]) or result["reply"]
     out = _out(conversation_id, result, reply)
     with admin_transaction("chat: save the outcome") as conn:
-        history.add_message(conn, user_id, conversation_id, "assistant", reply,
-                            meta={"decisions": result["decisions"], "waiting_for": result["waiting_for"]})
+        out["message_id"] = history.add_message(conn, user_id, conversation_id, "assistant", reply,
+                                                meta={"decisions": result["decisions"], "waiting_for": result["waiting_for"]})
     return out
 
 

@@ -273,3 +273,6 @@ chana_chaat,Chickpea chaat,chana salad,dish_legume,vegan,computed,chana_chaat,Re
 chicken_tikka,Chicken tikka (grilled marinated chicken),,dish_curry_meat,non_vegetarian,computed,chicken_tikka,Recipe: Chicken tikka (grilled marinated chicken),188.61,24.99,3.11,8.58,0.4,exact,recipe,review,indian
 greek_yogurt_fruit_bowl,Greek yogurt bowl with apple and almonds,high-protein yogurt bowl,dish_breakfast,vegetarian,computed,greek_yogurt_fruit_bowl,Recipe: Greek yogurt bowl with apple and almonds,92.31,7.66,7.17,3.36,1.16,exact,recipe,review,indian;mediterranean
 masala_chai,Masala chai (with milk and sugar),chai;cutting chai;tea with milk;doodh chai,beverage,vegetarian,computed,masala_chai,Recipe: Masala chai (with milk and sugar),56.48,2.1,7.29,2.18,0.0,exact,recipe,review,indian
+uttapam,Uttapam,uthappam;oothappam,dish_breakfast,vegan,computed,uttapam,Recipe: Uttapam,166.99,4.36,26.73,3.93,,exact,recipe,review,indian
+curd_rice,Curd rice,thayir sadam;dahi chawal;mosaru anna,dish_rice,vegetarian,computed,curd_rice,Recipe: Curd rice,103.8,2.95,16.47,2.62,0.27,exact,recipe,review,indian
+lemon_rice,Lemon rice,chitranna;elumichai sadam,dish_rice,vegan,computed,lemon_rice,Recipe: Lemon rice,183.56,3.85,26.52,6.37,0.99,approximate,recipe,review,indian

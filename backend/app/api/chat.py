@@ -6,9 +6,9 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response
 
 from app.core.auth import CurrentUser, get_current_user
 from app.db import chat_history as history
-from app.db import user_transaction
+from app.db import admin_transaction, user_transaction
 from app.llm.client import LLMBusy, LLMFailed
-from app.schemas.chat import (ChatIn, ChatOut, ConversationDetailOut, ConversationListOut, ConversationOut, DecideIn, MessageOut)
+from app.schemas.chat import (ChatIn, ChatOut, ConversationDetailOut, ConversationListOut, ConversationOut, DecideIn, FeedbackIn, MessageOut)
 from app.workflows import chat_turn
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -59,7 +59,17 @@ def conversation(conversation_id: UUID, user: CurrentUser = Depends(get_current_
         rows = history.messages_of(conn, conversation_id)
     if not rows:
         raise HTTPException(status.HTTP_404_NOT_FOUND, NOT_FOUND)         # someone else's chat looks exactly like no chat
-    return ConversationDetailOut(id=conversation_id, messages=[MessageOut(id=i, role=r, content=c, blocked=b) for i, r, c, b, _, _ in rows])
+    return ConversationDetailOut(id=conversation_id, messages=[MessageOut(id=i, role=r, content=c, blocked=b, feedback=f) for i, r, c, b, _, _, f in rows])
+
+
+@router.put("/messages/{message_id}/feedback", status_code=status.HTTP_204_NO_CONTENT)
+def feedback(message_id: int, body: FeedbackIn, user: CurrentUser = Depends(get_current_user)) -> Response:
+    """A thumbs up or down on one of your coach's answers (value null takes it back)."""
+    with admin_transaction("chat: save a thumb") as conn:     # users cannot update chat rows (D-027); the query checks the owner
+        found = history.set_feedback(conn, user.id, message_id, body.value)
+    if not found:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "We couldn't find that answer.")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.delete("/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)

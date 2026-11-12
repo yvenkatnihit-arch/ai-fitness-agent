@@ -108,9 +108,15 @@ def list_conversations(conn: Connection, limit: int = 30) -> list[tuple]:
 
 def messages_of(conn: Connection, conversation_id: UUID, limit: int = 200) -> list[tuple]:
     rows = conn.execute(
-        """select id, role, content, blocked, meta, created_at from public.chat_messages where conversation_id = %s
+        """select id, role, content, blocked, meta, created_at, feedback from public.chat_messages where conversation_id = %s
            order by id desc limit %s""", (conversation_id, limit)).fetchall()
     return list(reversed(rows))
+
+
+def set_feedback(conn: Connection, user_id: UUID, message_id: int, value: str | None) -> bool:
+    """Thumbs up/down on one of THIS user's assistant messages (None clears it). False when there is no such message."""
+    return conn.execute("update public.chat_messages set feedback = %s where id = %s and user_id = %s and role = 'assistant'",
+                        (value, message_id, user_id)).rowcount > 0
 
 
 def delete_conversation(conn: Connection, conversation_id: UUID) -> bool:

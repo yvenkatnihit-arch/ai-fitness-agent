@@ -27,6 +27,11 @@ class DecideIn(BaseModel):
     choice: Literal["approve", "reject"]
 
 
+class FeedbackIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    value: Literal["up", "down"] | None      # none = take the thumb back
+
+
 class ProposalCard(BaseModel):
     kind: str
     proposal_id: str
@@ -40,6 +45,7 @@ class ChatOut(BaseModel):
     waiting_for: ProposalCard | None = None  # a proposal the user must approve or reject
     decisions: list[dict[str, str]] = []
     meta: dict[str, Any] = {}              # what ran, for the "How this was made" panel
+    message_id: int | None = None          # the saved reply, so a thumb can be attached to it
 
 
 class MessageOut(BaseModel):
@@ -47,6 +53,7 @@ class MessageOut(BaseModel):
     role: Literal["user", "assistant"]
     content: str
     blocked: str | None = None
+    feedback: Literal["up", "down"] | None = None
 
 
 class ConversationOut(BaseModel):

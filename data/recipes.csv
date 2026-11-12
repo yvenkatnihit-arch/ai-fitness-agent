@@ -63,3 +63,6 @@ chana_chaat,Chickpea chaat,chana salad,dish_legume,365,,"Cooked chickpeas, not c
 chicken_tikka,Chicken tikka (grilled marinated chicken),,dish_curry_meat,300,,"6 pieces of 50 g; curd marinade, grilled; about 15% of the raw weight is lost",indian
 greek_yogurt_fruit_bowl,Greek yogurt bowl with apple and almonds,high-protein yogurt bowl,dish_breakfast,370,,Not cooked: the cooked weight is the sum,indian;mediterranean
 masala_chai,Masala chai (with milk and sugar),chai;cutting chai;tea with milk;doodh chai,beverage,150,,"One cup: whole milk 100 g, brewed tea 50 g, sugar 6 g; about 6 g lost as steam; ginger and cardamom not counted",indian
+uttapam,Uttapam,uthappam;oothappam,dish_breakfast,700,,Dosa batter (rice and urad dal) made thick with onion and tomato on top; about 8 uttapams of 88 g; oil used on the tawa,indian
+curd_rice,Curd rice,thayir sadam;dahi chawal;mosaru anna,dish_rice,330,,Plain rice cooked soft and mixed with curd; mustard tempering; salt not counted,indian
+lemon_rice,Lemon rice,chitranna;elumichai sadam,dish_rice,220,,Cooked rice tossed with a mustard and peanut tempering and lemon juice; turmeric and curry leaves not counted,indian
