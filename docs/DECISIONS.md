@@ -1185,3 +1185,10 @@ Question asked: "can the LLM create agents depending on the requirements?" Answe
 - **Charts:** macro colours now lime (protein, the goal-critical number), sky blue (carbs), amber (fat); the donut track uses a token.
 - **Tests:** `theme.test.ts` now checks one theme: tokens defined, no light/system-dark variant left, brand is lime with dark text on it, every text pairing at least 4.5:1 (WCAG AA). Frontend 208 tests, lint and build pass.
 - **Next:** Home dashboard (calorie ring, macro cards), then Chat. The rest follow the tokens.
+
+## D-122 — Redesign step 2: the Home dashboard (branch `redesign`)
+**Status:** Done on branch `redesign` (2026-11-12).
+- **What:** a greeting with the date (device clock; no name, we do not collect one), a big animated calorie ring (`dashboard/CalorieRing.tsx`: lime, amber and full when over the target, never red), macro cards with protein first and biggest (`MacroCards.tsx`), an insight card (`InsightCard.tsx`, `insight.ts`), glass cards (`.glass`) and a lime glow (`.ring-glow`) in `index.css`. The meal and workout cards, weight and targets below keep their content and take the new colours.
+- **Rules kept:** every number and percentage still comes from the server; the frontend only draws the ring and bars. The insight is plain rules over today's numbers (D-059), no AI call. Its wording never tells anyone to eat less. Users who must not see numbers get no ring, no cards and no insight (tested).
+- **Motion:** the big calorie number counts up and the ring and bars fill over about a second; with "reduce motion" on, they show the final values at once. The exact figures are also plain text (`704 / 1408 kcal`) for screen readers and tests.
+- **Tests:** 213 frontend tests (5 new for the ring, macro cards and insight rules; 2 old dashboard tests updated for the new layout). Lint and build pass.

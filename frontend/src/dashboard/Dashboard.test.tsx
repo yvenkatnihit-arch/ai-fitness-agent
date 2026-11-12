@@ -49,7 +49,7 @@ test('Home shows today: a bar for each of calories, protein, carbs and fat with 
   expect(calories).toHaveAttribute('aria-valuenow', '50')
   expect(within(progress).getByText('704 / 1408 kcal')).toBeInTheDocument()
   expect(within(progress).getByRole('progressbar', { name: 'Protein eaten today' })).toHaveAttribute('aria-valuenow', '25')
-  expect(within(progress).getByText('29 / 116 g')).toBeInTheDocument()
+  expect(progress).toHaveTextContent('29 / 116 g')                                              // protein card (the number is split over two elements)
 })
 
 test('going over a target fills the bar completely, says so in words and changes its colour', async () => {
@@ -59,7 +59,8 @@ test('going over a target fills the bar completely, says so in words and changes
   expect(fat).toHaveAttribute('aria-valuenow', '100')                                          // the bar never overflows
   expect(fat).toHaveAttribute('aria-valuetext', '151% of your fat target')
   expect((fat.firstElementChild as HTMLElement).className).toContain('bg-warn')
-  expect(((await screen.findByRole('progressbar', { name: 'Calories eaten today' })).firstElementChild as HTMLElement).className).toContain('bg-brand')
+  const ring = await screen.findByRole('progressbar', { name: 'Calories eaten today' })
+  expect(ring).toHaveAttribute('data-state', 'under')                                           // the calorie ring (50%) is still lime
 })
 
 test('what was logged today is listed by meal', async () => {

@@ -4,6 +4,7 @@ import { Link, Navigate } from 'react-router'
 import { useAuth } from '../auth/context'
 import { ButtonLink, FormError, PageShell } from '../components/ui'
 import { AskCoachCard } from '../chat/AskCoachCard'
+import { InsightCard } from '../dashboard/InsightCard'
 import { TodayPlans } from '../dashboard/TodayPlans'
 import { TodayProgress } from '../dashboard/TodayProgress'
 import type { Today } from '../dashboard/types'
@@ -14,6 +15,19 @@ import type { OnboardingStatus } from '../onboarding/types'
 import { TargetsView } from '../targets/TargetsView'
 import { ForecastCard } from '../targets/ForecastCard'
 import type { Forecast, Targets } from '../targets/types'
+
+// "Good morning" and today's date, from the device clock. No name is shown: we do not collect one.
+function Greeting() {
+  const [now] = useState(() => new Date())
+  const hour = now.getHours()
+  const hello = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  return (
+    <div>
+      <p className="text-xl font-bold text-ink">{hello}</p>
+      <p className="text-sm text-muted">{now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+    </div>
+  )
+}
 
 // Home: unfinished users go to onboarding; finished users see their daily targets.
 // The full dashboard (today's progress, workout, logs) replaces this in Phase 9.
@@ -88,6 +102,9 @@ export function HomePage() {
         </button>
       )}
       {!error && !targets && <p className="text-center text-sm text-muted">Loading…</p>}
+      {targets && <Greeting />}
+      {today && <TodayProgress today={today} />}
+      {today && <InsightCard today={today} />}
       {targets && (
         <div className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-3">
@@ -101,7 +118,6 @@ export function HomePage() {
           <ButtonLink to="/settings" variant="secondary">Settings</ButtonLink>
         </div>
       )}
-      {today && <TodayProgress today={today} />}
       {today && <TodayPlans today={today} />}
       {targets && <AskCoachCard />}
       {targets && <WeightCard onChanged={refreshForecast} />}

@@ -47,6 +47,16 @@
   --font-display: "Inter Variable", system-ui, "Segoe UI", sans-serif;
 }
 
+/* Glass cards and the lime glow (redesign, D-122): a faint gradient, a thin border and a soft shadow on the dark background. */
+.glass {
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 0.35);
+}
+.ring-glow {
+  filter: drop-shadow(0 0 6px rgb(183 255 53 / 0.45));
+}
+
 body {
   background: var(--bg);
   color: var(--ink-soft);
