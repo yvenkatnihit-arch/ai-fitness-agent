@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router'
 
 import { useAuth } from '../auth/context'
 import { ButtonLink, FormError, PageShell } from '../components/ui'
+import { AskCoachCard } from '../chat/AskCoachCard'
 import { TodayPlans } from '../dashboard/TodayPlans'
 import { TodayProgress } from '../dashboard/TodayProgress'
 import type { Today } from '../dashboard/types'
@@ -102,6 +103,7 @@ export function HomePage() {
       )}
       {today && <TodayProgress today={today} />}
       {today && <TodayPlans today={today} />}
+      {targets && <AskCoachCard />}
       {targets && <WeightCard onChanged={refreshForecast} />}
       {targets && <TargetsView targets={targets} />}
       {targets && forecast && <ForecastCard forecast={forecast} />}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useSearchParams } from 'react-router'
 
 import { FormError, PageShell, PrimaryButton, inputClass } from '../components/ui'
 import { ApiError } from '../lib/api'
@@ -75,7 +76,20 @@ export function ChatPage() {
     }
   }
 
+  // Arriving with /chat?ask=... (the starter questions on Home) starts a NEW chat with that question; otherwise the remembered chat comes back.
+  // The ref stops React's development double-run of effects from asking the question twice.
+  const [params, setParams] = useSearchParams()
+  const arrived = useRef(false)
   useEffect(() => {
+    if (arrived.current) return
+    arrived.current = true
+    const ask = params.get('ask')?.trim().slice(0, MAX_MESSAGE_CHARS)
+    if (ask) {
+      remember(null)
+      setParams({}, { replace: true }) // so a refresh does not ask it again
+      void send(undefined, ask)
+      return
+    }
     const id = remembered()
     if (id) void open(id, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
@@ -154,8 +168,8 @@ export function ChatPage() {
       back
     >
       <p className="text-xs text-muted">
-        Ask about foods, calories and protein. The coach can make mistakes, and for medical questions please ask a doctor. Any plan change it
-        suggests only happens if you approve it.
+        I can answer questions about foods and nutrition, exercises, your own plan, targets, weight and progress, and log a meal for you.
+        The coach can make mistakes, and for medical questions please ask a doctor. Anything it suggests saving only happens if you approve it.
       </p>
 
       <button

@@ -128,6 +128,9 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 - Guard evals and the regression gate (free, offline): `uv run python -m evals.run` (exit code 1 when the gate fails); lock in improvements with `--update-baseline`. The same gate runs inside `uv run pytest`.
 - Model-based evals with REAL Gemini calls (router about $0.003, composer about $0.003, nutrition specialist about $0.01; cached in `evals/cache/`, `--fresh` ignores the cache, `--show` prints every answer; use `--fresh` after changing a tool or the data, the cache cannot see that): `uv run python -m evals.run_llm router|composer|nutrition|workout|meal|summary|specialists` (specialists: 19 questions through the real chat for the exercise, meal-logging and my-plan specialists against a scratch user with real plans, a few cents; summary: 10 made-up chats for the rolling summary, about $0.001; workout: 14 made-up users through the real exercise picker, about $0.02; meal: 7 made-up users through the real dish picker and solver, about $0.05, `--limit=N` for a subset) (exit code 1 when below `evals/llm_thresholds.json`).
 
+**Demo check (`backend/`, D-117)**
+- Does the whole demo work for a brand-new account? `uv run python scripts/demo_check.py` (free, plans made by code) or `--chat` (also 4 real chat questions, about a cent). 20 steps, PASS or FAIL each. The guide to what is built is `docs/DEMO_GUIDE.md`.
+
 **Protein check (`backend/`, D-093)**
 - How much of the protein target do meal plans reach? Offline, real validated foods, no model, no database, no cost: `PYTHONPATH=. uv run python scripts/protein_report.py [indian|mediterranean]`. The same numbers are a regression gate inside `uv run pytest` (`tests/test_protein_regression.py`).
 

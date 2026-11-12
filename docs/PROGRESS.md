@@ -177,6 +177,7 @@ Planned, not started. Order: finish Phase 5, then:
 - [x] 8.1 Dashboard on Home (D-105). [x] 8.2 Exercise specialist (D-106). [x] 8.3 Food ideas and rankings (D-107). [x] 8.4 Progress questions (D-108). [x] 8.5 Log a meal by chat with confirmation + the claims guard (D-109). [x] Router eval 68 cases 100% (D-110). 2782 offline + 162 frontend pass, real-database suite all green (D-111). Not committed.
 - [x] 8.6 Chat example chips, weight log + trend card on the dashboard, weight questions in chat (D-112). [x] 8.7 "How the AI works" page (D-113). Not committed.
 - [x] 8.9 Accuracy audit (50 real questions), 11 problems fixed, 9 foods added, readable replies, waiting indicator, follow-up chips, specialist evals 19/19 (D-115). Not committed.
+- [x] 8.14 Starter questions on Home, demo reset check (20/20), docs/DEMO_GUIDE.md for the demo model (D-117). 204 frontend tests.
 - [x] 8.13 Date on the weight form + Try again on Home (D-116). 199 frontend tests.
 - [x] 7.12b Specialist eval for my_plan (done as part of D-115: exercises, meal logger and my plan, 19 questions). (exact numbers, honesty when empty, hidden numbers).
 - [ ] 7.11h Past chats list + reopen (+ keep the open chat on refresh); **next specialists so the chat can do more than foods (workout questions, plan help, meal logging in chat; Venkat to choose the order)**; 7.11e-2 LangSmith tracing (**Venkat: create a LangSmith account and API key first**); guard check for context-dependent follow-ups; streaming (later).

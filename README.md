@@ -106,6 +106,15 @@ Open http://localhost:5173.
 6. Open **How the AI works** (link at the bottom of Home) for the rules, the eval scores and your usage.
 7. **Settings** → add the Mediterranean cuisine → your meal plan is marked out of date → generate a new one.
 
+## Check the demo works (about a minute)
+
+```powershell
+cd backend
+uv run python scripts/demo_check.py --chat   # a brand-new account, start to finish; prints PASS or FAIL for 20 steps
+```
+
+To understand the project (what is built, file by file and flow by flow), read `docs/DEMO_GUIDE.md`.
+
 ## Tests and evals
 
 ```powershell
