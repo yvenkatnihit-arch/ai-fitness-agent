@@ -113,25 +113,33 @@ export function HomePage() {
       )}
       {!error && !targets && <p className="text-center text-sm text-muted">Loading…</p>}
       {targets && (
-        <SwipePanes labels={['Today', 'Daily targets']}>
+        <SwipePanes labels={['Today', 'Targets', 'Plan', 'Weight']}>
           {[
+            // 1. The dashboard and nothing else: how today is going.
             <>
               <Greeting />
               {today && <TodayProgress today={today} />}
               {today && <InsightCard today={today} />}
-              <div className="flex flex-col gap-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <ButtonLink to="/log">Log a meal</ButtonLink>
-                  <ButtonLink to="/meal-plan">Meal plan</ButtonLink>
-                </div>
-                <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
-              </div>
-              {today && <TodayPlans today={today} />}
-              <AskCoachCard />
-              <WeightCard onChanged={refreshForecast} />
             </>,
+            // 2. The daily targets (what the ring and bars are measured against).
             <>
               <TargetsView targets={targets} />
+            </>,
+            // 3. Today's plan and where to go to log, plan and ask.
+            <>
+              {today && <TodayPlans today={today} />}
+              <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <ButtonLink to="/meal-plan">Meal plan</ButtonLink>
+                  <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
+                </div>
+                {!today && <ButtonLink to="/log">Log a meal</ButtonLink> /* with today's summary the meals card has this link */}
+              </div>
+              <AskCoachCard />
+            </>,
+            // 4. Weight: the log, the chart and the goal date.
+            <>
+              <WeightCard onChanged={refreshForecast} />
               {forecast && <ForecastCard forecast={forecast} />}
             </>,
           ]}

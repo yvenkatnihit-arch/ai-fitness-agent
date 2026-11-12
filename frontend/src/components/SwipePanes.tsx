@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-// Two or more full-width panes side by side: swipe left (or use the tabs) to move to the next. Used on Home: "Today" first, then
-// "Daily targets". It is plain CSS scroll-snap, so a thumb swipe feels native; the tabs are for mouse and keyboard users and also show
+// Two or more full-width panes side by side: swipe left (or use the tabs) to move to the next. Used on Home: "Today" (the dashboard)
+// first, then "Targets", "Plan" and "Weight". It is plain CSS scroll-snap, so a thumb swipe feels native; the tabs are for mouse and keyboard users and also show
 // where you are. Both panes are always in the page, so nothing is hidden from screen readers.
 export function SwipePanes({ labels, children }: { labels: readonly string[]; children: ReactNode[] }) {
   const track = useRef<HTMLDivElement>(null)
