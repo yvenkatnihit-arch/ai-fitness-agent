@@ -134,7 +134,7 @@ Run each block from the folder named in its heading. Requires `uv` (Python 3.14)
 **Protein check (`backend/`, D-093)**
 - How much of the protein target do meal plans reach? Offline, real validated foods, no model, no database, no cost: `PYTHONPATH=. uv run python scripts/protein_report.py [indian|mediterranean]`. The same numbers are a regression gate inside `uv run pytest` (`tests/test_protein_regression.py`).
 
-**Not set up yet:** CI, deployment (Phase 3).
+**Deployed (Phase 3, redeployed 2026-11-12):** backend https://ai-fitness-agent-5dq9.onrender.com (Render, Docker), frontend https://ai-fitness-agent-one.vercel.app (Vercel); both rebuild when `main` is pushed. **Not set up yet:** CI.
 
 **Windows notes**
 - If `npm` fails with "running scripts is disabled": `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
