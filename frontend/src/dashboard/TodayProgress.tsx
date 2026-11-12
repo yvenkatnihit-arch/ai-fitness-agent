@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 import { CalorieRing } from './CalorieRing'
 import { MacroCards } from './MacroCards'
 import { MealChecklist } from './MealChecklist'
@@ -34,9 +36,14 @@ export function TodayProgress({ today }: { today: Today }) {
         <MealChecklist today={today} />
       </div>
       {today.progress && <MacroCards progress={today.progress} />}
-      <div className="glass rounded-2xl p-4">
+      <div className="glass flex flex-col gap-2 rounded-2xl p-4">
         {today.logged.length === 0 ? (
-          <p className="text-sm text-muted">Nothing logged today yet.</p>
+          <>
+            <p className="text-sm text-muted">Nothing logged today yet.</p>
+            {today.progress && (
+              <p className="text-xs text-muted">Log a meal and your calories, protein, carbs and fat above fill up as you go.</p>
+            )}
+          </>
         ) : (
           <ul aria-label="Logged today" className="flex flex-col gap-1 text-sm text-ink-soft">
             {today.logged.map((meal) => (
@@ -44,6 +51,14 @@ export function TodayProgress({ today }: { today: Today }) {
             ))}
           </ul>
         )}
+        <Link
+          to="/log"
+          className={`self-start rounded-full px-3 py-1.5 text-xs font-semibold transition hover:opacity-90 ${
+            today.logged.length === 0 ? 'btn-glow bg-brand text-on-brand' : 'border border-brand text-brand-strong'
+          }`}
+        >
+          {today.logged.length === 0 ? 'Log a meal' : 'Log another meal'}
+        </Link>
       </div>
     </section>
   )

@@ -55,7 +55,7 @@ test('the Today pane is only the dashboard: greeting, ring, macros, insight and 
   for (const other of [/Weight/, /Ask the coach/, /Today's meals/, /Today's workout/, /Log a meal/, /Daily targets|Your daily targets/i]) {
     expect(within(today).queryByRole('region', { name: other })).not.toBeInTheDocument()
   }
-  expect(within(today).queryByRole('link', { name: 'Log a meal' })).not.toBeInTheDocument()
+  expect(within(today).getByRole('link', { name: 'Log another meal' })).toHaveAttribute('href', '/log')              // the small button under what was logged
   expect(within(today).queryByText('1,408')).not.toBeInTheDocument()                                   // the targets are on their own pane
 })
 

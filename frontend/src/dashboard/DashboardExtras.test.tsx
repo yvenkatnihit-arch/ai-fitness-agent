@@ -99,3 +99,25 @@ test('goal progress stays out of the way: nothing without a target or a weigh-in
   render(<GoalProgress history={{ ...WEIGHT, percent_to_target: 130 }} />)
   expect(screen.getByRole('progressbar', { name: 'Goal progress' })).toHaveAttribute('aria-valuenow', '100')
 })
+
+test('with nothing logged, the dashboard explains that logging fills the numbers and offers a small Log a meal button', () => {
+  render(<MemoryRouter><TodayProgress today={{ ...TODAY, logged: [] }} /></MemoryRouter>)
+  expect(screen.getByText('Nothing logged today yet.')).toBeInTheDocument()
+  expect(screen.getByText('Log a meal and your calories, protein, carbs and fat above fill up as you go.')).toBeInTheDocument()
+  const button = screen.getByRole('link', { name: 'Log a meal' })
+  expect(button).toHaveAttribute('href', '/log')
+  expect(button.className).toContain('rounded-full')                                     // a small pill, not a full-width button
+})
+
+test('once something is logged the list stays and the button says Log another meal', () => {
+  render(<MemoryRouter><TodayProgress today={TODAY} /></MemoryRouter>)
+  expect(screen.getByRole('list', { name: 'Logged today' })).toHaveTextContent('breakfast: Idli')
+  expect(screen.queryByText(/fill up as you go/)).not.toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Log another meal' })).toHaveAttribute('href', '/log')
+})
+
+test('a user who must not see numbers gets the button but not the sentence about numbers filling up', () => {
+  render(<MemoryRouter><TodayProgress today={{ ...TODAY, logged: [], numbers_hidden: true, progress: null }} /></MemoryRouter>)
+  expect(screen.queryByText(/fill up as you go/)).not.toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Log a meal' })).toHaveAttribute('href', '/log')
+})
