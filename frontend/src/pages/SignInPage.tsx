@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 
 import { useAuth } from '../auth/context'
 import { MIN_PASSWORD_LENGTH } from '../auth/messages'
+import { BrandMark, inputClass } from '../components/ui'
 
 type Mode = 'sign-in' | 'sign-up'
 
@@ -55,10 +56,11 @@ export function SignInPage() {
   const isSignIn = mode === 'sign-in'
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-bg px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-sm">
+    <main className="page-glow flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-10">
+      <BrandMark tagline="Meal and workout plans built around you, with safety limits the AI cannot change." />
+      <div className="glass w-full max-w-sm rounded-3xl p-6">
         <h1 className="text-2xl font-bold text-ink">{isSignIn ? 'Welcome back' : 'Create your account'}</h1>
-        <p className="mt-1 text-sm text-muted">AI Fitness Coach</p>
+        <p className="mt-1 text-sm text-muted">{isSignIn ? 'Sign in to continue.' : 'It takes about two minutes to set up.'}</p>
 
         <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
           <label className="flex flex-col gap-1 text-sm font-medium text-ink-soft">
@@ -69,7 +71,7 @@ export function SignInPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-lg border border-line px-3 py-2 text-base font-normal focus:border-brand focus:outline-none"
+              className={inputClass}
             />
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium text-ink-soft">
@@ -80,7 +82,7 @@ export function SignInPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-lg border border-line px-3 py-2 text-base font-normal focus:border-brand focus:outline-none"
+              className={inputClass}
             />
             {!isSignIn && (
               <span className="text-xs font-normal text-muted">At least {MIN_PASSWORD_LENGTH} characters.</span>
@@ -101,7 +103,7 @@ export function SignInPage() {
           <button
             type="submit"
             disabled={busy || !email || !password}
-            className="rounded-lg bg-brand px-4 py-2.5 font-semibold text-on-brand disabled:opacity-50"
+            className="btn-glow rounded-xl bg-brand px-4 py-3 font-semibold text-on-brand transition hover:opacity-90 disabled:opacity-50"
           >
             {busy ? 'Please wait…' : isSignIn ? 'Sign in' : 'Create account'}
           </button>
@@ -111,7 +113,7 @@ export function SignInPage() {
           {isSignIn ? "New here? Create an account" : 'Already have an account? Sign in'}
         </button>
       </div>
-      <Link to="/sources" className="mt-4 text-xs text-muted underline">Data sources</Link>
+      <Link to="/sources" className="text-xs text-muted underline">Data sources</Link>
     </main>
   )
 }

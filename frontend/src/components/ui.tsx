@@ -1,4 +1,5 @@
 // Small shared pieces so every form looks and behaves the same.
+import { Dumbbell } from 'lucide-react'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Link } from 'react-router'
 
@@ -37,7 +38,7 @@ export function ButtonLink({ to, variant = 'primary', children }: { to: string; 
 
 export function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
   return (
-    <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-sm">
+    <div className="glass w-full max-w-md rounded-3xl p-6">
       <h1 className="text-xl font-bold text-ink">{title}</h1>
       {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       <div className="mt-5">{children}</div>
@@ -50,7 +51,7 @@ export function PrimaryButton({ busy, children, ...props }: ButtonHTMLAttributes
     <button
       {...props}
       disabled={busy || props.disabled}
-      className="w-full rounded-xl bg-brand px-4 py-3 font-semibold text-on-brand transition hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
+      className="btn-glow w-full rounded-xl bg-brand px-4 py-3 font-semibold text-on-brand transition hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
     >
       {busy ? 'Saving…' : children}
     </button>
@@ -101,4 +102,17 @@ export function Legend({ children }: { children: ReactNode }) {
 }
 
 export const inputClass =
-  'rounded-lg border border-line px-3 py-2 text-base font-normal focus:border-brand focus:outline-none'
+  'rounded-lg border border-line bg-surface-2 px-3 py-2 text-base font-normal text-ink placeholder:text-muted focus:border-brand focus:outline-none'
+
+// The app's mark: a lime dumbbell in a glowing circle, with the name under it. Used on sign-in and onboarding.
+export function BrandMark({ tagline }: { tagline?: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 text-center">
+      <span aria-hidden="true" className="btn-glow flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-on-brand">
+        <Dumbbell size={28} />
+      </span>
+      <p className="text-lg font-extrabold tracking-tight text-ink">AI Fitness Coach</p>
+      {tagline && <p className="max-w-xs text-sm text-muted">{tagline}</p>}
+    </div>
+  )
+}

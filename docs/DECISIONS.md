@@ -1197,3 +1197,10 @@ Question asked: "can the LLM create agents depending on the requirements?" Answe
 **Status:** Done on branch `redesign` (2026-11-12).
 - **What:** the intro text sits in a glass card with a lime dot; the empty chat shows the starter questions as icon cards in a 2-column grid (`chat/PromptCards.tsx`, Lucide icons, `lucide-react` 1.61.0, inside the 2-week age rule); your messages are lime bubbles with dark text and a square bottom-right corner, the coach's are glass bubbles with a square bottom-left corner, guard notices stay amber; "The coach is thinking…" gets three bouncing lime dots (switched off by reduce motion) next to the honest elapsed-seconds text; the confirm card is a glass card with a lime ring. Thumbs, follow-up chips, rich text and "How this answer was made" are unchanged.
 - **No behaviour changed:** same endpoints, same rules, same texts (so the existing chat tests still pass). Frontend 215 tests, lint and build pass.
+
+## D-124 — Redesign step 4: Sign-in and Onboarding (branch `redesign`; the first screens a viewer sees)
+**Status:** Done on branch `redesign` (2026-11-12).
+- **Shared pieces first, so all six onboarding steps improve at once** (`components/ui.tsx`): `Card` is now a glass card; `PrimaryButton` has a soft lime glow; `inputClass` has the dark fill and light text; new `BrandMark` (lime dumbbell in a glowing circle, the app name, an optional tagline). `index.css` gains `.page-glow` (a faint lime glow at the top of the page) and `.btn-glow`.
+- **Sign-in / sign-up:** brand mark and a one-line description ("Meal and workout plans built around you, with safety limits the AI cannot change."), a glass card, the shared input style, and a layout fix (the "Data sources" link used to sit BESIDE the card because the page was a row; it is now below it).
+- **Onboarding:** the brand mark on top and a progress bar with one lime segment per step reached (`role="progressbar"`, 1 to 6) above the existing "Step N of 6" words.
+- **No behaviour changed.** Frontend 218 tests (3 new in `pages/FirstScreens.test.tsx`), lint and build pass.

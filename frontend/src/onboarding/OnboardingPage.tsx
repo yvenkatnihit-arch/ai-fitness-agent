@@ -1,7 +1,7 @@
 import { useEffect, useState, type JSX, type ReactNode } from 'react'
 import { Navigate } from 'react-router'
 
-import { Card, FormError } from '../components/ui'
+import { BrandMark, Card, FormError } from '../components/ui'
 import { ApiError } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import { BasicsStep } from './BasicsStep'
@@ -50,14 +50,36 @@ export function OnboardingPage() {
   const Screen = SCREENS[status.next_step]
   return (
     <Shell>
-      <p className="mb-3 text-xs font-medium uppercase tracking-wide text-muted">
-        Step {STEPS.indexOf(status.next_step) + 1} of {STEPS.length}
-      </p>
+      <StepProgress current={STEPS.indexOf(status.next_step) + 1} total={STEPS.length} />
       <Screen onSaved={setStatus} />
     </Shell>
   )
 }
 
+// "Step 2 of 6" in words, with one lime segment per step reached (the words are what screen readers and tests read).
+function StepProgress({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="mb-4 flex w-full max-w-md flex-col gap-2">
+      <div
+        role="progressbar" aria-label="Onboarding progress" aria-valuemin={1} aria-valuemax={total} aria-valuenow={current}
+        className="flex gap-1.5"
+      >
+        {Array.from({ length: total }, (_, i) => (
+          <span key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i < current ? 'bg-brand' : 'bg-surface-2'}`} />
+        ))}
+      </div>
+      <p className="text-xs font-medium uppercase tracking-wide text-muted">
+        Step {current} of {total}
+      </p>
+    </div>
+  )
+}
+
 function Shell({ children }: { children: ReactNode }) {
-  return <main className="flex min-h-screen flex-col items-center bg-bg px-4 py-10">{children}</main>
+  return (
+    <main className="page-glow flex min-h-screen flex-col items-center gap-6 px-4 py-10">
+      <BrandMark />
+      <div className="flex w-full flex-col items-center">{children}</div>
+    </main>
+  )
 }
