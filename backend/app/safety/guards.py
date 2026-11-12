@@ -194,10 +194,21 @@ REFERRAL = re.compile(r"^(?:please |you should |it is best to |it's best to )?(?
                       r"(?:a |your |an? )?(?:doctor|physician|pharmacist|professional)\b|\bi can'?t (?:give|advise|recommend|help|diagnose)\b")
 
 
+# A sentence that only REPORTS what the user ate ("So far you have logged 700 kcal for the day.") is not advice to eat that little.
+TRACKING = re.compile(r"\b(?:logged|eaten|ate|had|consumed|so far|remaining|left|used|total|have)\b")
+ADVICE = re.compile(r"\b(?:should|aim|target|limit|need|recommend|stick|stay|goal|plan|try|only eat|just eat|eat only|cut)\b")
+
+
+def _without_reports(text: str) -> str:
+    """The text with factual tracking sentences removed, so the calorie-floor check looks only at advice and plans."""
+    keep = [s for s in re.split(r"(?<=[.!?])\s+", text) if not (TRACKING.search(s) and not ADVICE.search(s))]
+    return " ".join(keep)
+
+
 def check_output(text: str) -> Verdict | None:
     """The safe reply to send INSTEAD of the composed one, or None when it is fine."""
     t = normalize(text)
-    if extreme_diet(t) or _any(OUTPUT_ALWAYS_BANNED, [t]):
+    if extreme_diet(_without_reports(t)) or _any(OUTPUT_ALWAYS_BANNED, [t]):
         return Verdict("unsafe_output", messages.UNSAFE_OUTPUT)
     for sentence in re.split(r"(?<=[.!?])\s+", t):
         if not REFERRAL.search(sentence) and _any(OUTPUT_DRUGS_AND_DIAGNOSIS, [sentence]):
