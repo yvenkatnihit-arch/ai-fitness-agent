@@ -1204,3 +1204,9 @@ Question asked: "can the LLM create agents depending on the requirements?" Answe
 - **Sign-in / sign-up:** brand mark and a one-line description ("Meal and workout plans built around you, with safety limits the AI cannot change."), a glass card, the shared input style, and a layout fix (the "Data sources" link used to sit BESIDE the card because the page was a row; it is now below it).
 - **Onboarding:** the brand mark on top and a progress bar with one lime segment per step reached (`role="progressbar"`, 1 to 6) above the existing "Step N of 6" words.
 - **No behaviour changed.** Frontend 218 tests (3 new in `pages/FirstScreens.test.tsx`), lint and build pass.
+
+## D-125 — Home has two swipeable panes: Today first, then Daily targets (branch `redesign`; Venkat)
+**Status:** Done on branch `redesign` (2026-11-12).
+- **What:** Home now opens on **Today** (greeting, calorie ring, macro cards, insight, quick links, today's plans, ask the coach, weight). Swiping left (or tapping the **Daily targets** tab) moves to the second pane: the daily targets with the macro donut, the reasons, and the goal-date forecast. `components/SwipePanes.tsx`: plain CSS scroll-snap, so a thumb swipe feels native; a tab strip shows where you are and gives mouse and keyboard users a way to switch; a small hint "Swipe left for your daily targets" shows until you reach the last pane.
+- **Details:** both panes are always in the page (nothing hidden from screen readers); the track is only as tall as the pane you are on (a `ResizeObserver`), so the short targets pane does not leave a long empty page; the scrollbar is hidden. No data or behaviour changed.
+- **Tests:** `components/SwipePanes.test.tsx` (4: order and hint, the tab scrolls and selects, a swipe moves the selected tab and back, halfway rounds to the nearer pane). Frontend 222 tests, lint and build pass. Not yet tried on a real phone.

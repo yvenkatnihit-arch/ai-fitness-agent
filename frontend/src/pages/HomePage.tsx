@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router'
 
 import { useAuth } from '../auth/context'
+import { SwipePanes } from '../components/SwipePanes'
 import { ButtonLink, FormError, PageShell } from '../components/ui'
 import { AskCoachCard } from '../chat/AskCoachCard'
 import { InsightCard } from '../dashboard/InsightCard'
@@ -102,27 +103,35 @@ export function HomePage() {
         </button>
       )}
       {!error && !targets && <p className="text-center text-sm text-muted">Loading…</p>}
-      {targets && <Greeting />}
-      {today && <TodayProgress today={today} />}
-      {today && <InsightCard today={today} />}
       {targets && (
-        <div className="flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-3">
-            <ButtonLink to="/log">Log a meal</ButtonLink>
-            <ButtonLink to="/meal-plan">Meal plan</ButtonLink>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
-            <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
-          </div>
-          <ButtonLink to="/settings" variant="secondary">Settings</ButtonLink>
-        </div>
+        <SwipePanes labels={['Today', 'Daily targets']}>
+          {[
+            <>
+              <Greeting />
+              {today && <TodayProgress today={today} />}
+              {today && <InsightCard today={today} />}
+              <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <ButtonLink to="/log">Log a meal</ButtonLink>
+                  <ButtonLink to="/meal-plan">Meal plan</ButtonLink>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
+                  <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
+                </div>
+                <ButtonLink to="/settings" variant="secondary">Settings</ButtonLink>
+              </div>
+              {today && <TodayPlans today={today} />}
+              <AskCoachCard />
+              <WeightCard onChanged={refreshForecast} />
+            </>,
+            <>
+              <TargetsView targets={targets} />
+              {forecast && <ForecastCard forecast={forecast} />}
+            </>,
+          ]}
+        </SwipePanes>
       )}
-      {today && <TodayPlans today={today} />}
-      {targets && <AskCoachCard />}
-      {targets && <WeightCard onChanged={refreshForecast} />}
-      {targets && <TargetsView targets={targets} />}
-      {targets && forecast && <ForecastCard forecast={forecast} />}
       <div className="flex justify-center gap-4 text-xs text-muted">
         <Link to="/how-it-works" className="underline">How the AI works</Link>
         <Link to="/sources" className="underline">Data sources</Link>

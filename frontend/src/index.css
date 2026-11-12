@@ -53,6 +53,12 @@
   border: 1px solid var(--line);
   box-shadow: 0 8px 30px rgb(0 0 0 / 0.35);
 }
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 .page-glow {
   background: radial-gradient(ellipse 80% 40% at 50% 0%, rgb(183 255 53 / 0.10), transparent 70%), var(--bg);
 }
