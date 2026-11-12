@@ -24,7 +24,6 @@ def model_is_down(monkeypatch):
 @pytest.fixture
 def proposal(client):
     onboard(client)
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     return client.post("/plans/workout/generate").json()
 
 

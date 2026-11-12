@@ -81,7 +81,6 @@ export function WorkoutPlanPage() {
           <FormError message={error.message} requestId={error.requestId} />
           {error.status === 409 && (
             <div className="flex gap-4 text-sm font-semibold text-brand-strong">
-              <Link to="/splits">Choose a split</Link>
               <Link to="/onboarding">Go to onboarding</Link>
             </div>
           )}
@@ -93,6 +92,7 @@ export function WorkoutPlanPage() {
         <section aria-label="Plan waiting for your approval" className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm ring-2 ring-brand">
           <h2 className="text-base font-bold text-ink">New plan: approve it to make it yours</h2>
           <p className="text-sm text-ink-soft">{proposal.summary}</p>
+          {proposal.payload.split_name && <p className="text-xs text-muted">Split chosen for you: {proposal.payload.split_name}</p>}
           {proposal.payload.focus_areas && proposal.payload.focus_areas.length > 0 && (
             <p className="text-xs font-semibold text-brand-strong">Extra focus: {proposal.payload.focus_areas.map(words).join(', ')}</p>
           )}
@@ -131,7 +131,7 @@ export function WorkoutPlanPage() {
             </section>
           ) : (
             <p className="text-sm text-ink-soft">
-              You don&apos;t have a workout plan yet. The coach builds one from your split, your level, your equipment and your limits.
+              You don&apos;t have a workout plan yet. The app picks the split that fits your training days and level, then builds the plan from your equipment and limits.
               You will see it first and decide.
             </p>
           )}

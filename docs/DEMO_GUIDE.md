@@ -14,7 +14,7 @@ How to use it (about 3 hours): read sections 1 and 2 first (15 minutes), then fo
 | Onboarding (`/onboarding`) | Six short forms: consent, body, goal and pace, diet and cuisines, training setup, health screening | Safety-aware personalisation; ends with daily targets |
 | Home = dashboard (`/`) | Two panes: **Today** first, swipe left (or tap "Daily targets") for the targets and goal date. Sees today's calories and macros against targets, what they logged, what today's plan says, a weight log with a trend chart, their targets, a goal-date forecast, and starter questions for the coach | Everything here is calculated by code, no AI |
 | Meal plan (`/meal-plan`) | Generates a 7-day plan, reads it, presses **Approve** | AI picks dishes, code works out portions, the user decides |
-| Workout (`/workout`, `/splits`) | Picks a split, generates a plan, approves it, can edit a day | Same pattern, with exercises from our library |
+| Workout (`/workout`) | Generates a plan (the app picks the right split by itself), approves it, can edit a day | Same pattern, with exercises from our library |
 | Log a meal (`/log`) | Searches foods, picks amounts in household units | Code-only nutrition from a validated database |
 | Chat (round button, `/chat`) | Asks about foods, exercises, their own plan and progress, or tells the coach what they ate | Guards, a router, four specialists, a confirm step |
 | Settings (`/settings`) | Changes details, diet, cuisines, dislikes | Changing them marks plans "out of date" |
@@ -43,7 +43,7 @@ Two model sizes are used, both Gemini, configured in `.env`: a small fast one fo
 backend/app/
   main.py            builds the web app: middleware, CORS, and attaches every router
   api/               one file per area; each is thin: check login, call a workflow, return JSON
-                     onboarding, targets, plans, meals, foods, exercises, splits, profile, training,
+                     onboarding, targets, plans, meals, foods, exercises, profile, training,
                      chat, dashboard, weight, insights, me
   workflows/         the steps of a job, in order (the "what happens when you press the button" layer)
                      complete_onboarding, generate_meal_plan, generate_workout_plan, decide_proposal,
@@ -60,7 +60,7 @@ backend/app/
   schemas/           the shapes of requests and responses (Pydantic)
   core/              auth (login check), config, errors, logging, chat_limits, vocabulary, time
 frontend/src/        pages and components by area: auth, onboarding, pages (Home, SignIn), dashboard, weight,
-                     chat, plans, meals, settings, splits, insights, targets; lib/api.ts talks to the backend
+                     chat, plans, meals, settings, insights, targets; lib/api.ts talks to the backend
 supabase/migrations/ the database schema, one file per change (27 tables, all with row-level security)
 data/ + backend/fooddata, exercisedata/   how foods and exercises were gathered, checked and loaded
 backend/evals/       the quality tests for the AI (scores, pass lines, published results)
@@ -98,7 +98,7 @@ What to say: *"Every number on Home comes from this one pipeline; the AI is not 
 What to say: *"The AI picks the dishes, code does the arithmetic, and the user has the last word."*
 
 ### Flow 4: the workout plan
-Same shape. A split is chosen (`calc/splits.py` recommends one from days per week and level), `workflows/pick_exercises.py` has the model choose exercises from the **library** filtered for this person (`calc/exercise_filter.py`: injuries, level, place, equipment), `calc/workout_plan.py` validates the plan, `calc/weekly_cap.py` enforces a limit on weekly hard sets, and it waits for approval like a meal plan. The user can edit a day afterwards (`workflows/edit_workout.py`), and code re-checks every edit.
+Same shape. The split is picked by CODE, not by the user (`calc/splits.py` `recommend_splits`: the best fit for days per week, level and goal; `workflows/generate_workout_plan.py` takes the first one and the plan page shows "Split chosen for you"), `workflows/pick_exercises.py` has the model choose exercises from the **library** filtered for this person (`calc/exercise_filter.py`: injuries, level, place, equipment), `calc/workout_plan.py` validates the plan, `calc/weekly_cap.py` enforces a limit on weekly hard sets, and it waits for approval like a meal plan. The user can edit a day afterwards (`workflows/edit_workout.py`), and code re-checks every edit.
 
 ### Flow 5: logging, the dashboard and the weight log (no AI at all)
 - **Log a meal** (`api/meals.py`): the browser sends food ids, amounts and units; `calc/portions.py` turns "2 pieces" into grams and nutrition from the database values. The browser never sends calories.

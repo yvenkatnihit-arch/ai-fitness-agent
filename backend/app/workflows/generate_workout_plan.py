@@ -11,7 +11,7 @@ from uuid import UUID
 
 from app.calc.exercise_filter import ExerciseNeeds, filter_exercises, setting_for
 from app.calc.session_time import exercises_for_session
-from app.calc.splits import fits_days, split_by_key
+from app.calc.splits import recommend_splits
 from app.calc.targets import effective_pace
 from app.calc.workout_plan import DayPick, build_payload, next_monday, summarize, validate_payload
 from app.core.time import india_today
@@ -42,16 +42,14 @@ def generate_workout_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated
         saved = targets_repo.read_inputs(conn)
         if training is None or split_inputs is None or saved is None:
             raise NotReady("Please finish onboarding first.")
-        if not split_inputs.chosen_key:
-            raise NotReady("Please choose a workout split first.")
-        if not fits_days(split_inputs.chosen_key, split_inputs.days_per_week):
-            raise NotReady("Your chosen split no longer matches your training days. Please choose a split again.")
-        recent = proposals_repo.recent_pending_workout(conn, split_inputs.chosen_key, REUSE_WITHIN_SECONDS)
+        # The split is chosen by code, never by the user (D-127): the best fit for their training days, level and goal.
+        split = recommend_splits(split_inputs.days_per_week, split_inputs.level, split_inputs.goal)[0].split
+        splits_repo.save_split_choice(conn, split.key)      # remembered on the profile, for the record
+        recent = proposals_repo.recent_pending_workout(conn, split.key, REUSE_WITHIN_SECONDS)
         library = exercises_repo.list_exercises(conn)
     if recent is not None:
         return Generated(recent, reused=True)
 
-    split = split_by_key(split_inputs.chosen_key)
     needs = ExerciseNeeds(setting_for(training.workout_location), training.level, training.injuries, training.equipment)
     allowed = filter_exercises(library, needs)
     pace, _ = effective_pace(saved.pace, saved.goal_type, saved.flags)   # type: ignore[arg-type]
@@ -62,7 +60,7 @@ def generate_workout_plan(user_id: UUID, *, ask: Ask | None = None) -> Generated
     if empty:
         raise NotReady(
             f"With your equipment and limits there are not enough safe exercises for: {', '.join(empty)}. "
-            "Try a different split, or add equipment in your profile."
+            "Try adding equipment or removing a limit in your profile."
         )
 
     by_key = {o.key: o for o in library}

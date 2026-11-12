@@ -29,7 +29,7 @@ const ACTIVE: ActivePlan = { id: 'a1', week_start: '2026-11-09', version: 1, app
 
 const NO_PLAN = { status: 404, body: { detail: "You don't have a workout plan yet." } }
 const signedIn = () => fakeAuth({ session: { ...fakeSession(), access_token: 'tok' } as never })
-const render = () => renderWithAuth(signedIn(), { '/workout': <WorkoutPlanPage />, '/': <p>home</p>, '/splits': <p>splits</p> }, '/workout')
+const render = () => renderWithAuth(signedIn(), { '/workout': <WorkoutPlanPage />, '/': <p>home</p> }, '/workout')
 
 test('prescription text: reps, holds as time, rest in minutes when it is whole minutes', () => {
   expect(prescription(BENCH)).toBe('3 × 8-12 reps · rest 90 s')
@@ -132,16 +132,17 @@ test('a user with a plan can ask for a new one', async () => {
   expect(await screen.findByRole('button', { name: 'Make me a new plan' })).toBeEnabled()
 })
 
-test("a refusal such as 'choose a split first' shows the message and the way forward", async () => {
+test("a refusal such as 'finish onboarding first' shows the message and the way forward", async () => {
   fakeFetch({
     'GET /plans/workout/active': NO_PLAN,
     'GET /plans/proposals/pending': { body: { proposals: [] } },
-    'POST /plans/workout/generate': { status: 409, body: { detail: 'Please choose a workout split first.' } },
+    'POST /plans/workout/generate': { status: 409, body: { detail: 'Please finish onboarding first.' } },
   })
   render()
   fireEvent.click(await screen.findByRole('button', { name: 'Generate my plan' }))
-  expect(await screen.findByRole('alert')).toHaveTextContent('Please choose a workout split first.')
-  expect(screen.getByRole('link', { name: 'Choose a split' })).toBeInTheDocument()
+  expect(await screen.findByRole('alert')).toHaveTextContent('Please finish onboarding first.')
+  expect(screen.getByRole('link', { name: 'Go to onboarding' })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: /split/i })).not.toBeInTheDocument()                  // there is no split to choose any more
   await waitFor(() => expect(screen.getByRole('button', { name: 'Generate my plan' })).toBeEnabled())   // can try again
 })
 

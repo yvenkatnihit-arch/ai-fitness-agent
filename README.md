@@ -16,7 +16,7 @@ and a validated food database, not from the AI, and the AI can only *propose* ch
 | Home (the dashboard) | Today at a glance: calories and macros eaten against your targets, what you logged, what your meal plan and workout say for today, a weight log with a trend chart, then your targets and a goal-date forecast (a range, not a promise) |
 | How the AI works | The rules the AI cannot break, the eval scores it is held to, and your own AI usage and cost |
 | Meal plan | The coach builds a 7-day plan from our food database; code works out the portions; you read it and **Approve** or **Reject** |
-| Workout plan | Pick a split, the coach picks exercises from our library for your equipment and injuries; you approve; you can edit a day |
+| Workout plan | The app picks the right split for you, the coach picks exercises from our library for your equipment and injuries; you approve; you can edit a day |
 | Log a meal | Search foods, pick household units (katori, piece, bowl, cup), see totals. No AI involved |
 | Chat (round button, bottom-left) | Ask about foods ("calories in 2 rotis", "which vegetarian foods are high in protein"), exercises ("how do I do a plank", "an alternative to bench press for a shoulder injury"), your own data ("what's my calorie target", "what's for lunch tomorrow", "what workout do I have on Monday", "am I on track this week"), your weight progress ("how much weight have I lost"), or tell it what you ate ("I ate 2 rotis and dal for lunch"): it prepares the log and you press Approve to save it |
 | Settings | Change your details, diet, cuisines and dislikes; your plans are marked out of date when they no longer match |
@@ -98,7 +98,7 @@ Open http://localhost:5173.
 
 1. Open the app, **sign up**, and finish **onboarding** (about 2 minutes). You land on Home with your targets and goal-date range.
 2. **Meal plan** → *Generate my plan* (about a minute, about $0.04 of Gemini). Read the plan, open "How this plan was made" (which days the AI chose and which our code chose, the checks it passed), then **Approve**.
-3. **Workout** → pick a split on the Splits screen, generate a plan, approve it.
+3. **Workout** → generate a plan (the app picks the split for you), approve it.
 4. **Log a meal**: search "roti", add 2 pieces and a katori of dal, and watch the totals. Then on Home, **log your weight** (use the Date box to add a few past weigh-ins so the chart has a trend) and watch the chart and your goal date move.
 5. Tap the round **chat button** and the example chips (or type): ask "how much protein is in paneer?", then "and how much fat?" (it remembers), then "what's for lunch tomorrow?", "what workout do I have on Monday?", "how do I do a plank?" and "which vegetarian foods are high in protein?".
    Then say "I ate 2 rotis and a katori of dal for lunch": a **Please confirm** card appears, nothing is saved yet, press **Approve** and go back to Home to see it in today's progress.

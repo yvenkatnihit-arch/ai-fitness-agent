@@ -9,7 +9,6 @@ import { MealLogPage } from './meals/MealLogPage'
 import { MealPlanPage } from './plans/MealPlanPage'
 import { WorkoutPlanPage } from './plans/WorkoutPlanPage'
 import { SettingsPage } from './settings/SettingsPage'
-import { SplitsPage } from './splits/SplitsPage'
 import { OnboardingPage } from './onboarding/OnboardingPage'
 import { HomePage } from './pages/HomePage'
 import { SignInPage } from './pages/SignInPage'
@@ -32,7 +31,7 @@ function App() {
       <Route path="/settings" element={withChat(<SettingsPage />)} />
       <Route path="/meal-plan" element={withChat(<MealPlanPage />)} />
       <Route path="/workout" element={withChat(<WorkoutPlanPage />)} />
-      <Route path="/splits" element={withChat(<SplitsPage />)} />
+      <Route path="/splits" element={<Navigate to="/workout" replace />} /> {/* the split is picked automatically now (D-127); old links still work */}
       <Route path="/" element={withChat(<HomePage />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

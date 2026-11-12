@@ -31,7 +31,6 @@ def onboard_gym(client):
 def plan(client):
     """An intermediate gym user with an APPROVED push/pull/legs plan (Mon, Wed, Fri)."""
     onboard_gym(client)
-    client.put("/splits/choice", json={"split_key": "ppl_3"})
     proposal = client.post("/plans/workout/generate").json()
     assert client.post(f"/plans/proposals/{proposal['id']}/approve").status_code == 200
     return client.get("/plans/workout/active").json()

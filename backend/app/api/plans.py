@@ -23,7 +23,7 @@ router = APIRouter(prefix="/plans", tags=["plans"])
 
 @router.post("/workout/generate", response_model=ProposalOut)
 def generate_workout(user: CurrentUser = Depends(get_current_user)) -> ProposalOut:
-    """Make a workout plan from the user's chosen split. It is saved as a PENDING proposal, not as their plan:
+    """Make a workout plan (the split that fits the user best is picked automatically). It is saved as a PENDING proposal, not as their plan:
     they approve it first. Uses the mid-tier model once (plus a retry for any day that fails the checks)."""
     try:
         return to_proposal_out(generate_workout_plan(user.id).row)

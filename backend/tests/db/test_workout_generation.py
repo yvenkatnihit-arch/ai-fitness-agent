@@ -41,16 +41,22 @@ def test_nothing_to_generate_before_onboarding(client):
     assert response.status_code == 409 and "finish onboarding" in response.json()["detail"]
 
 
-def test_a_split_must_be_chosen_first(client):
-    onboard(client)
-    response = client.post("/plans/workout/generate")
-    assert response.status_code == 409 and "choose a workout split" in response.json()["detail"]
-    assert pending_count(client.session.user_id) == 0
+def test_the_split_is_picked_automatically_from_days_and_level_and_remembered(client, users):
+    from app.calc.splits import recommend_splits
+    onboard(client)                                                      # a beginner who trains 3 days a week, goal from the form
+    response = client.post("/plans/workout/generate")                    # nothing was chosen: the app picks
+    assert response.status_code == 200, response.text
+    payload = response.json()["payload"]
+    with admin_transaction("test: read the remembered split") as conn:
+        remembered, level, goal = conn.execute(
+            """select p.split_key, p.experience_level, g.goal_type from public.profiles p
+               join public.goals g on g.user_id = p.id and g.active where p.id = %s""", (users[0],)).fetchone()
+    best = recommend_splits(3, level, goal)[0].split
+    assert payload["split_key"] == remembered == best.key
 
 
 def test_generates_a_valid_pending_proposal_and_never_activates_a_plan(client, users):
     onboard(client)
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     response = client.post("/plans/workout/generate")
     assert response.status_code == 200, response.text
     body = response.json()
@@ -68,7 +74,6 @@ def test_generates_a_valid_pending_proposal_and_never_activates_a_plan(client, u
 
 def test_only_equipment_the_user_owns_is_used(client, users):
     onboard(client)                                  # trains at home with no equipment
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     payload = client.post("/plans/workout/generate").json()["payload"]
     keys = {e["exercise_key"] for d in payload["days"] for e in d["exercises"]}
     with user_transaction(users[0]) as conn:
@@ -78,7 +83,6 @@ def test_only_equipment_the_user_owns_is_used(client, users):
 
 def test_a_double_tap_reuses_the_proposal_and_a_later_one_replaces_it(client, users):
     onboard(client)
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     first = client.post("/plans/workout/generate").json()
     again = client.post("/plans/workout/generate").json()
     assert again["id"] == first["id"] and pending_count(users[0]) == 1
@@ -94,7 +98,6 @@ def test_a_double_tap_reuses_the_proposal_and_a_later_one_replaces_it(client, us
 
 def test_pending_list_shows_only_my_proposals(client, users):
     onboard(client)
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     mine = client.post("/plans/workout/generate").json()["id"]
     assert [p["id"] for p in client.get("/plans/proposals/pending").json()["proposals"]] == [mine]
     client.session.user_id = users[1]                # a different signed-in user
@@ -103,7 +106,6 @@ def test_pending_list_shows_only_my_proposals(client, users):
 
 def test_too_few_safe_exercises_means_a_polite_refusal_not_a_thin_plan(client):
     onboard(client)
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     with admin_transaction("test: give the user every injury") as conn:
         conn.execute(
             "update public.health_screening set injury_areas = %s where user_id = %s",
@@ -125,7 +127,6 @@ def onboard_training(client, **training):
 
 
 def counts_and_minutes(client):
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     days = client.post("/plans/workout/generate").json()["payload"]["days"]
     trained = [d for d in days if not d["is_rest"]]
     return [len(d["exercises"]) for d in trained], [d["minutes"] for d in trained]

@@ -124,10 +124,7 @@ export function HomePage() {
                   <ButtonLink to="/log">Log a meal</ButtonLink>
                   <ButtonLink to="/meal-plan">Meal plan</ButtonLink>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
-                  <ButtonLink to="/splits" variant="secondary">Workout split</ButtonLink>
-                </div>
+                <ButtonLink to="/workout" variant="secondary">Workout plan</ButtonLink>
               </div>
               {today && <TodayPlans today={today} />}
               <AskCoachCard />

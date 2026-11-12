@@ -15,7 +15,7 @@ EXAMPLES = "Try asking, for example, “How much protein is in paneer?”, “Wh
 # (name, pattern, reply). The first match wins, so the more specific topics come first.
 TOPICS: tuple[tuple[str, re.Pattern[str], str], ...] = (
     ("workout", re.compile(r"\b(workout|work out|exercise|exercises|gym|squat|squats|bench|deadlift|reps?|sets?|split|training|cardio|stretch\w*|muscle)\b"),
-     "I cannot build or change workouts in chat yet. Your Workout plan and Workout split screens do that, and you approve every change. "
+     "I cannot build or change workouts in chat yet. Your Workout plan screen does that (it picks the right split for you), and you approve every change. "
      "In chat I can answer questions about exercises and tell you what is in your own workout plan. " + EXAMPLES),
     ("meal_plan", re.compile(r"\b(meal plan|diet plan|menu|what (should|can|do) i (eat|have)|what to eat|eat today|breakfast ideas?|lunch ideas?|dinner ideas?|recipes?)\b"),
      "I cannot plan your meals in chat yet. Your Meal plan screen builds a full week that fits your targets, and you approve it first. "

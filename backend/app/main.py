@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import db
-from app.api import chat, dashboard, exercises, foods, insights, meals, me, onboarding, plans, profile, splits, targets, training, weight
+from app.api import chat, dashboard, exercises, foods, insights, meals, me, onboarding, plans, profile, targets, training, weight
 from app.core.config import get_app_settings
 from app.core.errors import register_error_handlers
 from app.core.logging import setup_logging
@@ -42,7 +42,6 @@ app.include_router(targets.router)
 app.include_router(foods.router)
 app.include_router(meals.router)
 app.include_router(exercises.router)
-app.include_router(splits.router)
 app.include_router(plans.router)
 app.include_router(chat.router)
 app.include_router(dashboard.router)

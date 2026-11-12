@@ -29,7 +29,6 @@ def food_id(key):
 
 
 def approve_plans(client):
-    client.put("/splits/choice", json={"split_key": "full_body_3"})
     for kind in ("meal", "workout"):
         proposal = client.post(f"/plans/{kind}/generate").json()
         assert client.post(f"/plans/proposals/{proposal['id']}/approve").status_code == 200

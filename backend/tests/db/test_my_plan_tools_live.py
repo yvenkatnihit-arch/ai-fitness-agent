@@ -42,7 +42,6 @@ def approved_meal_plan(client):
 
 
 def approved_workout_plan(client):
-    assert client.put("/splits/choice", json={"split_key": "full_body_3"}).status_code == 200
     proposal = client.post("/plans/workout/generate").json()
     assert client.post(f"/plans/proposals/{proposal['id']}/approve").status_code == 200
 

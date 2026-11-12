@@ -82,7 +82,6 @@ def main() -> int:
             active = client.get("/plans/meal/active")
             r.step("approving it makes it the active plan (and only then)", before == 404 and approved is not None and ok(approved) and ok(active) and len(active.json()["days"]) == 7)
 
-            client.put("/splits/choice", json={"split_key": "full_body_3"})
             workout = client.post("/plans/workout/generate")
             approved = client.post(f"/plans/proposals/{workout.json()['id']}/approve") if ok(workout) else None
             r.step("a workout plan is proposed and approved", ok(workout) and approved is not None and ok(approved) and ok(client.get("/plans/workout/active")))

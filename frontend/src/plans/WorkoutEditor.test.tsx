@@ -25,7 +25,7 @@ const BASE = {
   'GET /plans/proposals/pending': { body: { proposals: [] } },
 }
 const signedIn = () => fakeAuth({ session: { ...fakeSession(), access_token: 'tok' } as never })
-const render = () => renderWithAuth(signedIn(), { '/workout': <WorkoutPlanPage />, '/': <p>home</p>, '/splits': <p>splits</p> }, '/workout')
+const render = () => renderWithAuth(signedIn(), { '/workout': <WorkoutPlanPage />, '/': <p>home</p> }, '/workout')
 const startEditing = async () => fireEvent.click(await screen.findByRole('button', { name: 'Edit my plan' }))
 
 test('Edit my plan shows the controls, and Done editing goes back to reading', async () => {

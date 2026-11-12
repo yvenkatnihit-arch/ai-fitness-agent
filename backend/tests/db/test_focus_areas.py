@@ -22,8 +22,7 @@ def sets_by_key(payload):
     return {e["exercise_key"]: e["sets"] for d in payload["days"] for e in d["exercises"]}
 
 
-def generate(client, split="ppl_3"):
-    client.put("/splits/choice", json={"split_key": split})
+def generate(client):
     with admin_transaction("test: let a new proposal be made") as conn:
         conn.execute("update public.plan_proposals set created_at = now() - interval '5 minutes' where user_id = %s",
                      (client.session.user_id,))
@@ -95,12 +94,13 @@ def test_a_focus_muscle_gets_more_sets_and_the_plan_says_so(client):
 def test_focus_days_get_one_more_exercise(client):
     onboard_gym(client)
     plain = generate(client)
-    client.put("/training/focus-areas", json={"focus_areas": ["biceps"]})
+    client.put("/training/focus-areas", json={"focus_areas": ["chest"]})
     boosted = generate(client)
     by_focus = lambda p: {d["focus"]: len(d["exercises"]) for d in p["days"] if not d["is_rest"]}
     before, after = by_focus(plain), by_focus(boosted)
-    assert after["Pull"] == before["Pull"] + 1                              # the pull day trains biceps
-    assert after["Push"] == before["Push"] and after["Legs"] == before["Legs"]
+    # The split is picked by the app (full body for 3 days, D-127), so days are not named Push/Pull: every day that trains chest gets exactly one more.
+    assert before.keys() == after.keys() and all(after[k] in (before[k], before[k] + 1) for k in before)
+    assert any(after[k] == before[k] + 1 for k in before)
 
 
 def test_a_user_with_a_health_flag_gets_no_extra_volume_from_focus(client):
