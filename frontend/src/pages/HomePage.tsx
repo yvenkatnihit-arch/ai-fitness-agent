@@ -24,6 +24,7 @@ export function HomePage() {
   const [forecast, setForecast] = useState<Forecast | null>(null)
   const [today, setToday] = useState<Today | null>(null)
   const [error, setError] = useState<ApiError | null>(null)
+  const [attempt, setAttempt] = useState(0) // bumped by "Try again" to load everything once more
 
   useEffect(() => {
     let cancelled = false
@@ -50,7 +51,15 @@ export function HomePage() {
     return () => {
       cancelled = true // the page was left (or the token changed) before the answers came back
     }
-  }, [api])
+  }, [api, attempt])
+
+  // A failed load (server asleep, connection dropped) can simply be tried again: only those errors offer the button, not e.g. a refused login.
+  const retryable = error !== null && (error.status === 0 || error.status >= 500)
+  const tryAgain = () => {
+    setError(null)
+    setStatus(null)
+    setAttempt((n) => n + 1)
+  }
 
   // A weigh-in moves the goal date (it starts from the latest weight), so the forecast is asked for again.
   const refreshForecast = () => { api.get<Forecast>('/targets/forecast').then(setForecast, () => {}) }
@@ -72,6 +81,11 @@ export function HomePage() {
       }
     >
       {error && <FormError message={error.message} requestId={error.requestId} />}
+      {retryable && (
+        <button type="button" onClick={tryAgain} className="rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-brand-strong transition hover:bg-brand-soft">
+          Try again
+        </button>
+      )}
       {!error && !targets && <p className="text-center text-sm text-muted">Loading…</p>}
       {targets && (
         <div className="flex flex-col gap-3">

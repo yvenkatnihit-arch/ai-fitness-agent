@@ -99,7 +99,7 @@ Open http://localhost:5173.
 1. Open the app, **sign up**, and finish **onboarding** (about 2 minutes). You land on Home with your targets and goal-date range.
 2. **Meal plan** → *Generate my plan* (about a minute, about $0.04 of Gemini). Read the plan, open "How this plan was made" (which days the AI chose and which our code chose, the checks it passed), then **Approve**.
 3. **Workout** → pick a split on the Splits screen, generate a plan, approve it.
-4. **Log a meal**: search "roti", add 2 pieces and a katori of dal, and watch the totals. Then on Home, **log your weight** and watch the chart and your goal date move.
+4. **Log a meal**: search "roti", add 2 pieces and a katori of dal, and watch the totals. Then on Home, **log your weight** (use the Date box to add a few past weigh-ins so the chart has a trend) and watch the chart and your goal date move.
 5. Tap the round **chat button** and the example chips (or type): ask "how much protein is in paneer?", then "and how much fat?" (it remembers), then "what's for lunch tomorrow?", "what workout do I have on Monday?", "how do I do a plank?" and "which vegetarian foods are high in protein?".
    Then say "I ate 2 rotis and a katori of dal for lunch": a **Please confirm** card appears, nothing is saved yet, press **Approve** and go back to Home to see it in today's progress.
    Try "hello" or "make me a workout plan" to see how it redirects you to the right screen. Open **Past chats** to reopen or delete a conversation.

@@ -8,6 +8,15 @@ import { WeightChart } from './WeightChart'
 
 const kg = (n: number) => `${Math.abs(n)} kg`
 
+const BACKFILL_DAYS = 60 // the same limit as the server (backend/app/workflows/weight_log.py)
+const isoDay = (d: Date) => d.toLocaleDateString('en-CA') // YYYY-MM-DD in the person's own calendar
+const daysAgo = (n: number) => {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return isoDay(d)
+}
+const shortDate = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+
 // What the numbers mean, in words (all values come from the server; this only phrases them).
 function describe(h: WeightHistory): string[] {
   const lines: string[] = []
@@ -26,6 +35,7 @@ export function WeightCard({ onChanged }: { onChanged?: () => void }) {
   const api = useApi()
   const [history, setHistory] = useState<WeightHistory | null>(null)
   const [draft, setDraft] = useState('')
+  const [day, setDay] = useState(() => daysAgo(0)) // the weigh-in date: today unless changed
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
 
@@ -41,12 +51,14 @@ export function WeightCard({ onChanged }: { onChanged?: () => void }) {
   async function save(event: FormEvent) {
     event.preventDefault()
     const value = Number(draft)
-    if (!draft.trim() || !Number.isFinite(value)) return
+    if (!draft.trim() || !Number.isFinite(value) || !day) return
     setBusy(true)
     setError(null)
     try {
-      setHistory(await api.post<WeightHistory>('/weight', { weight_kg: value }))
+      const today = daysAgo(0)
+      setHistory(await api.post<WeightHistory>('/weight', { weight_kg: value, ...(day !== today ? { measured_on: day } : {}) }))
       setDraft('')
+      setDay(today)
       onChanged?.() // the goal-date forecast starts from the latest weight, so it is refreshed
     } catch (e) {
       setError(e instanceof ApiError ? e : new ApiError(0, 'Something went wrong. Please try again.'))
@@ -75,20 +87,24 @@ export function WeightCard({ onChanged }: { onChanged?: () => void }) {
       {facts.length > 0 && <ul className="flex flex-col gap-0.5 text-sm text-ink-soft">{facts.map((f) => <li key={f}>{f}</li>)}</ul>}
       <form onSubmit={save} className="flex items-end gap-2">
         <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-ink-soft">
-          Today&apos;s weight (kg)
+          Weight (kg)
           <input
             type="number" inputMode="decimal" step="0.1" min="30" max="300" value={draft} onChange={(e) => setDraft(e.target.value)}
             className={inputClass} placeholder={history.latest_kg === null ? '' : String(history.latest_kg)}
           />
         </label>
+        <label className="flex w-36 flex-col gap-1 text-xs font-medium text-ink-soft">
+          Date
+          <input type="date" value={day} min={daysAgo(BACKFILL_DAYS)} max={daysAgo(0)} onChange={(e) => setDay(e.target.value)} className={inputClass} />
+        </label>
         <button
-          type="submit" disabled={busy || !draft.trim()}
+          type="submit" disabled={busy || !draft.trim() || !day}
           className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-on-brand disabled:opacity-50"
         >
-          {busy ? 'Saving…' : 'Log weight'}
+          {busy ? 'Saving…' : day === daysAgo(0) ? 'Log weight' : `Log for ${shortDate(day)}`}
         </button>
       </form>
-      <p className="text-xs text-muted">Weigh-ins show your trend and update your goal date. Your daily targets change when you update your weight in Settings.</p>
+      <p className="text-xs text-muted">You can also add past weigh-ins (up to {BACKFILL_DAYS} days back) to see your trend. Weigh-ins show your trend and update your goal date. Your daily targets change when you update your weight in Settings.</p>
       {error && <FormError message={error.message} requestId={error.requestId} />}
     </section>
   )

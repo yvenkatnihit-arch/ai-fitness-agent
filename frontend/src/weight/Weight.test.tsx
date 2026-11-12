@@ -55,14 +55,14 @@ test('logging a weight sends only the number, shows the new trend and asks for t
   })
   render()
   const card = await screen.findByRole('region', { name: 'Weight' })
-  fireEvent.change(within(card).getByLabelText("Today's weight (kg)"), { target: { value: '56.4' } })
+  fireEvent.change(within(card).getByLabelText('Weight (kg)'), { target: { value: '56.4' } })
   fireEvent.click(within(card).getByRole('button', { name: 'Log weight' }))
   await waitFor(() => expect(within(card).getByText('56.4')).toBeInTheDocument())
   expect(calls.find((c) => c.method === 'POST')!.body).toEqual({ weight_kg: 56.4 })
   expect(card).toHaveTextContent('Down 1.6 kg since you started.')
   forecastCalls = calls.filter((c) => c.method === 'GET' && c.path === '/targets/forecast').length
   expect(forecastCalls).toBeGreaterThanOrEqual(2)                                                // once on arrival, once after the weigh-in
-  expect(within(card).getByLabelText("Today's weight (kg)")).toHaveValue(null)                  // the box is cleared
+  expect(within(card).getByLabelText('Weight (kg)')).toHaveValue(null)                  // the box is cleared
 })
 
 test('the button waits until a number is typed', async () => {
@@ -70,7 +70,7 @@ test('the button waits until a number is typed', async () => {
   render()
   const card = await screen.findByRole('region', { name: 'Weight' })
   expect(within(card).getByRole('button', { name: 'Log weight' })).toBeDisabled()
-  fireEvent.change(within(card).getByLabelText("Today's weight (kg)"), { target: { value: '57' } })
+  fireEvent.change(within(card).getByLabelText('Weight (kg)'), { target: { value: '57' } })
   expect(within(card).getByRole('button', { name: 'Log weight' })).toBeEnabled()
 })
 
@@ -78,10 +78,10 @@ test("the server's message is shown when a weigh-in is refused and what was type
   home({ body: HISTORY }, { 'POST /weight': { status: 422, body: { detail: "You can't log a weight for a future date.", request_id: 'r-5' } } })
   render()
   const card = await screen.findByRole('region', { name: 'Weight' })
-  fireEvent.change(within(card).getByLabelText("Today's weight (kg)"), { target: { value: '57' } })
+  fireEvent.change(within(card).getByLabelText('Weight (kg)'), { target: { value: '57' } })
   fireEvent.click(within(card).getByRole('button', { name: 'Log weight' }))
   expect(await within(card).findByRole('alert')).toHaveTextContent('future date')
-  expect(within(card).getByLabelText("Today's weight (kg)")).toHaveValue(57)
+  expect(within(card).getByLabelText('Weight (kg)')).toHaveValue(57)
 })
 
 test('a user who must not see numbers gets no weight card at all', async () => {
@@ -107,4 +107,54 @@ test('a single weigh-in draws one point and no line; being at the target is said
   expect(card.querySelector('path')).toBeNull()
   expect(card).toHaveTextContent('You are at your target weight.')
   expect(within(card).queryByText(/a week/)).not.toBeInTheDocument()
+})
+
+
+// ---------- the date on the weigh-in (so a trend can be built from past weights) ----------
+
+const iso = (daysBack: number) => {
+  const d = new Date()
+  d.setDate(d.getDate() - daysBack)
+  return d.toLocaleDateString('en-CA')
+}
+
+test('the date box starts on today and only allows today and the last 60 days, like the server', async () => {
+  home({ body: HISTORY })
+  render()
+  const date = (await screen.findByLabelText('Date')) as HTMLInputElement
+  expect(date.value).toBe(iso(0))
+  expect(date.max).toBe(iso(0))
+  expect(date.min).toBe(iso(60))
+})
+
+test('a weigh-in for an earlier day sends that date, and the button says which day it will log', async () => {
+  const calls = home({ body: HISTORY }, { 'POST /weight': { body: { ...HISTORY, latest_kg: 57 } } })
+  render()
+  const card = await screen.findByRole('region', { name: 'Weight' })
+  fireEvent.change(within(card).getByLabelText('Weight (kg)'), { target: { value: '59.5' } })
+  fireEvent.change(within(card).getByLabelText('Date'), { target: { value: iso(10) } })
+  expect(within(card).getByRole('button', { name: /^Log for \d+ \w+$/ })).toBeEnabled()
+  fireEvent.click(within(card).getByRole('button', { name: /^Log for/ }))
+  await waitFor(() => expect(calls.some((c) => c.method === 'POST')).toBe(true))
+  expect(calls.find((c) => c.method === 'POST')!.body).toEqual({ weight_kg: 59.5, measured_on: iso(10) })
+  await waitFor(() => expect((within(card).getByLabelText('Date') as HTMLInputElement).value).toBe(iso(0)))      // back to today for the next one
+})
+
+test('a weigh-in for today sends no date at all', async () => {
+  const calls = home({ body: HISTORY }, { 'POST /weight': { body: HISTORY } })
+  render()
+  const card = await screen.findByRole('region', { name: 'Weight' })
+  fireEvent.change(within(card).getByLabelText('Weight (kg)'), { target: { value: '57' } })
+  fireEvent.click(within(card).getByRole('button', { name: 'Log weight' }))
+  await waitFor(() => expect(calls.some((c) => c.method === 'POST')).toBe(true))
+  expect(calls.find((c) => c.method === 'POST')!.body).toEqual({ weight_kg: 57 })
+})
+
+test('clearing the date box stops the weigh-in from being sent', async () => {
+  home({ body: HISTORY })
+  render()
+  const card = await screen.findByRole('region', { name: 'Weight' })
+  fireEvent.change(within(card).getByLabelText('Weight (kg)'), { target: { value: '57' } })
+  fireEvent.change(within(card).getByLabelText('Date'), { target: { value: '' } })
+  expect(within(card).getByRole('button', { name: /Log/ })).toBeDisabled()
 })
